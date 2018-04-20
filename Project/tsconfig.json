@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": [ "dom", "es5", "es2015.promise" ],
+    "target": "es5",
+    "outFile": "./assets/script/lib/outscript.js",
+    "experimentalDecorators": true,
+    "skipLibCheck": true
+  },
+  // "include": [
+  //   "outscript"
+  // ],
+  "exclude": [
+    "node_modules",
+    "library",
+    "local",
+    "temp",
+    "build",
+    "settings"
+  ]
+}
