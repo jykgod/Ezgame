@@ -26,7 +26,7 @@ export default class NewClass extends cc.Component {
     start() {
         let state: FSM.IState = FSM.StateMachine.NONE;
         this.stateMachine =  FSM.StateMachine.GetBuilder().AddState(state).build();
-        this.stateMachine.ChangeState("null");
+        this.stateMachine.ChangeState(0);
     }
     update(dt){
         TimeManager.Instance.Update(dt);

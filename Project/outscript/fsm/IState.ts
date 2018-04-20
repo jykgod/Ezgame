@@ -10,7 +10,7 @@
 
 namespace FSM {
     export interface IState {
-        stateType: string;
+        stateType: number | string;
         /**
          * 状态进入时调用
          * @param args 进入状态时接受的参数

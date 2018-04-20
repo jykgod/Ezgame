@@ -17,10 +17,10 @@ namespace FSM {
         private statesMap: Array<IState> = new Array<IState>();
         /**
          * 空状态
-         * stateType 为 "null",这意味着自定义的状态的状态类型不能为"null"
+         * stateType 为 "0",这意味着自定义的状态的状态类型不能为"0"
          */
         public static readonly NONE: IState = {
-            stateType: "null",
+            stateType: 0,
             StateEnter() {
 
             },
@@ -63,7 +63,7 @@ namespace FSM {
          * @param nextStateType 
          * @param args 
          */
-        public ChangeState(nextStateType: string, ...args) {
+        public ChangeState(nextStateType: number | string, ...args) {
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
                 console.error(`attemp to change to the ${nextStateType} which ${name} not has!`);
                 return;

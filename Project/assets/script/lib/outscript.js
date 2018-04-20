@@ -216,16 +216,13 @@ var FSM;
             if (this.currentState != null && this.currentState.StateUpdate != undefined) {
                 this.currentState.StateUpdate(this.timer.time);
             }
-            else {
-                console.log("update is undefined");
-            }
         };
         /**
          * 空状态
-         * stateType 为 "null",这意味着自定义的状态的状态类型不能为"null"
+         * stateType 为 "0",这意味着自定义的状态的状态类型不能为"0"
          */
         StateMachine.NONE = {
-            stateType: "null",
+            stateType: 0,
             StateEnter: function () {
             },
             StateEnd: function (time) {
