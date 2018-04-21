@@ -18,19 +18,21 @@ export default class NewClass extends cc.Component {
 
     @property
     text: string = 'hello';
-    stateMachine : FSM.StateMachine; 
+    stateMachine : FSM.StateMachine;
+    session : NetWork.SeverSession;
 
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
     start() {
-        let state: FSM.IState = FSM.StateMachine.NONE;
-        this.stateMachine =  FSM.StateMachine.GetBuilder().AddState(state).build();
-        this.stateMachine.ChangeState(0);
+        this.session = new NetWork.SeverSession("server1", "ws://192.168.0.106:20170");
     }
     update(dt){
         TimeManager.Instance.Update(dt);
-        this.stateMachine.Update();
+        if (TimeManager.Instance.realTimeSinceStartScene > 10){
+            this.session.Close();
+        }
+        // this.stateMachine.Update();
     }
 
     // update (dt) {}

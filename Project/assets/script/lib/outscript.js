@@ -145,8 +145,45 @@ var Tools;
     }());
     Tools.Builder = Builder;
 })(Tools || (Tools = {}));
+var Tools;
+(function (Tools) {
+    var Logger = /** @class */ (function () {
+        function Logger() {
+        }
+        Logger.log = function (arg, tag) {
+            if (tag != null && tag != undefined) {
+                console.log("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg + " ");
+            }
+            else {
+                console.log("[notag] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
+            }
+        };
+        Logger.warn = function (arg, tag) {
+            if (tag != null && tag != undefined) {
+                console.warn("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
+            }
+            else {
+                console.warn("[notag] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
+            }
+        };
+        Logger.error = function (arg, tag) {
+            if (tag != null && tag != undefined) {
+                console.error("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
+            }
+            else {
+                console.error("[notag] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
+            }
+        };
+        Logger.info = function (arg) {
+            console.info(arg);
+        };
+        return Logger;
+    }());
+    Tools.Logger = Logger;
+})(Tools || (Tools = {}));
 /// <reference path="../tools/Timer.ts" />
 /// <reference path="../tools/Builder.ts" />
+/// <reference path="../tools/Logger.ts" />
 var FSM;
 (function (FSM) {
     var StateMachine = /** @class */ (function () {
@@ -172,7 +209,7 @@ var FSM;
          */
         StateMachine.prototype.AddState = function (state) {
             if (this.statesMap[state.stateType] != null && this.statesMap[state.stateType] != undefined) {
-                console.error("attemp to add a same State into the StateMachine. StateMatchine:" + name + " State:" + state.stateType);
+                Tools.Logger.error("attemp to add a same State into the StateMachine. StateMatchine:" + name + " State:" + state.stateType);
                 return;
             }
             this.statesMap[state.stateType] = state;
@@ -199,7 +236,7 @@ var FSM;
                 args[_i - 1] = arguments[_i];
             }
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
-                console.error("attemp to change to the " + nextStateType + " which " + name + " not has!");
+                Tools.Logger.error("attemp to change to the " + nextStateType + " which " + name + " not has!");
                 return;
             }
             if (this.currentState != null) {
@@ -250,3 +287,109 @@ var FSM;
         return StateMachineBuilder;
     }(Tools.Builder));
 })(FSM || (FSM = {}));
+var NetWork;
+(function (NetWork) {
+    var SeverSession = /** @class */ (function () {
+        /**
+         * 构造函数
+         * @param name 服务器会话名字
+         * @param url 服务器url,需要使用'ws'或者'wss'开头
+         */
+        function SeverSession(name, url) {
+            /**
+             * 会话状态
+             */
+            this.sesionState = SessionState.DISCONNECTED;
+            /**
+             * 服务器链接成功时回调
+             */
+            this.OnConnect = function (event) { };
+            /**
+             * 服务器关闭链接过后回调
+             */
+            this.OnDisConnect = function (CloseEvent) { };
+            /**
+             * 服务器收到消息后回调
+             */
+            this.OnGetMessage = function (MessageEvent) { };
+            /**
+             * 服务器收到消息后回调
+             */
+            this.OnError = function (ErrorEvent) { };
+            if (name == null || name == undefined) {
+                Tools.Logger.error("session name can't be null or undefined");
+                return;
+            }
+            var self = this;
+            this.ws = new WebSocket(url);
+            this.name = name;
+            this.sesionState = SessionState.CONNECTING;
+            this.ws.onopen = function (event) {
+                Tools.Logger.log("connect", self.name);
+                self.sesionState = SessionState.CONNECTED;
+                if (self.OnConnect != undefined) {
+                    self.OnConnect(event);
+                }
+            };
+            this.ws.onclose = function (event) {
+                Tools.Logger.log("disconnect", self.name);
+                self.sesionState = SessionState.DISCONNECTED;
+                if (self.OnDisConnect != undefined) {
+                    self.OnDisConnect(event);
+                }
+            };
+            this.ws.onmessage = function (event) {
+                Tools.Logger.log("getmessage:" + event.data, self.name);
+                if (self.OnGetMessage != undefined) {
+                    self.OnGetMessage(event);
+                }
+            };
+            this.ws.onerror = function (event) {
+                Tools.Logger.error("error:" + event.error, self.name);
+                if (self.OnError != undefined) {
+                    self.OnError(event);
+                }
+            };
+        }
+        Object.defineProperty(SeverSession.prototype, "state", {
+            /**
+             * 获取会话状态
+             */
+            get: function () {
+                return this.sesionState;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SeverSession.prototype, "connected", {
+            /**
+             * 判断会话是否处于链接状态
+             */
+            get: function () {
+                return this.sesionState == SessionState.CONNECTED;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        /**
+         * 主动断开会话
+         */
+        SeverSession.prototype.Close = function (code, reason) {
+            if (this.sesionState == SessionState.DISCONNECTING || this.sesionState == SessionState.DISCONNECTED) {
+                return;
+            }
+            Tools.Logger.log("Try close", this.name);
+            this.sesionState = SessionState.DISCONNECTING;
+            this.ws.close(code, reason);
+        };
+        return SeverSession;
+    }());
+    NetWork.SeverSession = SeverSession;
+    var SessionState;
+    (function (SessionState) {
+        SessionState[SessionState["CONNECTED"] = 0] = "CONNECTED";
+        SessionState[SessionState["CONNECTING"] = 1] = "CONNECTING";
+        SessionState[SessionState["DISCONNECTED"] = 2] = "DISCONNECTED";
+        SessionState[SessionState["DISCONNECTING"] = 3] = "DISCONNECTING";
+    })(SessionState = NetWork.SessionState || (NetWork.SessionState = {}));
+})(NetWork || (NetWork = {}));

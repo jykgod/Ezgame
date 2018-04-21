@@ -1,5 +1,6 @@
 /// <reference path="../tools/Timer.ts" />
 /// <reference path="../tools/Builder.ts" />
+/// <reference path="../tools/Logger.ts" />
 
 namespace FSM {
     export class StateMachine {
@@ -42,7 +43,7 @@ namespace FSM {
          */
         public AddState(state: IState) {
             if (this.statesMap[state.stateType] != null && this.statesMap[state.stateType] != undefined) {
-                console.error(`attemp to add a same State into the StateMachine. StateMatchine:${name} State:${state.stateType}`);
+                Tools.Logger.error(`attemp to add a same State into the StateMachine. StateMatchine:${name} State:${state.stateType}`);
                 return;
             }
             this.statesMap[state.stateType] = state;
@@ -65,7 +66,7 @@ namespace FSM {
          */
         public ChangeState(nextStateType: number | string, ...args) {
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
-                console.error(`attemp to change to the ${nextStateType} which ${name} not has!`);
+                Tools.Logger.error(`attemp to change to the ${nextStateType} which ${name} not has!`);
                 return;
             }
             if (this.currentState != null){
