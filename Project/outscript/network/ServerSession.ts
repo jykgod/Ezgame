@@ -23,7 +23,7 @@ namespace NetWork {
                 return;
             }
             let self = this;
-            this.ws = new WebSocket(url);
+            this.ws = new WebSocket("ws://" + url);
             this.name = name;
             this.sesionState = SessionState.CONNECTING;
             this.ws.onopen = function (event: Event) {
@@ -64,7 +64,7 @@ namespace NetWork {
         /**
          * 服务器收到消息后回调
          */
-        private OnGetMessage?= function (MessageEvent): void { }
+        public OnGetMessage?= function (MessageEvent): void { }
         /**
          * 服务器收到消息后回调
          */

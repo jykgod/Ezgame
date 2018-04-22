@@ -321,7 +321,7 @@ var NetWork;
                 return;
             }
             var self = this;
-            this.ws = new WebSocket(url);
+            this.ws = new WebSocket("ws://" + url);
             this.name = name;
             this.sesionState = SessionState.CONNECTING;
             this.ws.onopen = function (event) {
@@ -393,3 +393,171 @@ var NetWork;
         SessionState[SessionState["DISCONNECTING"] = 3] = "DISCONNECTING";
     })(SessionState = NetWork.SessionState || (NetWork.SessionState = {}));
 })(NetWork || (NetWork = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var CreateRoleOption = /** @class */ (function () {
+            function CreateRoleOption() {
+                // NAME
+                this.name = null;
+                // GENDER
+                this.gender = null;
+                // RACE
+                this.race = null;
+            }
+            return CreateRoleOption;
+        }());
+        Contract.CreateRoleOption = CreateRoleOption;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var Gender;
+        (function (Gender) {
+            Gender[Gender["male"] = 0] = "male";
+            Gender[Gender["female"] = 1] = "female";
+            Gender[Gender["other"] = 2] = "other";
+            Gender[Gender["none"] = 3] = "none";
+        })(Gender = Contract.Gender || (Contract.Gender = {}));
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var InteractionType;
+        (function (InteractionType) {
+        })(InteractionType = Contract.InteractionType || (Contract.InteractionType = {}));
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var ViewChange = /** @class */ (function () {
+            function ViewChange() {
+                // TICKCOUNT
+                this.tickCount = 0;
+                // TILECHANGE
+                this.tileChange = [];
+                // ENTITYCHANGE
+                this.entityChange = [];
+                // EVENTS
+                this.events = [];
+            }
+            ViewChange.prototype.toString = function () {
+                return null;
+            };
+            return ViewChange;
+        }());
+        Contract.ViewChange = ViewChange;
+        var ViewEvent = /** @class */ (function () {
+            function ViewEvent() {
+                // EVENTTYPE
+                this.eventType = null;
+                // TARGETENTITYID
+                this.targetEntityId = "00000000-0000-0000-0000-000000000000";
+            }
+            ViewEvent.prototype.toString = function () {
+                return null;
+            };
+            return ViewEvent;
+        }());
+        Contract.ViewEvent = ViewEvent;
+        var EntityDto = /** @class */ (function () {
+            function EntityDto() {
+                // ID
+                this.id = "00000000-0000-0000-0000-000000000000";
+                // NAME
+                this.name = null;
+                // POS
+                this.pos = null;
+            }
+            EntityDto.prototype.toString = function () {
+                return null;
+            };
+            return EntityDto;
+        }());
+        Contract.EntityDto = EntityDto;
+        var TileDto = /** @class */ (function () {
+            function TileDto() {
+                // POSITION
+                this.position = null;
+                // SURFACE
+                this.surface = null;
+            }
+            return TileDto;
+        }());
+        Contract.TileDto = TileDto;
+        var ViewEventType;
+        (function (ViewEventType) {
+            ViewEventType[ViewEventType["entityLeave"] = 0] = "entityLeave";
+        })(ViewEventType = Contract.ViewEventType || (Contract.ViewEventType = {}));
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var Race;
+        (function (Race) {
+            Race[Race["human"] = 0] = "human";
+        })(Race = Contract.Race || (Contract.Race = {}));
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var RoleSummary = /** @class */ (function () {
+            function RoleSummary() {
+                // ID
+                this.id = "00000000-0000-0000-0000-000000000000";
+                // NAME
+                this.name = null;
+                // GENDER
+                this.gender = null;
+                // RACE
+                this.race = null;
+            }
+            RoleSummary.prototype.toString = function () {
+                return null;
+            };
+            return RoleSummary;
+        }());
+        Contract.RoleSummary = RoleSummary;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
