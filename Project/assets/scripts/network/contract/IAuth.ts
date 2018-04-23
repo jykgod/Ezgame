@@ -18,17 +18,17 @@ module SimCivil.Contract {
 		
 		
         @RPC("SimCivil.Contract.IAuth.LogIn")
-		public async static logIn(username: string, password: string): boolean{
+		public static async logIn(username: string, password: string): Promise<boolean>{
             return false;
         }
 		
         @RPC("SimCivil.Contract.IAuth.LogOut")
-		public async static logOut(): void{
+		public static async logOut(): Promise<void>{
             return void(0);
         }
 		
         @RPC("SimCivil.Contract.IAuth.GetToken")
-		public async static getToken(): string{
+		public static async getToken(): Promise<string>{
             return null;
         }
 		

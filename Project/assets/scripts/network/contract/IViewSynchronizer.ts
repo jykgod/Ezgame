@@ -78,7 +78,7 @@ module SimCivil.Contract {
 		
 		
         @RPC("SimCivil.Contract.IViewSynchronizer.RegisterViewSync")
-		public async static registerViewSync(callback: Action<ViewChange>): void{
+		public static async registerViewSync(callback: Action<ViewChange>): Promise<void>{
             return void(0);
         }
 		
