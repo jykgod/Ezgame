@@ -17,21 +17,39 @@ module SimCivil.Contract {
 	
 
 	
-	export interface IPlayerController{
+	export class IPlayerController{
 		
 		
 		
-		getMoveState(): { X: number, Y: number, Speed: number };
+        @RPC("SimCivil.Contract.IPlayerController.GetMoveState")
+		public async static getMoveState(): { X: number, Y: number, Speed: number }{
+            return null;
+        }
 		
-		move(direction: { X: number, Y: number }, speed: number): { X: number, Y: number, Speed: number };
+        @RPC("SimCivil.Contract.IPlayerController.Move")
+		public async static move(direction: { X: number, Y: number }, speed: number): { X: number, Y: number, Speed: number }{
+            return null;
+        }
 		
-		movePercentage(direction: { X: number, Y: number }, relativeSpeed: number): { X: number, Y: number, Speed: number };
+        @RPC("SimCivil.Contract.IPlayerController.MovePercentage")
+		public async static movePercentage(direction: { X: number, Y: number }, relativeSpeed: number): { X: number, Y: number, Speed: number }{
+            return null;
+        }
 		
-		stop(): void;
+        @RPC("SimCivil.Contract.IPlayerController.Stop")
+		public async static stop(): void{
+            return void(0);
+        }
 		
-		interaction(target: string, interactionType: InteractionType): void;
+        @RPC("SimCivil.Contract.IPlayerController.Interaction")
+		public async static interaction(target: string, interactionType: InteractionType): void{
+            return void(0);
+        }
 		
-		build(tileElement: string, position: { X: number, Y: number }): void;
+        @RPC("SimCivil.Contract.IPlayerController.Build")
+		public async static build(tileElement: string, position: { X: number, Y: number }): void{
+            return void(0);
+        }
 		
 	}
 	

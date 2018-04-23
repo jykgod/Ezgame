@@ -13,13 +13,24 @@ module SimCivil.Contract {
 	
 
 	
-	export interface IAuth{
+	export class IAuth{
 		
-		logIn(username: string, password: string): boolean;
 		
-		logOut(): void;
 		
-		getToken(): string;
+        @RPC("SimCivil.Contract.IAuth.LogIn")
+		public async static logIn(username: string, password: string): boolean{
+            return false;
+        }
+		
+        @RPC("SimCivil.Contract.IAuth.LogOut")
+		public async static logOut(): void{
+            return void(0);
+        }
+		
+        @RPC("SimCivil.Contract.IAuth.GetToken")
+		public async static getToken(): string{
+            return null;
+        }
 		
 	}
 	

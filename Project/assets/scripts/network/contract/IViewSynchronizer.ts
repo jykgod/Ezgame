@@ -73,11 +73,14 @@ module SimCivil.Contract {
 	
 
 	
-	export interface IViewSynchronizer{
+	export class IViewSynchronizer{
 		
 		
 		
-		registerViewSync(callback: void): void;
+        @RPC("SimCivil.Contract.IViewSynchronizer.RegisterViewSync")
+		public async static registerViewSync(callback: Action<ViewChange>): void{
+            return void(0);
+        }
 		
 	}
 	

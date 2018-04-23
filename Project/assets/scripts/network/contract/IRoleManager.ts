@@ -13,17 +13,29 @@ module SimCivil.Contract {
 	
 
 	
-	export interface IRoleManager{
+	export class IRoleManager{
 		
 		
 		
-		createRole(option: CreateRoleOption): boolean;
+        @RPC("SimCivil.Contract.IRoleManager.CreateRole")
+		public async static createRole(option: CreateRoleOption): boolean{
+            return false;
+        }
 		
-		getRoleList(): RoleSummary[];
+        @RPC("SimCivil.Contract.IRoleManager.GetRoleList")
+		public async static getRoleList(): RoleSummary[]{
+            return [];
+        }
 		
-		useRole(eid: string): boolean;
+        @RPC("SimCivil.Contract.IRoleManager.UseRole")
+		public async static useRole(eid: string): boolean{
+            return false;
+        }
 		
-		releaseRole(): boolean;
+        @RPC("SimCivil.Contract.IRoleManager.ReleaseRole")
+		public async static releaseRole(): boolean{
+            return false;
+        }
 		
 	}
 	
