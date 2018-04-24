@@ -11,8 +11,8 @@ function RPC(serviceName: string) {
             Tools.Logger.log(typeof target);
             Tools.Logger.log(serviceName);
             let _sequence = RpcClient.Instance.GetSequence();
-            let result = await RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
-            return RpcClient.Instance.GetResponce(_sequence);
+            RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
+            return await RpcClient.Instance.GetResponce(_sequence);
         }
     }
 }
@@ -41,6 +41,14 @@ class RpcClient {
      */
     private _sequence = 0;
     /**
+     * 消息返回值队列
+     */
+    public resultQueue: Array<SimCivil.Rpc.RpcResponse> = new Array<SimCivil.Rpc.RpcResponse>();
+    /**
+     * 超时时间
+     */
+    private timeOut = 2;
+    /**
      * 与rpc服务器建立的会话
      */
     public get session(): NetWork.SeverSession {
@@ -51,18 +59,33 @@ class RpcClient {
      * @param url 服务器地址
      */
     public Init(url: string, callBack?: (event: Event) => void, errorCallBack?: (event: ErrorEvent) => void) {
+        //这里不加约束是错误的
+        //let self = this;
+        //加上类型约束后是正确的
+        let self: RpcClient = this;
         this._session = new NetWork.SeverSession("RPC", url);
-        this._session.OnGetMessage = this.GetMessage;
-        this._session.OnConnect = callBack;
-        this._session.OnError = errorCallBack;
+        //上面self没加约束的时候会被翻译成:
+        // this._session.OnGetMessage = self.GetMessage(event);
+        //上面self加了约束后被正确翻译翻:
+        // this._session.OnGetMessage = function (event) { return self.GetMessage(event); };
+        this._session.OnGetMessage = (event) => self.GetMessage(event);
+        this._session.OnConnect = (event) => callBack(event);
+        this._session.OnError = (event) => errorCallBack(event);
     }
     /**
      * 收取并加工再交给做rpc处理的函数
      * @param event messageEvent
      */
     private GetMessage(event: MessageEvent) {
-        console.log(typeof (event.data));
-        console.log(event.data);
+        let self: RpcClient = this;
+        let reader = new FileReader();
+        reader.readAsText(event.data, 'utf-8');
+        reader.onload = function (ev: ProgressEvent) {
+            let obj: SimCivil.Rpc.RpcResponse = JSON.parse(reader.result);
+            Tools.Logger.log(reader.result, "RPC");
+            Tools.Logger.info(obj);
+            self.resultQueue[obj.Sequence] = obj;
+        }
     }
     /**
      * 获取消息序列号
@@ -73,8 +96,18 @@ class RpcClient {
     /**
      * 通过序列号获取消息类型
      */
-    public GetResponce(sequence: number): any {
-        return "something";
+    public async GetResponce(sequence: number): Promise<SimCivil.Rpc.RpcResponse> {
+        await new Promise<void>((resolve, reject) => {
+            if (this.resultQueue[sequence] != undefined && this.resultQueue[sequence] != null) {
+                resolve();
+            }
+            setTimeout(() => {
+                reject('timeout in ' + this.timeOut + ' seconds.');
+            }, this.timeOut * 1000);
+        });
+        let ret = this.resultQueue[sequence];
+        this.resultQueue[sequence] = null;
+        return ret;
     }
     /**
      * 发送rpc消息给服务器
@@ -99,11 +132,10 @@ class RpcClient {
         Tools.Logger.info(json);
         let enc = new TextEncoder();
         let str = JSON.stringify(json);
-        let length = enc.encode(str).length;
-        str = "  ".concat(str);
-        let arr = enc.encode(str);
-        arr.set([length / 256,length % 256], 0);
-        console.info(arr);
-        this.session.SendMessage(arr.buffer);
+        // let length = enc.encode(str).length;
+        // str = "  ".concat(str);
+        // let arr = enc.encode(str);
+        // arr.set([length / 256, length % 256], 0);
+        this.session.SendMessage(enc.encode(str).buffer);
     }
 }

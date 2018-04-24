@@ -1,3 +1,13 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39,506 +49,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-/**
- * RPC修饰器
- * 用来修饰客户端发起的RPC调用函数
- */
-function RPC(serviceName) {
-    /**
-     * 真正的修饰器函数
-     */
-    return function (target, methodName, descriptor) {
-        descriptor.value = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            return __awaiter(this, void 0, void 0, function () {
-                var _sequence, result;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            Tools.Logger.log(typeof target);
-                            Tools.Logger.log(serviceName);
-                            _sequence = RpcClient.Instance.GetSequence();
-                            return [4 /*yield*/, RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args)];
-                        case 1:
-                            result = _a.sent();
-                            return [2 /*return*/, RpcClient.Instance.GetResponce(_sequence)];
-                    }
-                });
-            });
-        };
-    };
-}
-var RpcClient = /** @class */ (function () {
-    /**
-     * 构造函数
-     */
-    function RpcClient() {
-        /**
-         * 与rpc服务器建立的会话
-         */
-        this._session = null;
-        /**
-         * 消息序列号
-         */
-        this._sequence = 0;
-    }
-    Object.defineProperty(RpcClient, "Instance", {
-        get: function () {
-            if (this.instance == null) {
-                this.instance = new RpcClient();
-            }
-            return this.instance;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(RpcClient.prototype, "session", {
-        /**
-         * 与rpc服务器建立的会话
-         */
-        get: function () {
-            return this._session;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * rpc客户端初始化，用来构造一个与服务器进行RPC同行的类
-     * @param url 服务器地址
-     */
-    RpcClient.prototype.Init = function (url, callBack, errorCallBack) {
-        this._session = new NetWork.SeverSession("RPC", url);
-        this._session.OnGetMessage = this.GetMessage;
-        this._session.OnConnect = callBack;
-        this._session.OnError = errorCallBack;
-    };
-    /**
-     * 收取并加工再交给做rpc处理的函数
-     * @param event messageEvent
-     */
-    RpcClient.prototype.GetMessage = function (event) {
-        console.log(typeof (event.data));
-        console.log(event.data);
-    };
-    /**
-     * 获取消息序列号
-     */
-    RpcClient.prototype.GetSequence = function () {
-        return this._sequence++;
-    };
-    /**
-     * 通过序列号获取消息类型
-     */
-    RpcClient.prototype.GetResponce = function (sequence) {
-        return "something";
-    };
-    /**
-     * 发送rpc消息给服务器
-     * @param sequence 序列号
-     * @param serviceName 服务名
-     * @param methodName 方法名
-     * @param args 参数
-     */
-    RpcClient.prototype.SendRpc = function (sequence, serviceName, methodName, args) {
-        var json = {
-            "$type": "SimCivil.Rpc.RpcRequest, SimCivil.Rpc",
-            "ServiceName": serviceName,
-            "MethodName": methodName,
-            "Arguments": args,
-            "Sequnce": sequence,
-            "TimeStamp": new Date().toISOString()
-        };
-        if (!("TextEncoder" in window)) {
-            Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
-            return;
-        }
-        Tools.Logger.info(json);
-        var enc = new TextEncoder();
-        var str = JSON.stringify(json);
-        var length = enc.encode(str).length;
-        str = "  ".concat(str);
-        var arr = enc.encode(str);
-        arr.set([length / 256, length % 256], 0);
-        console.info(arr);
-        this.session.SendMessage(arr.buffer);
-    };
-    /**
-     * 单例
-     */
-    RpcClient.instance = null;
-    return RpcClient;
-}());
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var CreateRoleOption = /** @class */ (function () {
-            function CreateRoleOption() {
-                // NAME
-                this.name = null;
-                // GENDER
-                this.gender = null;
-                // RACE
-                this.race = null;
-            }
-            return CreateRoleOption;
-        }());
-        Contract.CreateRoleOption = CreateRoleOption;
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var Gender;
-        (function (Gender) {
-            Gender[Gender["male"] = 0] = "male";
-            Gender[Gender["female"] = 1] = "female";
-            Gender[Gender["other"] = 2] = "other";
-            Gender[Gender["none"] = 3] = "none";
-        })(Gender = Contract.Gender || (Contract.Gender = {}));
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
-/// <reference path="../RpcClient.ts" />
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var IAuth = /** @class */ (function () {
-            function IAuth() {
-            }
-            IAuth.logIn = function (username, password) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, false];
-                    });
-                });
-            };
-            IAuth.logOut = function () {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, void (0)];
-                    });
-                });
-            };
-            IAuth.getToken = function () {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, null];
-                    });
-                });
-            };
-            __decorate([
-                RPC("SimCivil.Contract.IAuth.LogIn")
-            ], IAuth, "logIn", null);
-            __decorate([
-                RPC("SimCivil.Contract.IAuth.LogOut")
-            ], IAuth, "logOut", null);
-            __decorate([
-                RPC("SimCivil.Contract.IAuth.GetToken")
-            ], IAuth, "getToken", null);
-            return IAuth;
-        }());
-        Contract.IAuth = IAuth;
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
-/// <reference path="../RpcClient.ts" />
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var InteractionType;
-        (function (InteractionType) {
-        })(InteractionType = Contract.InteractionType || (Contract.InteractionType = {}));
-        var IPlayerController = /** @class */ (function () {
-            function IPlayerController() {
-            }
-            IPlayerController.getMoveState = function () {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, null];
-                    });
-                });
-            };
-            IPlayerController.move = function (direction, speed) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, null];
-                    });
-                });
-            };
-            IPlayerController.movePercentage = function (direction, relativeSpeed) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, null];
-                    });
-                });
-            };
-            IPlayerController.stop = function () {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, void (0)];
-                    });
-                });
-            };
-            IPlayerController.interaction = function (target, interactionType) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, void (0)];
-                    });
-                });
-            };
-            IPlayerController.build = function (tileElement, position) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, void (0)];
-                    });
-                });
-            };
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController.GetMoveState")
-            ], IPlayerController, "getMoveState", null);
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController.Move")
-            ], IPlayerController, "move", null);
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController.MovePercentage")
-            ], IPlayerController, "movePercentage", null);
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController.Stop")
-            ], IPlayerController, "stop", null);
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController.Interaction")
-            ], IPlayerController, "interaction", null);
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController.Build")
-            ], IPlayerController, "build", null);
-            return IPlayerController;
-        }());
-        Contract.IPlayerController = IPlayerController;
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
-/// <reference path="../RpcClient.ts" />
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var IRoleManager = /** @class */ (function () {
-            function IRoleManager() {
-            }
-            IRoleManager.createRole = function (option) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, false];
-                    });
-                });
-            };
-            IRoleManager.getRoleList = function () {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, []];
-                    });
-                });
-            };
-            IRoleManager.useRole = function (eid) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, false];
-                    });
-                });
-            };
-            IRoleManager.releaseRole = function () {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, false];
-                    });
-                });
-            };
-            __decorate([
-                RPC("SimCivil.Contract.IRoleManager.CreateRole")
-            ], IRoleManager, "createRole", null);
-            __decorate([
-                RPC("SimCivil.Contract.IRoleManager.GetRoleList")
-            ], IRoleManager, "getRoleList", null);
-            __decorate([
-                RPC("SimCivil.Contract.IRoleManager.UseRole")
-            ], IRoleManager, "useRole", null);
-            __decorate([
-                RPC("SimCivil.Contract.IRoleManager.ReleaseRole")
-            ], IRoleManager, "releaseRole", null);
-            return IRoleManager;
-        }());
-        Contract.IRoleManager = IRoleManager;
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
-/// <reference path="../RpcClient.ts" />
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var ViewChange = /** @class */ (function () {
-            function ViewChange() {
-                // TICKCOUNT
-                this.tickCount = 0;
-                // TILECHANGE
-                this.tileChange = [];
-                // ENTITYCHANGE
-                this.entityChange = [];
-                // EVENTS
-                this.events = [];
-            }
-            ViewChange.prototype.toString = function () {
-                return null;
-            };
-            return ViewChange;
-        }());
-        Contract.ViewChange = ViewChange;
-        var ViewEvent = /** @class */ (function () {
-            function ViewEvent() {
-                // EVENTTYPE
-                this.eventType = null;
-                // TARGETENTITYID
-                this.targetEntityId = "00000000-0000-0000-0000-000000000000";
-            }
-            ViewEvent.prototype.toString = function () {
-                return null;
-            };
-            return ViewEvent;
-        }());
-        Contract.ViewEvent = ViewEvent;
-        var EntityDto = /** @class */ (function () {
-            function EntityDto() {
-                // ID
-                this.id = "00000000-0000-0000-0000-000000000000";
-                // NAME
-                this.name = null;
-                // POS
-                this.pos = null;
-            }
-            EntityDto.prototype.toString = function () {
-                return null;
-            };
-            return EntityDto;
-        }());
-        Contract.EntityDto = EntityDto;
-        var TileDto = /** @class */ (function () {
-            function TileDto() {
-                // POSITION
-                this.position = null;
-                // SURFACE
-                this.surface = null;
-            }
-            return TileDto;
-        }());
-        Contract.TileDto = TileDto;
-        var ViewEventType;
-        (function (ViewEventType) {
-            ViewEventType[ViewEventType["entityLeave"] = 0] = "entityLeave";
-        })(ViewEventType = Contract.ViewEventType || (Contract.ViewEventType = {}));
-        var IViewSynchronizer = /** @class */ (function () {
-            function IViewSynchronizer() {
-            }
-            IViewSynchronizer.registerViewSync = function (callback) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, void (0)];
-                    });
-                });
-            };
-            __decorate([
-                RPC("SimCivil.Contract.IViewSynchronizer.RegisterViewSync")
-            ], IViewSynchronizer, "registerViewSync", null);
-            return IViewSynchronizer;
-        }());
-        Contract.IViewSynchronizer = IViewSynchronizer;
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var Race;
-        (function (Race) {
-            Race[Race["human"] = 0] = "human";
-        })(Race = Contract.Race || (Contract.Race = {}));
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var RoleSummary = /** @class */ (function () {
-            function RoleSummary() {
-                // ID
-                this.id = "00000000-0000-0000-0000-000000000000";
-                // NAME
-                this.name = null;
-                // GENDER
-                this.gender = null;
-                // RACE
-                this.race = null;
-            }
-            RoleSummary.prototype.toString = function () {
-                return null;
-            };
-            return RoleSummary;
-        }());
-        Contract.RoleSummary = RoleSummary;
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -915,3 +425,535 @@ var NetWork;
         SessionState[SessionState["DISCONNECTING"] = 3] = "DISCONNECTING";
     })(SessionState = NetWork.SessionState || (NetWork.SessionState = {}));
 })(NetWork || (NetWork = {}));
+/**
+ * RPC修饰器
+ * 用来修饰客户端发起的RPC调用函数
+ */
+function RPC(serviceName) {
+    /**
+     * 真正的修饰器函数
+     */
+    return function (target, methodName, descriptor) {
+        descriptor.value = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return __awaiter(this, void 0, void 0, function () {
+                var _sequence;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            Tools.Logger.log(typeof target);
+                            Tools.Logger.log(serviceName);
+                            _sequence = RpcClient.Instance.GetSequence();
+                            RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
+                            return [4 /*yield*/, RpcClient.Instance.GetResponce(_sequence)];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+    };
+}
+var RpcClient = /** @class */ (function () {
+    /**
+     * 构造函数
+     */
+    function RpcClient() {
+        /**
+         * 与rpc服务器建立的会话
+         */
+        this._session = null;
+        /**
+         * 消息序列号
+         */
+        this._sequence = 0;
+        /**
+         * 消息返回值队列
+         */
+        this.resultQueue = new Array();
+        /**
+         * 超时时间
+         */
+        this.timeOut = 2;
+    }
+    Object.defineProperty(RpcClient, "Instance", {
+        get: function () {
+            if (this.instance == null) {
+                this.instance = new RpcClient();
+            }
+            return this.instance;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RpcClient.prototype, "session", {
+        /**
+         * 与rpc服务器建立的会话
+         */
+        get: function () {
+            return this._session;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * rpc客户端初始化，用来构造一个与服务器进行RPC同行的类
+     * @param url 服务器地址
+     */
+    RpcClient.prototype.Init = function (url, callBack, errorCallBack) {
+        var self = this;
+        this._session = new NetWork.SeverSession("RPC", url);
+        this._session.OnGetMessage = function (event) { return self.GetMessage(event); };
+        this._session.OnConnect = function (event) { return callBack(event); };
+        this._session.OnError = function (event) { return errorCallBack(event); };
+    };
+    /**
+     * 收取并加工再交给做rpc处理的函数
+     * @param event messageEvent
+     */
+    RpcClient.prototype.GetMessage = function (event) {
+        var self = this;
+        var reader = new FileReader();
+        reader.readAsText(event.data, 'utf-8');
+        reader.onload = function (ev) {
+            var obj = JSON.parse(reader.result);
+            Tools.Logger.log(reader.result, "RPC");
+            Tools.Logger.info(obj);
+            self.resultQueue[obj.Sequence] = obj;
+        };
+    };
+    /**
+     * 获取消息序列号
+     */
+    RpcClient.prototype.GetSequence = function () {
+        return this._sequence++;
+    };
+    /**
+     * 通过序列号获取消息类型
+     */
+    RpcClient.prototype.GetResponce = function (sequence) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            var ret;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
+                            if (_this.resultQueue[sequence] != undefined && _this.resultQueue[sequence] != null) {
+                                resolve();
+                            }
+                            setTimeout(function () {
+                                reject('timeout in ' + _this.timeOut + ' seconds.');
+                            }, _this.timeOut * 1000);
+                        })];
+                    case 1:
+                        _a.sent();
+                        ret = this.resultQueue[sequence];
+                        this.resultQueue[sequence] = null;
+                        return [2 /*return*/, ret];
+                }
+            });
+        });
+    };
+    /**
+     * 发送rpc消息给服务器
+     * @param sequence 序列号
+     * @param serviceName 服务名
+     * @param methodName 方法名
+     * @param args 参数
+     */
+    RpcClient.prototype.SendRpc = function (sequence, serviceName, methodName, args) {
+        var json = {
+            "$type": "SimCivil.Rpc.RpcRequest, SimCivil.Rpc",
+            "ServiceName": serviceName,
+            "MethodName": methodName,
+            "Arguments": args,
+            "Sequnce": sequence,
+            "TimeStamp": new Date().toISOString()
+        };
+        if (!("TextEncoder" in window)) {
+            Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
+            return;
+        }
+        Tools.Logger.info(json);
+        var enc = new TextEncoder();
+        var str = JSON.stringify(json);
+        // let length = enc.encode(str).length;
+        // str = "  ".concat(str);
+        // let arr = enc.encode(str);
+        // arr.set([length / 256, length % 256], 0);
+        this.session.SendMessage(enc.encode(str).buffer);
+    };
+    /**
+     * 单例
+     */
+    RpcClient.instance = null;
+    return RpcClient;
+}());
+var SimCivil;
+(function (SimCivil) {
+    var Rpc;
+    (function (Rpc) {
+        var RpcResponse = /** @class */ (function () {
+            function RpcResponse() {
+            }
+            return RpcResponse;
+        }());
+        Rpc.RpcResponse = RpcResponse;
+    })(Rpc = SimCivil.Rpc || (SimCivil.Rpc = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var CreateRoleOption = /** @class */ (function () {
+            function CreateRoleOption() {
+                // NAME
+                this.Name = null;
+                // GENDER
+                this.Gender = null;
+                // RACE
+                this.Race = null;
+            }
+            return CreateRoleOption;
+        }());
+        Contract.CreateRoleOption = CreateRoleOption;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var Gender;
+        (function (Gender) {
+            Gender[Gender["male"] = 0] = "male";
+            Gender[Gender["female"] = 1] = "female";
+            Gender[Gender["other"] = 2] = "other";
+            Gender[Gender["none"] = 3] = "none";
+        })(Gender = Contract.Gender || (Contract.Gender = {}));
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var IAuth = /** @class */ (function () {
+            function IAuth() {
+            }
+            IAuth.LogIn = function (username, password) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, false];
+                    });
+                });
+            };
+            IAuth.LogOut = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, void (0)];
+                    });
+                });
+            };
+            IAuth.GetToken = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, null];
+                    });
+                });
+            };
+            __decorate([
+                RPC("SimCivil.Contract.IAuth")
+            ], IAuth, "LogIn", null);
+            __decorate([
+                RPC("SimCivil.Contract.IAuth")
+            ], IAuth, "LogOut", null);
+            __decorate([
+                RPC("SimCivil.Contract.IAuth")
+            ], IAuth, "GetToken", null);
+            return IAuth;
+        }());
+        Contract.IAuth = IAuth;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var InteractionType;
+        (function (InteractionType) {
+        })(InteractionType = Contract.InteractionType || (Contract.InteractionType = {}));
+        var IPlayerController = /** @class */ (function () {
+            function IPlayerController() {
+            }
+            IPlayerController.GetMoveState = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, null];
+                    });
+                });
+            };
+            IPlayerController.Move = function (direction, speed) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, null];
+                    });
+                });
+            };
+            IPlayerController.MovePercentage = function (direction, relativeSpeed) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, null];
+                    });
+                });
+            };
+            IPlayerController.Stop = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, void (0)];
+                    });
+                });
+            };
+            IPlayerController.Interaction = function (target, interactionType) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, void (0)];
+                    });
+                });
+            };
+            IPlayerController.Build = function (tileElement, position) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, void (0)];
+                    });
+                });
+            };
+            __decorate([
+                RPC("SimCivil.Contract.IPlayerController")
+            ], IPlayerController, "GetMoveState", null);
+            __decorate([
+                RPC("SimCivil.Contract.IPlayerController")
+            ], IPlayerController, "Move", null);
+            __decorate([
+                RPC("SimCivil.Contract.IPlayerController")
+            ], IPlayerController, "MovePercentage", null);
+            __decorate([
+                RPC("SimCivil.Contract.IPlayerController")
+            ], IPlayerController, "Stop", null);
+            __decorate([
+                RPC("SimCivil.Contract.IPlayerController")
+            ], IPlayerController, "Interaction", null);
+            __decorate([
+                RPC("SimCivil.Contract.IPlayerController")
+            ], IPlayerController, "Build", null);
+            return IPlayerController;
+        }());
+        Contract.IPlayerController = IPlayerController;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var IRoleManager = /** @class */ (function () {
+            function IRoleManager() {
+            }
+            IRoleManager.CreateRole = function (option) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, false];
+                    });
+                });
+            };
+            IRoleManager.GetRoleList = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, []];
+                    });
+                });
+            };
+            IRoleManager.UseRole = function (eid) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, false];
+                    });
+                });
+            };
+            IRoleManager.ReleaseRole = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, false];
+                    });
+                });
+            };
+            __decorate([
+                RPC("SimCivil.Contract.IRoleManager")
+            ], IRoleManager, "CreateRole", null);
+            __decorate([
+                RPC("SimCivil.Contract.IRoleManager")
+            ], IRoleManager, "GetRoleList", null);
+            __decorate([
+                RPC("SimCivil.Contract.IRoleManager")
+            ], IRoleManager, "UseRole", null);
+            __decorate([
+                RPC("SimCivil.Contract.IRoleManager")
+            ], IRoleManager, "ReleaseRole", null);
+            return IRoleManager;
+        }());
+        Contract.IRoleManager = IRoleManager;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var ViewChange = /** @class */ (function () {
+            function ViewChange() {
+                // TICKCOUNT
+                this.TickCount = 0;
+                // TILECHANGE
+                this.TileChange = [];
+                // ENTITYCHANGE
+                this.EntityChange = [];
+                // EVENTS
+                this.Events = [];
+            }
+            ViewChange.prototype.ToString = function () {
+                return null;
+            };
+            return ViewChange;
+        }());
+        Contract.ViewChange = ViewChange;
+        var ViewEvent = /** @class */ (function () {
+            function ViewEvent() {
+                // EVENTTYPE
+                this.EventType = null;
+                // TARGETENTITYID
+                this.TargetEntityId = "00000000-0000-0000-0000-000000000000";
+            }
+            ViewEvent.prototype.ToString = function () {
+                return null;
+            };
+            return ViewEvent;
+        }());
+        Contract.ViewEvent = ViewEvent;
+        var EntityDto = /** @class */ (function () {
+            function EntityDto() {
+                // ID
+                this.Id = "00000000-0000-0000-0000-000000000000";
+                // NAME
+                this.Name = null;
+                // POS
+                this.Pos = null;
+            }
+            EntityDto.prototype.ToString = function () {
+                return null;
+            };
+            return EntityDto;
+        }());
+        Contract.EntityDto = EntityDto;
+        var TileDto = /** @class */ (function () {
+            function TileDto() {
+                // POSITION
+                this.Position = null;
+                // SURFACE
+                this.Surface = null;
+            }
+            return TileDto;
+        }());
+        Contract.TileDto = TileDto;
+        var ViewEventType;
+        (function (ViewEventType) {
+            ViewEventType[ViewEventType["entityLeave"] = 0] = "entityLeave";
+        })(ViewEventType = Contract.ViewEventType || (Contract.ViewEventType = {}));
+        var IViewSynchronizer = /** @class */ (function () {
+            function IViewSynchronizer() {
+            }
+            IViewSynchronizer.RegisterViewSync = function (callback) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, void (0)];
+                    });
+                });
+            };
+            __decorate([
+                RPC("SimCivil.Contract.IViewSynchronizer")
+            ], IViewSynchronizer, "RegisterViewSync", null);
+            return IViewSynchronizer;
+        }());
+        Contract.IViewSynchronizer = IViewSynchronizer;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var Race;
+        (function (Race) {
+            Race[Race["human"] = 0] = "human";
+        })(Race = Contract.Race || (Contract.Race = {}));
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
+        var RoleSummary = /** @class */ (function () {
+            function RoleSummary() {
+                // ID
+                this.Id = "00000000-0000-0000-0000-000000000000";
+                // NAME
+                this.Name = null;
+                // GENDER
+                this.Gender = null;
+                // RACE
+                this.Race = null;
+            }
+            RoleSummary.prototype.ToString = function () {
+                return null;
+            };
+            return RoleSummary;
+        }());
+        Contract.RoleSummary = RoleSummary;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
