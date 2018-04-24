@@ -21,7 +21,10 @@ export default class NewClass extends cc.Component {
     stateMachine : FSM.StateMachine;
     start() {
         RpcClient.Instance.Init("192.168.0.106:20170", function(ev: Event){
-            SimCivil.Contract.IAuth.LogIn("jyk", "123");
+            new Promise<void>(async () =>{ 
+                let x = await SimCivil.Contract.IAuth.LogIn("jyk", "123");
+               console.info(x);}
+            )
         });
     }
     update(dt){

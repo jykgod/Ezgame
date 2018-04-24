@@ -429,7 +429,7 @@ var NetWork;
  * RPC修饰器
  * 用来修饰客户端发起的RPC调用函数
  */
-function RPC(serviceName) {
+function RPC(serviceName, noReturn) {
     /**
      * 真正的修饰器函数
      */
@@ -448,8 +448,10 @@ function RPC(serviceName) {
                             Tools.Logger.log(serviceName);
                             _sequence = RpcClient.Instance.GetSequence();
                             RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
+                            if (!(noReturn == false)) return [3 /*break*/, 2];
                             return [4 /*yield*/, RpcClient.Instance.GetResponce(_sequence)];
                         case 1: return [2 /*return*/, _a.sent()];
+                        case 2: return [2 /*return*/];
                     }
                 });
             });
@@ -473,6 +475,10 @@ var RpcClient = /** @class */ (function () {
          * 消息返回值队列
          */
         this.resultQueue = new Array();
+        /**
+         * 消息promise队列
+         */
+        this.promiseQueue = new Array();
         /**
          * 超时时间
          */
@@ -503,9 +509,9 @@ var RpcClient = /** @class */ (function () {
      * @param url 服务器地址
      */
     RpcClient.prototype.Init = function (url, callBack, errorCallBack) {
-        var self = this;
+        var _this = this;
         this._session = new NetWork.SeverSession("RPC", url);
-        this._session.OnGetMessage = function (event) { return self.GetMessage(event); };
+        this._session.OnGetMessage = function (event) { return _this.GetMessage(event); };
         this._session.OnConnect = function (event) { return callBack(event); };
         this._session.OnError = function (event) { return errorCallBack(event); };
     };
@@ -519,9 +525,10 @@ var RpcClient = /** @class */ (function () {
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
             var obj = JSON.parse(reader.result);
-            Tools.Logger.log(reader.result, "RPC");
-            Tools.Logger.info(obj);
             self.resultQueue[obj.Sequence] = obj;
+            if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null) {
+                self.promiseQueue[obj.Sequence]();
+            }
         };
     };
     /**
@@ -540,12 +547,12 @@ var RpcClient = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
-                            if (_this.resultQueue[sequence] != undefined && _this.resultQueue[sequence] != null) {
-                                resolve();
-                            }
+                            _this.promiseQueue[sequence] = resolve;
                             setTimeout(function () {
                                 reject('timeout in ' + _this.timeOut + ' seconds.');
                             }, _this.timeOut * 1000);
+                        }).catch(function () {
+                            Tools.Logger.log("TimeOut", "RPC");
                         })];
                     case 1:
                         _a.sent();
@@ -678,13 +685,13 @@ var SimCivil;
                 });
             };
             __decorate([
-                RPC("SimCivil.Contract.IAuth")
+                RPC("SimCivil.Contract.IAuth", false)
             ], IAuth, "LogIn", null);
             __decorate([
-                RPC("SimCivil.Contract.IAuth")
+                RPC("SimCivil.Contract.IAuth", true)
             ], IAuth, "LogOut", null);
             __decorate([
-                RPC("SimCivil.Contract.IAuth")
+                RPC("SimCivil.Contract.IAuth", false)
             ], IAuth, "GetToken", null);
             return IAuth;
         }());
@@ -749,22 +756,22 @@ var SimCivil;
                 });
             };
             __decorate([
-                RPC("SimCivil.Contract.IPlayerController")
+                RPC("SimCivil.Contract.IPlayerController", false)
             ], IPlayerController, "GetMoveState", null);
             __decorate([
-                RPC("SimCivil.Contract.IPlayerController")
+                RPC("SimCivil.Contract.IPlayerController", false)
             ], IPlayerController, "Move", null);
             __decorate([
-                RPC("SimCivil.Contract.IPlayerController")
+                RPC("SimCivil.Contract.IPlayerController", false)
             ], IPlayerController, "MovePercentage", null);
             __decorate([
-                RPC("SimCivil.Contract.IPlayerController")
+                RPC("SimCivil.Contract.IPlayerController", true)
             ], IPlayerController, "Stop", null);
             __decorate([
-                RPC("SimCivil.Contract.IPlayerController")
+                RPC("SimCivil.Contract.IPlayerController", true)
             ], IPlayerController, "Interaction", null);
             __decorate([
-                RPC("SimCivil.Contract.IPlayerController")
+                RPC("SimCivil.Contract.IPlayerController", true)
             ], IPlayerController, "Build", null);
             return IPlayerController;
         }());
@@ -812,16 +819,16 @@ var SimCivil;
                 });
             };
             __decorate([
-                RPC("SimCivil.Contract.IRoleManager")
+                RPC("SimCivil.Contract.IRoleManager", false)
             ], IRoleManager, "CreateRole", null);
             __decorate([
-                RPC("SimCivil.Contract.IRoleManager")
+                RPC("SimCivil.Contract.IRoleManager", false)
             ], IRoleManager, "GetRoleList", null);
             __decorate([
-                RPC("SimCivil.Contract.IRoleManager")
+                RPC("SimCivil.Contract.IRoleManager", false)
             ], IRoleManager, "UseRole", null);
             __decorate([
-                RPC("SimCivil.Contract.IRoleManager")
+                RPC("SimCivil.Contract.IRoleManager", false)
             ], IRoleManager, "ReleaseRole", null);
             return IRoleManager;
         }());
@@ -907,7 +914,7 @@ var SimCivil;
                 });
             };
             __decorate([
-                RPC("SimCivil.Contract.IViewSynchronizer")
+                RPC("SimCivil.Contract.IViewSynchronizer", true)
             ], IViewSynchronizer, "RegisterViewSync", null);
             return IViewSynchronizer;
         }());
