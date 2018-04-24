@@ -12,11 +12,11 @@ module SimCivil.Contract {
     export class CreateRoleOption {
         
         // NAME
-        public name: string = null;
+        public Name: string = null;
         // GENDER
-        public gender: Gender = null;
+        public Gender: Gender = null;
         // RACE
-        public race: Race = null;
+        public Race: Race = null;
 		
 
     }

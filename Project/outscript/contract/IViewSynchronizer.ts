@@ -12,15 +12,15 @@ module SimCivil.Contract {
     export class ViewChange {
         
         // TICKCOUNT
-        public tickCount: number = 0;
+        public TickCount: number = 0;
         // TILECHANGE
-        public tileChange: TileDto[] = [];
+        public TileChange: TileDto[] = [];
         // ENTITYCHANGE
-        public entityChange: EntityDto[] = [];
+        public EntityChange: EntityDto[] = [];
         // EVENTS
-        public events: ViewEvent[] = [];
+        public Events: ViewEvent[] = [];
 		
-		public toString(): string{
+		public ToString(): string{
 			return null;
 		}
 		
@@ -29,11 +29,11 @@ module SimCivil.Contract {
     export class ViewEvent {
         
         // EVENTTYPE
-        public eventType: ViewEventType = null;
+        public EventType: ViewEventType = null;
         // TARGETENTITYID
-        public targetEntityId: string = "00000000-0000-0000-0000-000000000000";
+        public TargetEntityId: string = "00000000-0000-0000-0000-000000000000";
 		
-		public toString(): string{
+		public ToString(): string{
 			return null;
 		}
 		
@@ -42,13 +42,13 @@ module SimCivil.Contract {
     export class EntityDto {
         
         // ID
-        public id: string = "00000000-0000-0000-0000-000000000000";
+        public Id: string = "00000000-0000-0000-0000-000000000000";
         // NAME
-        public name: string = null;
+        public Name: string = null;
         // POS
-        public pos: { X: number, Y: number } = null;
+        public Pos: { X: number, Y: number } = null;
 		
-		public toString(): string{
+		public ToString(): string{
 			return null;
 		}
 		
@@ -57,9 +57,9 @@ module SimCivil.Contract {
     export class TileDto {
         
         // POSITION
-        public position: { X: number, Y: number } = null;
+        public Position: { X: number, Y: number } = null;
         // SURFACE
-        public surface: string = null;
+        public Surface: string = null;
 		
 
     }
@@ -78,7 +78,7 @@ module SimCivil.Contract {
 		
 		
         @RPC("SimCivil.Contract.IViewSynchronizer")
-		public static async registerViewSync(callback: Action<ViewChange>): Promise<void>{
+		public static async RegisterViewSync(callback: Action<ViewChange>): Promise<void>{
             return void(0);
         }
 		

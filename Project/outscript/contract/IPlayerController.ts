@@ -22,32 +22,32 @@ module SimCivil.Contract {
 		
 		
         @RPC("SimCivil.Contract.IPlayerController")
-		public static async getMoveState(): Promise<{ X: number, Y: number, Speed: number }>{
+		public static async GetMoveState(): Promise<{ X: number, Y: number, Speed: number }>{
             return null;
         }
 		
         @RPC("SimCivil.Contract.IPlayerController")
-		public static async move(direction: { X: number, Y: number }, speed: number): Promise<{ X: number, Y: number, Speed: number }>{
+		public static async Move(direction: { X: number, Y: number }, speed: number): Promise<{ X: number, Y: number, Speed: number }>{
             return null;
         }
 		
         @RPC("SimCivil.Contract.IPlayerController")
-		public static async movePercentage(direction: { X: number, Y: number }, relativeSpeed: number): Promise<{ X: number, Y: number, Speed: number }>{
+		public static async MovePercentage(direction: { X: number, Y: number }, relativeSpeed: number): Promise<{ X: number, Y: number, Speed: number }>{
             return null;
         }
 		
         @RPC("SimCivil.Contract.IPlayerController")
-		public static async stop(): Promise<void>{
+		public static async Stop(): Promise<void>{
             return void(0);
         }
 		
         @RPC("SimCivil.Contract.IPlayerController")
-		public static async interaction(target: string, interactionType: InteractionType): Promise<void>{
+		public static async Interaction(target: string, interactionType: InteractionType): Promise<void>{
             return void(0);
         }
 		
         @RPC("SimCivil.Contract.IPlayerController")
-		public static async build(tileElement: string, position: { X: number, Y: number }): Promise<void>{
+		public static async Build(tileElement: string, position: { X: number, Y: number }): Promise<void>{
             return void(0);
         }
 		

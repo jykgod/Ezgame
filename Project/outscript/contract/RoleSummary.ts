@@ -12,15 +12,15 @@ module SimCivil.Contract {
     export class RoleSummary {
         
         // ID
-        public id: string = "00000000-0000-0000-0000-000000000000";
+        public Id: string = "00000000-0000-0000-0000-000000000000";
         // NAME
-        public name: string = null;
+        public Name: string = null;
         // GENDER
-        public gender: Gender = null;
+        public Gender: Gender = null;
         // RACE
-        public race: Race = null;
+        public Race: Race = null;
 		
-		public toString(): string{
+		public ToString(): string{
 			return null;
 		}
 		
