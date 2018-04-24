@@ -1,5 +1,4 @@
-﻿/// <reference path="../RpcClient.ts" />
-
+﻿
 module SimCivil.Contract {
 
     // $Classes/Enums/Interfaces(filter)[template][separator]
@@ -18,22 +17,22 @@ module SimCivil.Contract {
 		
 		
 		
-        @RPC("SimCivil.Contract.IRoleManager.CreateRole")
+        @RPC("SimCivil.Contract.IRoleManager")
 		public static async createRole(option: CreateRoleOption): Promise<boolean>{
             return false;
         }
 		
-        @RPC("SimCivil.Contract.IRoleManager.GetRoleList")
+        @RPC("SimCivil.Contract.IRoleManager")
 		public static async getRoleList(): Promise<RoleSummary[]>{
             return [];
         }
 		
-        @RPC("SimCivil.Contract.IRoleManager.UseRole")
+        @RPC("SimCivil.Contract.IRoleManager")
 		public static async useRole(eid: string): Promise<boolean>{
             return false;
         }
 		
-        @RPC("SimCivil.Contract.IRoleManager.ReleaseRole")
+        @RPC("SimCivil.Contract.IRoleManager")
 		public static async releaseRole(): Promise<boolean>{
             return false;
         }
