@@ -56,19 +56,19 @@ namespace NetWork {
         /**
          * 服务器链接成功时回调
          */
-        public OnConnect?= function (event: Event): void { }
+        public OnConnect?: (event: Event) => void;
         /**
          * 服务器关闭链接过后回调
          */
-        public OnDisConnect?= function (CloseEvent): void { }
+        public OnDisConnect?: (event: CloseEvent) => void;
         /**
          * 服务器收到消息后回调
          */
-        public OnGetMessage?= function (MessageEvent): void { }
+        public OnGetMessage?: (event: MessageEvent) => void;
         /**
          * 服务器收到消息后回调
          */
-        public OnError?= function (ErrorEvent): void { }
+        public OnError?: (event: ErrorEvent) => void;
         /**
          * 获取会话状态
          */
@@ -91,6 +91,14 @@ namespace NetWork {
             Tools.Logger.log("Try close", this.name);
             this.sesionState = SessionState.DISCONNECTING;
             this.ws.close(code, reason);
+        }
+
+        /**
+         * 向服务器发送消息
+         * @param arrayBuffer 字节数组
+         */
+        public SendMessage(arrayBuffer: ArrayBuffer) {
+            this.ws.send(arrayBuffer);
         }
     }
 

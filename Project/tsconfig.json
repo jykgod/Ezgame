@@ -3,7 +3,7 @@
     "module": "commonjs",
     "lib": [ "dom", "es5", "es2015.promise" ],
     "target": "es5",
-    "outFile": "./assets/script/lib/outscript.js",
+    "outFile": "./assets/scripts/lib/outscript.js",
     "experimentalDecorators": true,
     "skipLibCheck": true
   },

@@ -1,4 +1,5 @@
-﻿
+﻿/// <reference path="../RpcClient.ts" />
+
 module SimCivil.Contract {
 
     // $Classes/Enums/Interfaces(filter)[template][separator]
@@ -14,8 +15,6 @@ module SimCivil.Contract {
 
 	
 	export class IAuth{
-		
-		
 		
         @RPC("SimCivil.Contract.IAuth.LogIn")
 		public static async logIn(username: string, password: string): Promise<boolean>{

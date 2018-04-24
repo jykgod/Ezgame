@@ -1,4 +1,5 @@
-﻿
+﻿/// <reference path="../RpcClient.ts" />
+
 module SimCivil.Contract {
 
     // $Classes/Enums/Interfaces(filter)[template][separator]
@@ -8,9 +9,9 @@ module SimCivil.Contract {
 
     // More info: http://frhagn.github.io/Typewriter/
 
-    
+
     export class ViewChange {
-        
+
         // TICKCOUNT
         public tickCount: number = 0;
         // TILECHANGE
@@ -19,69 +20,69 @@ module SimCivil.Contract {
         public entityChange: EntityDto[] = [];
         // EVENTS
         public events: ViewEvent[] = [];
-		
-		public toString(): string{
-			return null;
-		}
-		
+
+        public toString(): string {
+            return null;
+        }
+
 
     }
     export class ViewEvent {
-        
+
         // EVENTTYPE
         public eventType: ViewEventType = null;
         // TARGETENTITYID
         public targetEntityId: string = "00000000-0000-0000-0000-000000000000";
-		
-		public toString(): string{
-			return null;
-		}
-		
+
+        public toString(): string {
+            return null;
+        }
+
 
     }
     export class EntityDto {
-        
+
         // ID
         public id: string = "00000000-0000-0000-0000-000000000000";
         // NAME
         public name: string = null;
         // POS
         public pos: { X: number, Y: number } = null;
-		
-		public toString(): string{
-			return null;
-		}
-		
+
+        public toString(): string {
+            return null;
+        }
+
 
     }
     export class TileDto {
-        
+
         // POSITION
         public position: { X: number, Y: number } = null;
         // SURFACE
         public surface: string = null;
-		
+
 
     }
 
-	
-	export enum ViewEventType{
-		
-		entityLeave,
-		
-	}	
-	
 
-	
-	export class IViewSynchronizer{
-		
-		
-		
+    export enum ViewEventType {
+
+        entityLeave,
+
+    }
+
+
+
+    export class IViewSynchronizer {
+
+
+
         @RPC("SimCivil.Contract.IViewSynchronizer.RegisterViewSync")
-		public static async registerViewSync(callback: Action<ViewChange>): Promise<void>{
-            return void(0);
+        public static async registerViewSync(callback: (vc: ViewChange) => void): Promise<void> {
+            return void (0);
         }
-		
-	}
-	
+
+    }
+
 }

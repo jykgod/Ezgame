@@ -1,4 +1,5 @@
-﻿
+﻿/// <reference path="../RpcClient.ts" />
+
 module SimCivil.Contract {
 
     // $Classes/Enums/Interfaces(filter)[template][separator]

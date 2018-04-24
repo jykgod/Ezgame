@@ -1,5 +1,3 @@
-import { RPC, RpcClient } from "../network/RpcClient";
-
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -21,28 +19,12 @@ export default class NewClass extends cc.Component {
     @property
     text: string = 'hello';
     stateMachine : FSM.StateMachine;
-    session : NetWork.SeverSession;
-    @RPC()
-    async testRpc (x : number){
-        return 123;
-    }
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
     start() {
-        new Promise (async ()=> {
-            let ret = await this.testRpc(123);
-            Tools.Logger.log(ret);
+        RpcClient.Instance.Init("192.168.0.106:20170", function(ev: Event){
+            SimCivil.Contract.IAuth.logIn("jyk", "123");
         });
-       // this.session = new NetWork.SeverSession("server1", "ws://192.168.0.106:20170");
     }
     update(dt){
         TimeManager.Instance.Update(dt);
-        // if (TimeManager.Instance.realTimeSinceStartScene > 10){
-        //     this.session.Close();
-        // }
-        // this.stateMachine.Update();
     }
-
-    // update (dt) {}
 }
