@@ -88,7 +88,7 @@ namespace NetWork {
             if (this.sesionState == SessionState.DISCONNECTING || this.sesionState == SessionState.DISCONNECTED) {
                 return;
             }
-            Tools.Logger.log("Try close", this.name);
+            Logger.log("Try close", this.name);
             this.sesionState = SessionState.DISCONNECTING;
             this.ws.close(code, reason);
         }

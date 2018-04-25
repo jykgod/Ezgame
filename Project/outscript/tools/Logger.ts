@@ -27,3 +27,5 @@ namespace Tools {
         }
     }
 }
+
+var Logger = Tools.Logger;

@@ -18,12 +18,12 @@ namespace FSM {
         StateEnter(...args): void;
         /**
          * 状态开始后每帧由状态机调用
-         * @param currentStateTime 状态机自开始到当前帧经过的游戏时间
+         * @param currentStateTime 状态机自开始(StateEnter执行前)到当前帧经过的游戏时间
          */
         StateUpdate?(currentStateTime: number): void;
         /**
          * 状态结束时调用
-         * @param currentStateTIme 状态机自开始到状态结束时经过的游戏时间
+         * @param currentStateTIme 状态机自开始(StateEnter执行前)到状态结束时经过的游戏时间
          */
         StateEnd(currentStateTIme: number): void;
     }

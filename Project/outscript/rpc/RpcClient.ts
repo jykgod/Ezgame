@@ -25,13 +25,7 @@ class RpcClient {
     /**
      * 单例
      */
-    private static instance: RpcClient = null;
-    public static get Instance(): RpcClient {
-        if (this.instance == null) {
-            this.instance = new RpcClient();
-        }
-        return this.instance;
-    }
+    public static readonly Instance = new RpcClient();
     /**
      * 构造函数
      */

@@ -38,6 +38,10 @@ namespace FSM {
          */
         private currentState: IState = null;
         /**
+         * 状态机是否正在切换状态
+         */
+        private asyncChangingState: boolean = false;
+        /**
          * 往状态机里面添加状态
          * @param state 状态
          */
@@ -58,31 +62,75 @@ namespace FSM {
             return new StateMachineBuilder(new StateMachine());
         }
         /**
-         * 状态机切换状态
-         * 状态会立即被切换，所以尽量不要在状态机的update里切换状态，即使切换了也尽量不要再处理别的逻辑了(容易出现错误)
-         * 关于是否立即切换这一点有点想要改动orz，目前还是就这么先用着吧
+         * 立即切换状态机状态,hint:
+         * 1.状态会立即切换
+         * 2.处于异步切换状态的状态机是不能执行状态切换的
          * @param nextStateType 
          * @param args 
          */
         public ChangeState(nextStateType: number | string, ...args) {
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
-                Tools.Logger.error(`attemp to change to the ${nextStateType} which ${name} not has!`);
+                Tools.Logger.error(`attemp to change to the ${nextStateType} which ${name} not has!`, "FSM");
                 return;
             }
-            if (this.currentState != null){
+            if (this.asyncChangingState) {
+                Tools.Logger.error(`attemp to change to the ${nextStateType} when the stateMachine is changing with async method!`, "FSM");
+                return;
+            }
+            if (this.currentState != null) {
                 this.currentState.StateEnd(this.timer.time);
             }
-            this.timer.Reset();
             this.currentState = this.statesMap[nextStateType];
+            this.timer.Reset();
             this.currentState.StateEnter(args);
+        }
+        /**
+         * 异步切换状态机状态,hint:
+         * 1.状态不会立即切换，而是异步执行
+         * 2.状态机切换期间是不能再执行状态切换的!
+         * @param nextStateType 
+         * @param callback 成功切换状态机后执行的回调函数
+         * @param args 
+         */
+        public async ChangeStateAsync(nextStateType: number | string, callback?: Function, ...args) {
+            if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
+                Tools.Logger.error(`attemp to change to the ${nextStateType} which ${name} not has!`, "FSM");
+                return;
+            }
+            if (this.asyncChangingState) {
+                Tools.Logger.error(`attemp to change to the ${nextStateType} when the stateMachine is changing with async method!`, "FSM");
+                return;
+            }
+            this.asyncChangingState = true;
+            if (this.currentState != null) {
+                await this.currentState.StateEnd(this.timer.time);
+            }
+            this.currentState = this.statesMap[nextStateType];
+            this.timer.Reset();
+            await this.currentState.StateEnter(args);
+            this.asyncChangingState = false;
+            callback != undefined && callback();
         }
         /**
          * 状态机更新
          */
         public Update() {
-            if (this.currentState != null && this.currentState.StateUpdate != undefined) {
+            this.currentState != null && this.currentState.StateUpdate != undefined && !this.timer.paused && !this.asyncChangingState &&
                 this.currentState.StateUpdate(this.timer.time);
-            }
+        }
+
+        /**
+         * 状态机暂停
+         */
+        public Pause() {
+            this.timer.Pause();
+        }
+
+        /**
+         * 状态机恢复
+         */
+        public Resume() {
+            this.timer.Resume();
         }
     }
 

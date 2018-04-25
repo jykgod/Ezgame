@@ -65,16 +65,6 @@ var TimeManager = /** @class */ (function () {
          */
         this._realTimeSinceStartScene = 0;
     }
-    Object.defineProperty(TimeManager, "Instance", {
-        get: function () {
-            if (this.instance == null) {
-                this.instance = new TimeManager();
-            }
-            return this.instance;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(TimeManager.prototype, "realTimeSinceStartScene", {
         get: function () {
             return this._realTimeSinceStartScene;
@@ -92,7 +82,7 @@ var TimeManager = /** @class */ (function () {
     /**
      * 单例模式声明
      */
-    TimeManager.instance = null;
+    TimeManager.Instance = new TimeManager();
     return TimeManager;
 }());
 /// <reference path="../manager/TimeManager.ts" />
@@ -222,6 +212,7 @@ var Tools;
     }());
     Tools.Logger = Logger;
 })(Tools || (Tools = {}));
+var Logger = Tools.Logger;
 /// <reference path="../tools/Timer.ts" />
 /// <reference path="../tools/Builder.ts" />
 /// <reference path="../tools/Logger.ts" />
@@ -242,6 +233,10 @@ var FSM;
              * 当前状态
              */
             this.currentState = null;
+            /**
+             * 状态机是否正在切换状态
+             */
+            this.asyncChangingState = false;
             this.timer = new Tools.Timer();
         }
         /**
@@ -265,9 +260,9 @@ var FSM;
             return new StateMachineBuilder(new StateMachine());
         };
         /**
-         * 状态机切换状态
-         * 状态会立即被切换，所以尽量不要在状态机的update里切换状态，即使切换了也尽量不要再处理别的逻辑了(容易出现错误)
-         * 关于是否立即切换这一点有点想要改动orz，目前还是就这么先用着吧
+         * 立即切换状态机状态,hint:
+         * 1.状态会立即切换
+         * 2.处于异步切换状态的状态机是不能执行状态切换的
          * @param nextStateType
          * @param args
          */
@@ -277,23 +272,82 @@ var FSM;
                 args[_i - 1] = arguments[_i];
             }
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
-                Tools.Logger.error("attemp to change to the " + nextStateType + " which " + name + " not has!");
+                Tools.Logger.error("attemp to change to the " + nextStateType + " which " + name + " not has!", "FSM");
+                return;
+            }
+            if (this.asyncChangingState) {
+                Tools.Logger.error("attemp to change to the " + nextStateType + " when the stateMachine is changing with async method!", "FSM");
                 return;
             }
             if (this.currentState != null) {
                 this.currentState.StateEnd(this.timer.time);
             }
-            this.timer.Reset();
             this.currentState = this.statesMap[nextStateType];
+            this.timer.Reset();
             this.currentState.StateEnter(args);
+        };
+        /**
+         * 异步切换状态机状态,hint:
+         * 1.状态不会立即切换，而是异步执行
+         * 2.状态机切换期间是不能再执行状态切换的!
+         * @param nextStateType
+         * @param callback 成功切换状态机后执行的回调函数
+         * @param args
+         */
+        StateMachine.prototype.ChangeStateAsync = function (nextStateType, callback) {
+            var args = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                args[_i - 2] = arguments[_i];
+            }
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
+                                Tools.Logger.error("attemp to change to the " + nextStateType + " which " + name + " not has!", "FSM");
+                                return [2 /*return*/];
+                            }
+                            if (this.asyncChangingState) {
+                                Tools.Logger.error("attemp to change to the " + nextStateType + " when the stateMachine is changing with async method!", "FSM");
+                                return [2 /*return*/];
+                            }
+                            this.asyncChangingState = true;
+                            if (!(this.currentState != null)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, this.currentState.StateEnd(this.timer.time)];
+                        case 1:
+                            _a.sent();
+                            _a.label = 2;
+                        case 2:
+                            this.currentState = this.statesMap[nextStateType];
+                            this.timer.Reset();
+                            return [4 /*yield*/, this.currentState.StateEnter(args)];
+                        case 3:
+                            _a.sent();
+                            this.asyncChangingState = false;
+                            callback != undefined && callback();
+                            return [2 /*return*/];
+                    }
+                });
+            });
         };
         /**
          * 状态机更新
          */
         StateMachine.prototype.Update = function () {
-            if (this.currentState != null && this.currentState.StateUpdate != undefined) {
+            this.currentState != null && this.currentState.StateUpdate != undefined && !this.timer.paused && !this.asyncChangingState &&
                 this.currentState.StateUpdate(this.timer.time);
-            }
+        };
+        /**
+         * 状态机暂停
+         */
+        StateMachine.prototype.Pause = function () {
+            this.timer.Pause();
+        };
+        /**
+         * 状态机恢复
+         */
+        StateMachine.prototype.Resume = function () {
+            this.timer.Resume();
         };
         /**
          * 空状态
@@ -403,7 +457,7 @@ var NetWork;
             if (this.sesionState == SessionState.DISCONNECTING || this.sesionState == SessionState.DISCONNECTED) {
                 return;
             }
-            Tools.Logger.log("Try close", this.name);
+            Logger.log("Try close", this.name);
             this.sesionState = SessionState.DISCONNECTING;
             this.ws.close(code, reason);
         };
@@ -484,16 +538,6 @@ var RpcClient = /** @class */ (function () {
          */
         this.timeOut = 2;
     }
-    Object.defineProperty(RpcClient, "Instance", {
-        get: function () {
-            if (this.instance == null) {
-                this.instance = new RpcClient();
-            }
-            return this.instance;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(RpcClient.prototype, "session", {
         /**
          * 与rpc服务器建立的会话
@@ -599,7 +643,7 @@ var RpcClient = /** @class */ (function () {
     /**
      * 单例
      */
-    RpcClient.instance = null;
+    RpcClient.Instance = new RpcClient();
     return RpcClient;
 }());
 var SimCivil;
@@ -614,6 +658,31 @@ var SimCivil;
         Rpc.RpcResponse = RpcResponse;
     })(Rpc = SimCivil.Rpc || (SimCivil.Rpc = {}));
 })(SimCivil || (SimCivil = {}));
+//UI使用分层次管理的模式
+//每个层级的UI在一个独立的LayerNode下面
+//相同层级的UI具备互斥的性质（即是说同一个层级的UI同时只能有一个显示在界面中）
+var UIManager = /** @class */ (function () {
+    function UIManager() {
+        /**
+         * 层级节点数组
+         */
+        this.layerNodesArray = new Array();
+        /**
+         * 层级节点对象池
+         */
+        this.layerPool = new cc.NodePool("LayerNode");
+    }
+    /**
+     * 初始化
+     */
+    UIManager.prototype.Init = function () {
+    };
+    /**
+     * 单例模式声明
+     */
+    UIManager.Instance = new UIManager();
+    return UIManager;
+}());
 var SimCivil;
 (function (SimCivil) {
     var Contract;
