@@ -23,7 +23,8 @@ export default class NewClass extends cc.Component {
         RpcClient.Instance.Init("192.168.0.106:20170", function(ev: Event){
             new Promise<void>(async () =>{ 
                 let x = await SimCivil.Contract.IAuth.LogIn("jyk", "123");
-               console.info(x);}
+               console.info(x);
+            }
             )
         });
     }

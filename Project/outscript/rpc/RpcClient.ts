@@ -104,6 +104,7 @@ class RpcClient {
                 reject('timeout in ' + this.timeOut + ' seconds.');
             }, this.timeOut * 1000);
         }).catch(()=>{
+            //TODO:需要更详细的结果（具体是哪个协议超时了）
             Tools.Logger.log("TimeOut", "RPC");
         });
         let ret = this.resultQueue[sequence];
@@ -138,5 +139,9 @@ class RpcClient {
         // let arr = enc.encode(str);
         // arr.set([length / 256, length % 256], 0);
         this.session.SendMessage(enc.encode(str).buffer);
+    }
+
+    public Disconnect(){
+        this._session.Close();
     }
 }

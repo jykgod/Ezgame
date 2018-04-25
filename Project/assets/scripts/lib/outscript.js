@@ -552,6 +552,7 @@ var RpcClient = /** @class */ (function () {
                                 reject('timeout in ' + _this.timeOut + ' seconds.');
                             }, _this.timeOut * 1000);
                         }).catch(function () {
+                            //TODO:需要更详细的结果（具体是哪个协议超时了）
                             Tools.Logger.log("TimeOut", "RPC");
                         })];
                     case 1:
@@ -591,6 +592,9 @@ var RpcClient = /** @class */ (function () {
         // let arr = enc.encode(str);
         // arr.set([length / 256, length % 256], 0);
         this.session.SendMessage(enc.encode(str).buffer);
+    };
+    RpcClient.prototype.Disconnect = function () {
+        this._session.Close();
     };
     /**
      * 单例
