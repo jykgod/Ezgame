@@ -67,7 +67,8 @@
     "node": {
       "__id__": 1
     },
-    "_enabled": true
+    "_enabled": false,
+    "zIndex": 0
   },
   {
     "__type__": "cc.PrefabInfo",

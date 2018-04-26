@@ -49,6 +49,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var UINameEnum;
+(function (UINameEnum) {
+    UINameEnum["LAYER_NODE"] = "LayerNode";
+})(UINameEnum || (UINameEnum = {}));
+var GloableConstant = /** @class */ (function () {
+    function GloableConstant() {
+    }
+    GloableConstant.PrefabPath = "prefab/";
+    return GloableConstant;
+}());
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -658,31 +668,6 @@ var SimCivil;
         Rpc.RpcResponse = RpcResponse;
     })(Rpc = SimCivil.Rpc || (SimCivil.Rpc = {}));
 })(SimCivil || (SimCivil = {}));
-//UI使用分层次管理的模式
-//每个层级的UI在一个独立的LayerNode下面
-//相同层级的UI具备互斥的性质（即是说同一个层级的UI同时只能有一个显示在界面中）
-var UIManager = /** @class */ (function () {
-    function UIManager() {
-        /**
-         * 层级节点数组
-         */
-        this.layerNodesArray = new Array();
-        /**
-         * 层级节点对象池
-         */
-        this.layerPool = new cc.NodePool("LayerNode");
-    }
-    /**
-     * 初始化
-     */
-    UIManager.prototype.Init = function () {
-    };
-    /**
-     * 单例模式声明
-     */
-    UIManager.Instance = new UIManager();
-    return UIManager;
-}());
 var SimCivil;
 (function (SimCivil) {
     var Contract;

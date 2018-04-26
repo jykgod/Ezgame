@@ -1,3 +1,5 @@
+import { UIManager } from "../manager/UIManager";
+
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -20,16 +22,20 @@ export default class NewClass extends cc.Component {
     text: string = 'hello';
     stateMachine : FSM.StateMachine;
     start() {
-        RpcClient.Instance.Init("localhost:20170", function(ev: Event){
-            new Promise<void>(async () =>{ 
-                let x = await SimCivil.Contract.IAuth.LogIn("jyk", "123");
-               console.info(x);
-            }
-            )
+        // RpcClient.Instance.Init("localhost:20170", function(ev: Event){
+        //     new Promise<void>(async () =>{ 
+        //         let x = await SimCivil.Contract.IAuth.LogIn("jyk", "123");
+        //        console.info(x);
+        //     }
+        //     )
+        // });
+        // Logger.log(1);
+        // this.asyncTest();
+        // Logger.log(4);
+        UIManager.Instance.Init();
+        UIManager.Instance.ShowUI(UINameEnum.LAYER_NODE,()=>{
+            UIManager.Instance.HideUI(UINameEnum.LAYER_NODE);
         });
-        Logger.log(1);
-        this.asyncTest();
-        Logger.log(4);
     }
     async asyncTest(){
         Logger.log(2);
