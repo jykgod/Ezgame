@@ -18,10 +18,10 @@ namespace FSM {
         private statesMap: Array<IState> = new Array<IState>();
         /**
          * 空状态
-         * stateType 为 "0",这意味着自定义的状态的状态类型不能为"0"
+         * hint:stateType 为 -1,这意味着在加入NONE状态的状态机中状态类型不能为-1
          */
         public static readonly NONE: IState = {
-            stateType: 0,
+            stateType: -1,
             StateEnter() {
 
             },
@@ -82,7 +82,7 @@ namespace FSM {
             }
             this.currentState = this.statesMap[nextStateType];
             this.timer.Reset();
-            this.currentState.StateEnter(args);
+            this.currentState.StateEnter(...args);
         }
         /**
          * 异步切换状态机状态,hint:

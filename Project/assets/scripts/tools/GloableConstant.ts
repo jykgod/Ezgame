@@ -1,3 +1,3 @@
 class GloableConstant{
-    public static readonly PrefabPath = "prefab/";
+    public static readonly PrefabPath = "prefab/ui/";
 }

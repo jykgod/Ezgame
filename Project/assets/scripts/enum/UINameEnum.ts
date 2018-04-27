@@ -1,3 +1,4 @@
-enum UINameEnum{
-    LAYER_NODE = "LayerNode",
+export enum UINameEnum{
+    LOGIN_UI = "LoginUI",
+    LOADING_UI = "LoadingUI"
 }

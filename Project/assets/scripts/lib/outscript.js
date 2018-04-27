@@ -49,16 +49,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var UINameEnum;
-(function (UINameEnum) {
-    UINameEnum["LAYER_NODE"] = "LayerNode";
-})(UINameEnum || (UINameEnum = {}));
-var GloableConstant = /** @class */ (function () {
-    function GloableConstant() {
-    }
-    GloableConstant.PrefabPath = "prefab/";
-    return GloableConstant;
-}());
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -76,12 +66,21 @@ var TimeManager = /** @class */ (function () {
         this._realTimeSinceStartScene = 0;
     }
     Object.defineProperty(TimeManager.prototype, "realTimeSinceStartScene", {
+        /**
+         * 游戏第一个场景加载完成时到当前帧经过的帧时间
+         */
         get: function () {
             return this._realTimeSinceStartScene;
         },
         enumerable: true,
         configurable: true
     });
+    /**
+     * 初始化函数
+     */
+    TimeManager.prototype.Init = function () {
+        this._realTimeSinceStartScene = 0;
+    };
     /**
      * 需要每帧调用的update
      * @param dt 当前帧与上一帧的间隔时间
@@ -294,7 +293,8 @@ var FSM;
             }
             this.currentState = this.statesMap[nextStateType];
             this.timer.Reset();
-            this.currentState.StateEnter(args);
+            (_a = this.currentState).StateEnter.apply(_a, args);
+            var _a;
         };
         /**
          * 异步切换状态机状态,hint:
@@ -361,10 +361,10 @@ var FSM;
         };
         /**
          * 空状态
-         * stateType 为 "0",这意味着自定义的状态的状态类型不能为"0"
+         * hint:stateType 为 -1,这意味着在加入NONE状态的状态机中状态类型不能为-1
          */
         StateMachine.NONE = {
-            stateType: 0,
+            stateType: -1,
             StateEnter: function () {
             },
             StateEnd: function (time) {
@@ -489,6 +489,12 @@ var NetWork;
         SessionState[SessionState["DISCONNECTING"] = 3] = "DISCONNECTING";
     })(SessionState = NetWork.SessionState || (NetWork.SessionState = {}));
 })(NetWork || (NetWork = {}));
+var GloableConstant = /** @class */ (function () {
+    function GloableConstant() {
+    }
+    GloableConstant.PrefabPath = "prefab/ui/";
+    return GloableConstant;
+}());
 /**
  * RPC修饰器
  * 用来修饰客户端发起的RPC调用函数

@@ -21,7 +21,7 @@
     "_active": true,
     "_components": [],
     "_prefab": null,
-    "_id": "36801c42-6cfe-4b0b-8724-7b963f6bf344",
+    "_id": "3ecb59b4-51dc-43d0-b3f3-b703919c1dd3",
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
@@ -49,7 +49,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Canvas",
+    "_name": "label",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -60,13 +60,10 @@
     "_components": [
       {
         "__id__": 3
-      },
-      {
-        "__id__": 4
       }
     ],
     "_prefab": null,
-    "_id": "5ctOQS/Z1IqLDR/B6X9Vqo",
+    "_id": "7ePWBhPh5BfalRdGiXdDWY",
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
@@ -83,8 +80,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 960,
-      "height": 640
+      "width": 98,
+      "height": 40
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -92,8 +89,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 480,
-      "y": 320
+      "x": 628,
+      "y": 272
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -103,30 +100,25 @@
     "groupIndex": 0
   },
   {
-    "__type__": "cc.Canvas",
+    "__type__": "cc.Label",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 2
     },
     "_enabled": true,
-    "_designResolution": {
-      "__type__": "cc.Size",
-      "width": 960,
-      "height": 640
-    },
-    "_fitWidth": false,
-    "_fitHeight": true
-  },
-  {
-    "__type__": "ae445R4/1xLW6kraXIbvZJ+",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 2
-    },
-    "_enabled": true,
-    "label": null,
-    "text": "hello"
+    "_useOriginalSize": false,
+    "_actualFontSize": 40,
+    "_fontSize": 40,
+    "_lineHeight": 40,
+    "_enableWrapText": true,
+    "_N$file": null,
+    "_isSystemFontUsed": true,
+    "_spacingX": 0,
+    "_N$string": "Label",
+    "_N$horizontalAlign": 1,
+    "_N$verticalAlign": 1,
+    "_N$fontFamily": "Arial",
+    "_N$overflow": 0
   }
 ]
