@@ -49,6 +49,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var GloableConstantUtils = /** @class */ (function () {
+    function GloableConstantUtils() {
+    }
+    GloableConstantUtils.UIPrefabPath = "prefab/ui/";
+    GloableConstantUtils.JsonPath = "json/";
+    return GloableConstantUtils;
+}());
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -489,12 +496,6 @@ var NetWork;
         SessionState[SessionState["DISCONNECTING"] = 3] = "DISCONNECTING";
     })(SessionState = NetWork.SessionState || (NetWork.SessionState = {}));
 })(NetWork || (NetWork = {}));
-var GloableConstant = /** @class */ (function () {
-    function GloableConstant() {
-    }
-    GloableConstant.PrefabPath = "prefab/ui/";
-    return GloableConstant;
-}());
 /**
  * RPC修饰器
  * 用来修饰客户端发起的RPC调用函数
@@ -1028,3 +1029,77 @@ var SimCivil;
         Contract.RoleSummary = RoleSummary;
     })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
 })(SimCivil || (SimCivil = {}));
+var Tools;
+(function (Tools) {
+    var JsonConigUtils = /** @class */ (function () {
+        function JsonConigUtils() {
+        }
+        /**
+         * 通过文件路径读取json文件，转成对象后返回
+         * @param path 文件路径(resources目录下)
+         */
+        JsonConigUtils.ReadJsonObjectByPath = function (path, callBack) {
+            if (JsonConigUtils.jsonObjectDict[path] != undefined && JsonConigUtils.jsonObjectDict[path] != null) {
+                callBack(null, JsonConigUtils.jsonObjectDict[path]);
+                return;
+            }
+            cc.loader.loadRes(path, cc.TextAsset, function (error, res) {
+                JsonConigUtils.jsonObjectDict[path] = res;
+                callBack(error, res);
+            });
+        };
+        /**
+         * 通过文件名读取json文件，转成对象后返回
+         * @param name 文件名(json文件需要放在resources/json/目录下)
+         */
+        JsonConigUtils.ReadJsonObjectByName = function (name, callBack) {
+            if (JsonConigUtils.jsonObjectDict[name] != undefined && JsonConigUtils.jsonObjectDict[name] != null) {
+                callBack(null, JsonConigUtils.jsonObjectDict[name]);
+                return;
+            }
+            cc.loader.loadRes(GloableConstantUtils.JsonPath.concat(name), function (error, res) {
+                JsonConigUtils.jsonObjectDict[name] = res;
+                callBack(error, res);
+            });
+        };
+        /**
+         * 用于缓存json对象
+         */
+        JsonConigUtils.jsonObjectDict = new Array();
+        return JsonConigUtils;
+    }());
+    Tools.JsonConigUtils = JsonConigUtils;
+})(Tools || (Tools = {}));
+var JsonConigUtils = Tools.JsonConigUtils;
+var Tools;
+(function (Tools) {
+    /**
+     * 用于从本地读写数据
+     */
+    var LocalStorageUtils = /** @class */ (function () {
+        function LocalStorageUtils() {
+        }
+        LocalStorageUtils.setNumber = function (key, value) {
+            cc.sys.localStorage.setItem(key, value.toString());
+        };
+        LocalStorageUtils.setString = function (key, value) {
+            cc.sys.localStorage.setItem(key, value);
+        };
+        LocalStorageUtils.setObject = function (key, value) {
+            cc.sys.localStorage.setItem(key, JSON.stringify(value));
+        };
+        LocalStorageUtils.getNumber = function (key) {
+            var ret = cc.sys.localStorage.getItem(key);
+            return +ret;
+        };
+        LocalStorageUtils.getString = function (key) {
+            return cc.sys.localStorage.getItem(key);
+        };
+        LocalStorageUtils.getObject = function (key) {
+            return JSON.parse(cc.sys.localStorage.getItem(key));
+        };
+        return LocalStorageUtils;
+    }());
+    Tools.LocalStorageUtils = LocalStorageUtils;
+})(Tools || (Tools = {}));
+var LocalStorageUtils = Tools.LocalStorageUtils;

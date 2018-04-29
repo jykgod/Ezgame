@@ -47,7 +47,7 @@ export class UIManager {
         Logger.log(`ShowUI ${uiName}`, "UIManager");
         if (this.uiDictionary[uiName] == undefined) {
             this.uiDictionary[uiName] = null;
-            cc.loader.loadRes(GloableConstant.PrefabPath.concat(uiName), (error, res) => {
+            cc.loader.loadRes(GloableConstantUtils.UIPrefabPath.concat(uiName), (error, res) => {
                 if (error != null) {
                     (callBack != undefined && callBack != null) && callBack(error, null);
                     return;
