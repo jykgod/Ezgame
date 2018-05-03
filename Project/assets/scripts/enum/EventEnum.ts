@@ -1,3 +1,4 @@
 export enum EventEnum{
-    GameSceneLoadingProgress = 'loadingProgress',
+    GameSceneLoadingProgress = '0',
+    RefreshLocalizationText = '1',
 }

@@ -13,7 +13,7 @@ function RPC(serviceName: string, noReturn: boolean) {
             let _sequence = RpcClient.Instance.GetSequence();
             RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
             if (noReturn == false) {
-                return await RpcClient.Instance.GetResponce(_sequence);
+                return (await RpcClient.Instance.GetResponce(_sequence)).ReturnValue;
             } else {
                 return;
             }

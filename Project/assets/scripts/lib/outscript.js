@@ -521,7 +521,7 @@ function RPC(serviceName, noReturn) {
                             RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
                             if (!(noReturn == false)) return [3 /*break*/, 2];
                             return [4 /*yield*/, RpcClient.Instance.GetResponce(_sequence)];
-                        case 1: return [2 /*return*/, _a.sent()];
+                        case 1: return [2 /*return*/, (_a.sent()).ReturnValue];
                         case 2: return [2 /*return*/];
                     }
                 });
@@ -1036,6 +1036,7 @@ var Tools;
         }
         /**
          * 通过文件路径读取json文件，转成对象后返回
+         * 如果获取成功则error为null
          * @param path 文件路径(resources目录下)
          */
         JsonConigUtils.ReadJsonObjectByPath = function (path, callBack) {
@@ -1050,6 +1051,7 @@ var Tools;
         };
         /**
          * 通过文件名读取json文件，转成对象后返回
+         * 如果获取成功则error为null
          * @param name 文件名(json文件需要放在resources/json/目录下)
          */
         JsonConigUtils.ReadJsonObjectByName = function (name, callBack) {

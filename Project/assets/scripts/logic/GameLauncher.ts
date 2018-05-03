@@ -1,5 +1,6 @@
 import { GameManager } from "../manager/GameManager";
 import { UIManager } from "../manager/UIManager";
+import { LocalizationManager } from "../manager/LocalizationManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -21,6 +22,7 @@ export default class GameLauncher extends cc.Component {
         GameLauncher.instance = this;
         cc.game.addPersistRootNode(this.node);
         TimeManager.Instance.Init();
+        LocalizationManager.Instance.Init("cn");
         UIManager.Instance.Init();
         GameManager.Instance.Init();
     }
