@@ -1,5 +1,6 @@
 import GameLauncher from "../logic/GameLauncher";
 import { EventEnum } from "../enum/EventEnum";
+import { JsonConfigNameEnum } from "../enum/JsonConfigNameEnum";
 
 /**
  * 本地化文本管理类
@@ -24,13 +25,13 @@ export class LocalizationManager {
     private localizationDictionary: object;
     /**
      * 通过语言代码进行初始化(刷新)本地化文本版本
-     * @param languageCode 语言代码,ex:en,cn
+     * @param languageCode 语言代码,ex:en,cn;和语言本地化配置表的名字相同
      */
     public Init(languageCode: string) {
-        if (languageCode == "cn") {
-            this.languageCode = "cn";
+        if (languageCode == JsonConfigNameEnum.Language_CN) {
+            this.languageCode = JsonConfigNameEnum.Language_CN;
         } else {
-            this.languageCode = "en";
+            this.languageCode = JsonConfigNameEnum.Language_EN;
         }
         this.inited = false;
         JsonConigUtils.ReadJsonObjectByName(this.languageCode, (error, object) => {
