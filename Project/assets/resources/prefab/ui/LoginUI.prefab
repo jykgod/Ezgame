@@ -834,6 +834,9 @@
     },
     "passwrodEditBox": {
       "__id__": 15
+    },
+    "loginButton": {
+      "__id__": 24
     }
   },
   {

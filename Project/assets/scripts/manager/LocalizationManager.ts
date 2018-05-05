@@ -1,6 +1,7 @@
 import GameLauncher from "../logic/GameLauncher";
 import { EventEnum } from "../enum/EventEnum";
 import { JsonConfigNameEnum } from "../enum/JsonConfigNameEnum";
+import { JsonConigUtils } from "../tools/JsonConfigUtils";
 
 /**
  * 本地化文本管理类

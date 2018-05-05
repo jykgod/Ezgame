@@ -49,6 +49,58 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+/**
+ * 统一管理UI的切换时动画
+ * 保持游戏UI动画风格的一致性
+ */
+var UIAnimationUtils = /** @class */ (function () {
+    function UIAnimationUtils() {
+    }
+    /**
+     * 缩放进入动画
+     * 注意：动画开始前会显示节点
+     * @param node UINode
+     * @param callBack 回调函数
+     * @param fromScale 起始大小
+     * @param toScale 目标大小
+     */
+    UIAnimationUtils.ScaleIn = function (node, callBack, fromScale, toScale) {
+        if (fromScale === void 0) { fromScale = 0; }
+        if (toScale === void 0) { toScale = 1; }
+        node.active = true;
+        node.scale = fromScale;
+        node.stopAllActions();
+        var scalIn = cc.scaleTo(0.5, toScale).easing(cc.easeBackOut());
+        if (callBack != undefined && callBack != null) {
+            var sequence = cc.sequence(scalIn, cc.callFunc(callBack));
+            node.runAction(sequence);
+        }
+        else {
+            node.runAction(scalIn);
+        }
+    };
+    /**
+     * 缩放退出动画
+     * 注意：动画完成后会隐藏节点
+     * @param node UINode
+     * @param callBack 回调函数
+     * @param fromScale 起始大小
+     * @param toScale 目标大小
+     */
+    UIAnimationUtils.ScaleOut = function (node, callBack, fromScale, toScale) {
+        if (fromScale === void 0) { fromScale = 1; }
+        if (toScale === void 0) { toScale = 0; }
+        node.scale = fromScale;
+        node.stopAllActions();
+        var scalIn = cc.scaleTo(0.5, toScale).easing(cc.easeBackIn());
+        var sequence = cc.sequence(scalIn, cc.callFunc(function () {
+            node.active = false;
+            (callBack != undefined && callBack != null) && callBack();
+        }));
+        node.runAction(sequence);
+    };
+    return UIAnimationUtils;
+}());
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -489,141 +541,6 @@ var NetWork;
         SessionState[SessionState["DISCONNECTING"] = 3] = "DISCONNECTING";
     })(SessionState = NetWork.SessionState || (NetWork.SessionState = {}));
 })(NetWork || (NetWork = {}));
-var Tools;
-(function (Tools) {
-    var JsonConigUtils = /** @class */ (function () {
-        function JsonConigUtils() {
-        }
-        /**
-         * 通过文件路径读取json文件，转成对象后返回
-         * 如果获取成功则error为null
-         * @param path 文件路径(resources目录下)
-         */
-        JsonConigUtils.ReadJsonObjectByPath = function (path, callBack) {
-            if (JsonConigUtils.jsonObjectDict[path] != undefined && JsonConigUtils.jsonObjectDict[path] != null) {
-                callBack(null, JsonConigUtils.jsonObjectDict[path]);
-                return;
-            }
-            cc.loader.loadRes(path, cc.TextAsset, function (error, res) {
-                JsonConigUtils.jsonObjectDict[path] = res;
-                callBack(error, res);
-            });
-        };
-        /**
-         * 通过文件名读取json文件，转成对象后返回
-         * 如果获取成功则error为null
-         * @param name 文件名(json文件需要放在resources/json/目录下)
-         */
-        JsonConigUtils.ReadJsonObjectByName = function (name, callBack) {
-            if (JsonConigUtils.jsonObjectDict[name] != undefined && JsonConigUtils.jsonObjectDict[name] != null) {
-                callBack(null, JsonConigUtils.jsonObjectDict[name]);
-                return;
-            }
-            cc.loader.loadRes(GloableConstantUtils.JsonPath.concat(name), function (error, res) {
-                JsonConigUtils.jsonObjectDict[name] = res;
-                callBack(error, res);
-            });
-        };
-        /**
-         * 用于缓存json对象
-         */
-        JsonConigUtils.jsonObjectDict = new Array();
-        return JsonConigUtils;
-    }());
-    Tools.JsonConigUtils = JsonConigUtils;
-})(Tools || (Tools = {}));
-var JsonConigUtils = Tools.JsonConigUtils;
-var Tools;
-(function (Tools) {
-    /**
-     * 用于从本地读写数据
-     */
-    var LocalStorageUtils = /** @class */ (function () {
-        function LocalStorageUtils() {
-        }
-        LocalStorageUtils.setNumber = function (key, value) {
-            cc.sys.localStorage.setItem(key, value.toString());
-        };
-        LocalStorageUtils.setString = function (key, value) {
-            cc.sys.localStorage.setItem(key, value);
-        };
-        LocalStorageUtils.setObject = function (key, value) {
-            cc.sys.localStorage.setItem(key, JSON.stringify(value));
-        };
-        LocalStorageUtils.getNumber = function (key) {
-            var ret = cc.sys.localStorage.getItem(key);
-            return +ret;
-        };
-        LocalStorageUtils.getString = function (key) {
-            return cc.sys.localStorage.getItem(key);
-        };
-        LocalStorageUtils.getObject = function (key) {
-            return JSON.parse(cc.sys.localStorage.getItem(key));
-        };
-        return LocalStorageUtils;
-    }());
-    Tools.LocalStorageUtils = LocalStorageUtils;
-})(Tools || (Tools = {}));
-var LocalStorageUtils = Tools.LocalStorageUtils;
-var GloableConstantUtils = /** @class */ (function () {
-    function GloableConstantUtils() {
-    }
-    GloableConstantUtils.UIPrefabPath = "prefab/ui/";
-    GloableConstantUtils.JsonPath = "json/";
-    return GloableConstantUtils;
-}());
-/**
- * 统一管理UI的切换时动画
- * 保持游戏UI动画风格的一致性
- */
-var UIAnimationUtils = /** @class */ (function () {
-    function UIAnimationUtils() {
-    }
-    /**
-     * 缩放进入动画
-     * 注意：动画开始前会显示节点
-     * @param node UINode
-     * @param callBack 回调函数
-     * @param fromScale 起始大小
-     * @param toScale 目标大小
-     */
-    UIAnimationUtils.ScaleIn = function (node, callBack, fromScale, toScale) {
-        if (fromScale === void 0) { fromScale = 0; }
-        if (toScale === void 0) { toScale = 1; }
-        node.active = true;
-        node.scale = fromScale;
-        node.stopAllActions();
-        var scalIn = cc.scaleTo(0.5, toScale).easing(cc.easeBackOut());
-        if (callBack != undefined && callBack != null) {
-            var sequence = cc.sequence(scalIn, cc.callFunc(callBack));
-            node.runAction(sequence);
-        }
-        else {
-            node.runAction(scalIn);
-        }
-    };
-    /**
-     * 缩放退出动画
-     * 注意：动画完成后会隐藏节点
-     * @param node UINode
-     * @param callBack 回调函数
-     * @param fromScale 起始大小
-     * @param toScale 目标大小
-     */
-    UIAnimationUtils.ScaleOut = function (node, callBack, fromScale, toScale) {
-        if (fromScale === void 0) { fromScale = 1; }
-        if (toScale === void 0) { toScale = 0; }
-        node.scale = fromScale;
-        node.stopAllActions();
-        var scalIn = cc.scaleTo(0.5, toScale).easing(cc.easeBackIn());
-        var sequence = cc.sequence(scalIn, cc.callFunc(function () {
-            node.active = false;
-            (callBack != undefined && callBack != null) && callBack();
-        }));
-        node.runAction(sequence);
-    };
-    return UIAnimationUtils;
-}());
 /**
  * RPC修饰器
  * 用来修饰客户端发起的RPC调用函数
@@ -639,7 +556,7 @@ function RPC(serviceName, noReturn) {
                 args[_i] = arguments[_i];
             }
             return __awaiter(this, void 0, void 0, function () {
-                var _sequence;
+                var _sequence, ret;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -649,7 +566,11 @@ function RPC(serviceName, noReturn) {
                             RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
                             if (!(noReturn == false)) return [3 /*break*/, 2];
                             return [4 /*yield*/, RpcClient.Instance.GetResponce(_sequence)];
-                        case 1: return [2 /*return*/, (_a.sent()).ReturnValue];
+                        case 1:
+                            ret = _a.sent();
+                            if (ret == null || ret == undefined)
+                                return [2 /*return*/, null];
+                            return [2 /*return*/, ret.ReturnValue];
                         case 2: return [2 /*return*/];
                     }
                 });
@@ -1157,3 +1078,108 @@ var SimCivil;
         Contract.RoleSummary = RoleSummary;
     })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
 })(SimCivil || (SimCivil = {}));
+var Tools;
+(function (Tools) {
+    /**
+     * 用于从本地读写数据
+     */
+    var LocalStorageUtils = /** @class */ (function () {
+        function LocalStorageUtils() {
+        }
+        LocalStorageUtils.setNumber = function (key, value) {
+            cc.sys.localStorage.setItem(key, value.toString());
+        };
+        LocalStorageUtils.setString = function (key, value) {
+            cc.sys.localStorage.setItem(key, value);
+        };
+        LocalStorageUtils.setObject = function (key, value) {
+            cc.sys.localStorage.setItem(key, JSON.stringify(value));
+        };
+        LocalStorageUtils.getNumber = function (key) {
+            var ret = cc.sys.localStorage.getItem(key);
+            return +ret;
+        };
+        LocalStorageUtils.getString = function (key) {
+            return cc.sys.localStorage.getItem(key);
+        };
+        LocalStorageUtils.getObject = function (key) {
+            return JSON.parse(cc.sys.localStorage.getItem(key));
+        };
+        return LocalStorageUtils;
+    }());
+    Tools.LocalStorageUtils = LocalStorageUtils;
+})(Tools || (Tools = {}));
+var LocalStorageUtils = Tools.LocalStorageUtils;
+var Tools;
+(function (Tools) {
+    var QueueNode = /** @class */ (function () {
+        function QueueNode(data) {
+            this.next = null;
+            this.data = data;
+        }
+        return QueueNode;
+    }());
+    /**
+     * 队列
+     * 只提供基本功能，进队、出队、查询大小、查询队头
+     */
+    var Queue = /** @class */ (function () {
+        /**
+         * 构造函数
+         */
+        function Queue() {
+            this._count = 0;
+            this._count = 0;
+            this._first = this.trail = null;
+        }
+        Object.defineProperty(Queue.prototype, "first", {
+            /**
+             * 获取队列里元素个数
+             */
+            get: function () {
+                return this._first.data;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Queue.prototype, "count", {
+            /**
+             * 获取队列里元素个数
+             */
+            get: function () {
+                return this._count;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        /**
+         * 向队尾添加元素
+         * @param obj 添加的类容
+         */
+        Queue.prototype.Enqueue = function (obj) {
+            if (this._count == 0) {
+                this._first = this.trail = new QueueNode(obj);
+            }
+            else {
+                this.trail.next = new QueueNode(obj);
+                this.trail = this.trail.next;
+            }
+            this._count++;
+        };
+        /**
+         * 获取队头的元素
+         * 并从队列中移除该元素
+         */
+        Queue.prototype.Dequeue = function () {
+            if (this._count == 0) {
+                return null;
+            }
+            this._count--;
+            var ret = this._first.data;
+            this._first = this._first.next;
+            return ret;
+        };
+        return Queue;
+    }());
+    Tools.Queue = Queue;
+})(Tools || (Tools = {}));

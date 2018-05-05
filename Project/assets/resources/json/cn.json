@@ -3,5 +3,6 @@
     "login_text_id" : "账号:",
     "login_text_id_edit" : "请输入账号...",
     "login_text_psw": "密码:",
-    "login_text_psw_edit" : "请输入密码..."
+    "login_text_psw_edit" : "请输入密码...",
+    "login_text_tips_error" : "登录失败"
 }

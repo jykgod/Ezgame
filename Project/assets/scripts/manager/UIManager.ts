@@ -1,5 +1,6 @@
 import UIBase from "../ui/UIBase";
 import { UINameEnum } from "../enum/UINameEnum";
+import { GloableConstantUtils } from "../tools/GloableConstantUtils";
 
 //TODO:因为每个UI需要在UINameEnum中定义其名称并保持脚本名与prefab名字相同，所以最好能用工具实现重复性工作
 /**
@@ -64,7 +65,7 @@ export class UIManager {
                     (callBack != undefined && callBack != null) && callBack(null, this.uiDictionary[uiName]);
                 }
             });
-        }else if (this.uiDictionary[uiName] == null) {
+        } else if (this.uiDictionary[uiName] == null) {
             Logger.error(`There are many places attempt to show the same UI "${uiName}"`, "UIManager");
             (callBack != undefined && callBack != null) && callBack(new Error(`There are many places attempt to show the same UI "${uiName}"`), null);
         } else {
@@ -114,5 +115,6 @@ export class UIManager {
             let ui = this.uiDictionary.pop();
             ui != null && ui != undefined && ui.destroy();
         }
+        cc.loader.releaseAll();
     }
 }
