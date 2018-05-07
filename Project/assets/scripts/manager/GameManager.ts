@@ -1,6 +1,7 @@
 import { GameStateLogin } from "../fsm/gameState/GameStateLogin";
 import { GameStateSceneLoading } from "../fsm/gameState/GameStateSceneLoading";
 import { GameStateEnum } from "../enum/StateEnum";
+import { GameStateMainNormal } from "../fsm/gameState/GameStateMainNormal";
 
 export class GameManager {
     /**
@@ -19,6 +20,7 @@ export class GameManager {
         this.stateMachine = FSM.StateMachine.GetBuilder().
             AddState(new GameStateLogin()).
             AddState(new GameStateSceneLoading()).
+            AddState(new GameStateMainNormal()).
             build();
         this.stateMachine.ChangeState(GameStateEnum.GAME_STATE_LOGIN);
     }

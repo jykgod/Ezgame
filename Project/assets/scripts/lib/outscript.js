@@ -84,8 +84,8 @@ var UIAnimationUtils = /** @class */ (function () {
      * 注意：动画完成后会隐藏节点
      * @param node UINode
      * @param callBack 回调函数
-     * @param fromScale 起始大小
-     * @param toScale 目标大小
+     * @param fromScale 起始大小,默认为1
+     * @param toScale 目标大小,默认为0
      */
     UIAnimationUtils.ScaleOut = function (node, callBack, fromScale, toScale) {
         if (fromScale === void 0) { fromScale = 1; }
@@ -93,6 +93,51 @@ var UIAnimationUtils = /** @class */ (function () {
         node.scale = fromScale;
         node.stopAllActions();
         var scalIn = cc.scaleTo(0.5, toScale).easing(cc.easeBackIn());
+        var sequence = cc.sequence(scalIn, cc.callFunc(function () {
+            node.active = false;
+            (callBack != undefined && callBack != null) && callBack();
+        }));
+        node.runAction(sequence);
+    };
+    /**
+     * 位移进入动画
+     * 注意：动画开始前会显示节点
+     * @param node UINode
+     * @param callBack 回调函数
+     * @param toPos 目标位置
+     * @param fromPos 起始位置(默认为空，为空时从UI当前位置开始移动)
+     */
+    UIAnimationUtils.MoveIn = function (node, callBack, toPos, fromPos) {
+        if (toPos === void 0) { toPos = cc.Vec2.ZERO; }
+        if (fromPos === void 0) { fromPos = null; }
+        node.active = true;
+        if (fromPos != null)
+            node.position = fromPos;
+        node.stopAllActions();
+        var moveIn = cc.moveTo(1, toPos).easing(cc.easeBackOut());
+        if (callBack != undefined && callBack != null) {
+            var sequence = cc.sequence(moveIn, cc.callFunc(callBack));
+            node.runAction(sequence);
+        }
+        else {
+            node.runAction(moveIn);
+        }
+    };
+    /**
+     * 位移退出动画
+     * 注意：动画开始前会显示节点
+     * @param node UINode
+     * @param callBack 回调函数
+     * @param fromPos 起始位置
+     * @param toPos 目标位置
+     */
+    UIAnimationUtils.MoveOut = function (node, callBack, toPos, fromPos) {
+        if (toPos === void 0) { toPos = cc.Vec2.ZERO; }
+        if (fromPos === void 0) { fromPos = null; }
+        if (fromPos != null)
+            node.position = fromPos;
+        node.stopAllActions();
+        var scalIn = cc.moveTo(1, toPos).easing(cc.easeBackIn());
         var sequence = cc.sequence(scalIn, cc.callFunc(function () {
             node.active = false;
             (callBack != undefined && callBack != null) && callBack();

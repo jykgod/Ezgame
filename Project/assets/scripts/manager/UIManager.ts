@@ -44,33 +44,33 @@ export class UIManager {
      * @param uiName UI名称
      * @param callBack 回调
      */
-    public ShowUI(uiName: UINameEnum, callBack?: (error?: Error, component?: UIBase) => void) {
+    public ShowUI(uiName: UINameEnum, callBack: (error?: Error, component?: UIBase) => void = null, parent: cc.Node = this.canvas.node) {
         Logger.log(`ShowUI ${uiName}`, "UIManager");
         if (this.uiDictionary[uiName] == undefined) {
             this.uiDictionary[uiName] = null;
             cc.loader.loadRes(GloableConstantUtils.UIPrefabPath.concat(uiName), (error, res) => {
                 if (error != null) {
-                    (callBack != undefined && callBack != null) && callBack(error, null);
+                    (callBack != null) && callBack(error, null);
                     return;
                 }
                 let node = cc.instantiate<cc.Node>(res);
-                node.parent = this.canvas.node;
+                node.parent = parent;
                 this.uiDictionary[uiName] = node.getComponent(uiName);
                 if (this.uiDictionary[uiName] == null) {
                     Logger.error(`Get null component from the ui named "${uiName}"`, "UIManager");
-                    (callBack != undefined && callBack != null) && callBack(new Error(`Get null component from the ui named "${uiName}"`), null);
+                    (callBack != null) && callBack(new Error(`Get null component from the ui named "${uiName}"`), null);
                 } else {
                     this.uiDictionary[uiName].init();
                     this.uiDictionary[uiName].show();
-                    (callBack != undefined && callBack != null) && callBack(null, this.uiDictionary[uiName]);
+                    (callBack != null) && callBack(null, this.uiDictionary[uiName]);
                 }
             });
         } else if (this.uiDictionary[uiName] == null) {
             Logger.error(`There are many places attempt to show the same UI "${uiName}"`, "UIManager");
-            (callBack != undefined && callBack != null) && callBack(new Error(`There are many places attempt to show the same UI "${uiName}"`), null);
+            (callBack != null) && callBack(new Error(`There are many places attempt to show the same UI "${uiName}"`), null);
         } else {
             this.uiDictionary[uiName].show();
-            (callBack != undefined && callBack != null) && callBack(null, this.uiDictionary[uiName]);
+            (callBack != null) && callBack(null, this.uiDictionary[uiName]);
         }
     }
 
@@ -110,7 +110,7 @@ export class UIManager {
      * 销毁所有UI
      * @param uiName UI名字
      */
-    public DestroyAll(uiName: UINameEnum) {
+    public DestroyAll() {
         while (this.uiDictionary.length > 0) {
             let ui = this.uiDictionary.pop();
             ui != null && ui != undefined && ui.destroy();

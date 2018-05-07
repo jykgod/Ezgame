@@ -1,3 +1,4 @@
 {
-    "ServerIP" : "192.168.0.103:20170"
+    "ServerIP" : "192.168.0.100:20170",
+    "OfflineMode" : true
 }
