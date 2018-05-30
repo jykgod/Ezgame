@@ -76,4 +76,20 @@ export class GloableUtils {
             GloableUtils.RealShowTips();
         }
     }
+
+    /**
+     * 查找节点路径
+     */
+    public static GetNodePath(from: cc.Node, to: cc.Node){
+        let ret = null;
+        while(to != null && to != undefined && from != to){
+            if (ret != null){
+                ret = to.name.concat('/'.concat(ret));
+            }else{
+                ret = to.name;
+            }
+            to = to.parent;
+        }
+        return ret;
+    }
 }

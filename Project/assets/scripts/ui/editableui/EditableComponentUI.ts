@@ -5,6 +5,7 @@ import { EditableCompnentUIConfigure } from "./EditableCompnentUIConfigure";
 import { LocalStorageEnum } from "../../enum/LocalStorageEnum";
 import { GloableConstantUtils } from "../../tools/GloableConstantUtils";
 import { UIManager } from "../../manager/UIManager";
+import { ComponentUINameEnum } from "../../enum/ComponentUINameEnum";
 
 const { ccclass, property } = cc._decorator;
 /**
@@ -12,11 +13,10 @@ const { ccclass, property } = cc._decorator;
  */
 @ccclass
 export abstract class EditableComponentUI extends cc.Component {
-    @property
-    public uiname: string = '';
 
     private key: string;
     private conf: EditableCompnentUIConfigure;
+    private fatherUI: UIBase;
 
     /**
      * 通过配置文件加载可编辑组件
@@ -25,17 +25,17 @@ export abstract class EditableComponentUI extends cc.Component {
      */
     public static LoadEditableComponentUI(key: string, callback: (ui: EditableComponentUI) => void) {
         var conf = LocalStorageUtils.loadStorageObject<EditableCompnentUIConfigure>(key);
-        cc.loader.loadRes(GloableConstantUtils.UIPrefabPath.concat(conf.name), (error, res) => {
+        cc.loader.loadRes(GloableConstantUtils.UIPrefabPath.concat(conf.uiname.toString()), (error, res) => {
             if (error != null) {
                 Logger.error(`load res error key:${key}`, 'EditableComponent');
-                if(callback != null){
+                if (callback != null) {
                     callback(null);
                 }
                 return;
             }
 
             let node = cc.instantiate<cc.Node>(res);
-            let ui = node.getComponent (EditableComponentUI);
+            let ui = node.getComponent(EditableComponentUI);
             ui.resetUIStateByConfig();
             callback(ui);
         });
@@ -43,11 +43,13 @@ export abstract class EditableComponentUI extends cc.Component {
 
     /**
      * 通过配置文件加载可编辑组件
-     * @param key 可编辑组件的配置文件键值
+     * @param fatherUI 可编辑组件父级UI的名字
+     * @param fatherNode 可编辑组件挂载的父节点
+     * @param componentName 可编辑组件的名字(和prefab名字相同)
      * @param callback 加载完成后的回调
      */
-    public static CreateEditableComponentUI(father: cc.Node, uiname: string, callback: (ui: EditableComponentUI) => void) {
-        
+    public static CreateEditableComponentUI(fatherUI: UINameEnum, fatherNode: string, componentName: ComponentUINameEnum, callback: (ui: EditableComponentUI) => void) {
+
     }
 
     /**
@@ -60,8 +62,10 @@ export abstract class EditableComponentUI extends cc.Component {
      * 保存编辑
      */
     protected save() {
-       // this.conf.parentNodePath = this.node.parent;
-        this.conf.scale =this.node.scale;
+        if (this.fatherUI == null || this.fatherUI == undefined) return;
+        let father = UIManager.Instance.GetUI(this.conf.fatherUI as UINameEnum);
+        this.conf.parentNodePath = GloableUtils.GetNodePath(this.fatherUI.node, this.node);
+        this.conf.scale = this.node.scale;
         this.conf.pos = this.node.position;
         this.conf.Save();
     }
@@ -70,11 +74,11 @@ export abstract class EditableComponentUI extends cc.Component {
      * 根据配置重新摆放UI的位置
      */
     public resetUIStateByConfig() {
-        let father = UIManager.Instance.GetUI(this.conf.fatherUI as UINameEnum);
-        if(father == null || father == undefined) {
+        this.fatherUI = UIManager.Instance.GetUI(this.conf.fatherUI as UINameEnum);
+        if (this.fatherUI == null || this.fatherUI == undefined) {
             return;
         }
-        this.node.parent = father.node;
+        this.node.parent = cc.find(this.conf.parentNodePath, this.fatherUI.node);
         this.node.scale = this.conf.scale;
         this.node.position = this.conf.pos;
     }
