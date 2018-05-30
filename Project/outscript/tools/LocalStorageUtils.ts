@@ -27,6 +27,17 @@ namespace Tools {
         public static getObject(key: string): object {
             return JSON.parse(cc.sys.localStorage.getItem(key))
         }
+
+        public static loadStorageObject<T extends LocalStorageBase>(key: string): T{
+            return <T>LocalStorageUtils.getObject(key);
+        }
+        // public static loadStorageObject<T extends LocalStorageBase>(): T{
+        //     return <T>LocalStorageUtils.getObject();
+        // }
+
+        public static saveStorageObject(obj : LocalStorageBase){
+            obj.Save();
+        }
     }
 }
 

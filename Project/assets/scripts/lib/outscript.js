@@ -1125,6 +1125,27 @@ var SimCivil;
 })(SimCivil || (SimCivil = {}));
 var Tools;
 (function (Tools) {
+    var LocalStorageBase = /** @class */ (function () {
+        function LocalStorageBase(key) {
+            this.key = key;
+        }
+        Object.defineProperty(LocalStorageBase.prototype, "Key", {
+            get: function () {
+                return this.key;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        LocalStorageBase.prototype.Save = function () {
+            Tools.LocalStorageUtils.setObject(this.key, this);
+        };
+        return LocalStorageBase;
+    }());
+    Tools.LocalStorageBase = LocalStorageBase;
+})(Tools || (Tools = {}));
+var LocalStorageBase = Tools.LocalStorageBase;
+var Tools;
+(function (Tools) {
     /**
      * 用于从本地读写数据
      */
@@ -1149,6 +1170,15 @@ var Tools;
         };
         LocalStorageUtils.getObject = function (key) {
             return JSON.parse(cc.sys.localStorage.getItem(key));
+        };
+        LocalStorageUtils.loadStorageObject = function (key) {
+            return LocalStorageUtils.getObject(key);
+        };
+        // public static loadStorageObject<T extends LocalStorageBase>(): T{
+        //     return <T>LocalStorageUtils.getObject();
+        // }
+        LocalStorageUtils.saveStorageObject = function (obj) {
+            obj.Save();
         };
         return LocalStorageUtils;
     }());

@@ -1,5 +1,5 @@
-import UIBase from "./UIBase";
-import { UIManager } from "../manager/UIManager";
+import UIBase from "../UIBase";
+import { UIManager } from "../../manager/UIManager";
 
 const { ccclass, property } = cc._decorator;
 

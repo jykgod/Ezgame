@@ -1,11 +1,11 @@
-import UIBase from "./UIBase";
-import { GameManager } from "../manager/GameManager";
-import { GameStateEnum } from "../enum/StateEnum";
-import { SceneEnum } from "../enum/SceneEnum";
-import { LocalizationManager } from "../manager/LocalizationManager";
-import { JsonConfigNameEnum } from "../enum/JsonConfigNameEnum";
-import { GloableUtils } from "../tools/GloableUtils";
-import { JsonConigUtils } from "../tools/JsonConfigUtils";
+import UIBase from "../UIBase";
+import { GameManager } from "../../manager/GameManager";
+import { GameStateEnum } from "../../enum/StateEnum";
+import { SceneEnum } from "../../enum/SceneEnum";
+import { LocalizationManager } from "../../manager/LocalizationManager";
+import { JsonConfigNameEnum } from "../../enum/JsonConfigNameEnum";
+import { GloableUtils } from "../../tools/GloableUtils";
+import { JsonConigUtils } from "../../tools/JsonConfigUtils";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html

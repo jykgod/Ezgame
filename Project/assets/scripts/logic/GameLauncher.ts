@@ -36,6 +36,6 @@ export default class GameLauncher extends cc.Component {
     }
 
     private setScreenFit() {
-
+        
     }
 }
