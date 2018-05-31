@@ -25,6 +25,21 @@ export default class GameLauncher extends cc.Component {
         LocalizationManager.Instance.Init("cn");
         UIManager.Instance.Init();
         GameManager.Instance.Init();
+
+        // let node1 = new cc.Node();
+        // node1.name = "nihao"
+        // node1.parent = UIManager.Instance.Canvas.node;
+
+        // let node2 = new cc.Node();
+        // node2.name = "baba"
+        // node2.parent = node1;
+
+        // let node3 = new cc.Node();
+        // node3.name = "erzi"
+        // node3.parent = node2;
+        // Logger.log(cc.(node3, node1));
+        // let a = LocalStorageUtils.loadStorageObject<A>("A");
+        // Logger.info(a);
     }
 
     update(dt) {
@@ -36,6 +51,6 @@ export default class GameLauncher extends cc.Component {
     }
 
     private setScreenFit() {
-        
+
     }
 }
