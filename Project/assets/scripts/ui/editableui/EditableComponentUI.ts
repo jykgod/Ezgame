@@ -11,16 +11,27 @@ const { ccclass, property } = cc._decorator;
  * 可编辑的UI组件
  */
 @ccclass
-export abstract class EditableComponentUI extends cc.Component {
-
-    private key: string;
-    private conf: EditableComponentUIConfigure;
+export class EditableComponentUI extends cc.Component {
+    /**
+     * key
+     */
+    public get Key(): string {
+        if (this.conf == null) return null;
+        return this.conf.Key;
+    }
+    /**
+     * 父ui
+     */
     private fatherUI: UIBase;
+    /**
+     * 存放在客户端本地的配置
+     */
+    protected conf: EditableComponentUIConfigure;
     /**
      * 取消编辑
      */
     protected cancel() {
-        this.ResetUIStateByConfig();
+        this.resetUIStateByConfig();
     }
     /**
      * 保存编辑
@@ -39,20 +50,37 @@ export abstract class EditableComponentUI extends cc.Component {
     protected clone(callback: (ui: EditableComponentUI) => void) {
         let editableCount = LocalStorageUtils.getNumber(LocalStorageEnum.EDITABLE_UI_COUNT) + 1;
         LocalStorageUtils.setNumber(LocalStorageEnum.EDITABLE_UI_COUNT, editableCount);
-        var conf = this.conf.clone(LocalStorageEnum.EDITABLE_UI_COUNT.concat(editableCount.toString()));
+        var conf = this.conf.clone(LocalStorageEnum.EDITABLE_UI_PREFIX.concat(editableCount.toString()));
         conf.Save();
         EditableComponentUIManager.Instance.LoadEditableComponentUI(conf.Key, callback);
     }
     /**
      * 根据配置重新摆放UI的位置
      */
-    public ResetUIStateByConfig() {
+    public resetUIStateByConfig() {
         this.fatherUI = UIManager.Instance.GetUI(this.conf.fatherUI as UINameEnum);
         if (this.fatherUI == null || this.fatherUI == undefined) {
-            return;
+            return false;
         }
         this.node.parent = cc.find(this.conf.parentNodePath, this.fatherUI.node);
         this.node.scale = this.conf.scale;
         this.node.position = this.conf.pos;
+        return true;
+    }
+
+    public set Conf(conf: EditableComponentUIConfigure){
+        this.conf = conf;
+    }
+
+    public show(data: object) {
+
+    }
+
+    public delate(){
+
+    }
+
+    public hide() {
+
     }
 }

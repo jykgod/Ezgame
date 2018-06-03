@@ -54,8 +54,8 @@ export class UIManager {
                     return;
                 }
                 let node = cc.instantiate<cc.Node>(res);
-                node.parent = parent;
                 this.uiDictionary[uiName] = node.getComponent(uiName);
+                node.parent = parent;
                 if (this.uiDictionary[uiName] == null) {
                     Logger.error(`Get null component from the ui named "${uiName}"`, "UIManager");
                     (callBack != null) && callBack(new Error(`Get null component from the ui named "${uiName}"`), null);
@@ -101,7 +101,7 @@ export class UIManager {
      */
     public DestroyUI(uiName: UINameEnum) {
         if (this.uiDictionary[uiName] != undefined && cc.isValid(this.uiDictionary[uiName]) == true) {
-            this.uiDictionary[uiName].destroy();
+            this.uiDictionary[uiName].node.destroy();
             this.uiDictionary[uiName] = undefined;
         }
     }
@@ -113,7 +113,7 @@ export class UIManager {
     public DestroyAll() {
         while (this.uiDictionary.length > 0) {
             let ui = this.uiDictionary.pop();
-            ui != null && ui != undefined && ui.destroy();
+            ui != null && ui != undefined && ui.node.destroy();
         }
         cc.loader.releaseAll();
     }

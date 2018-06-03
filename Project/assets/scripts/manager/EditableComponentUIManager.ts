@@ -10,12 +10,12 @@ import { GloableUtils } from "../tools/GloableUtils";
 /**
  * 可编辑UI组件管理类
  */
-export class EditableComponentUIManager{
+export class EditableComponentUIManager {
     /**
      * 单例声明
      */
-    public static readonly Instance = new EditableComponentUIManager(); 
-    private constructor(){
+    public static readonly Instance = new EditableComponentUIManager();
+    private constructor() {
 
     }
 
@@ -26,6 +26,7 @@ export class EditableComponentUIManager{
      */
     public LoadEditableComponentUI(key: string, callback: (ui: EditableComponentUI) => void) {
         var conf = LocalStorageUtils.loadStorageObject<EditableComponentUIConfigure>(key);
+        Logger.info(conf);
         cc.loader.loadRes(GloableConstantUtils.UIPrefabPath.concat(conf.uiname.toString()), (error, res) => {
             if (error != null) {
                 Logger.error(`load res error key:${key}`, 'EditableComponent');
@@ -37,8 +38,16 @@ export class EditableComponentUIManager{
 
             let node = cc.instantiate<cc.Node>(res);
             let ui = node.getComponent(EditableComponentUI);
-            ui.ResetUIStateByConfig();
-            callback(ui);
+            ui.Conf = conf;
+            if (ui.resetUIStateByConfig() == true) {
+                ui.show(conf.data);
+                callback(ui);
+            } else {
+                ui.node.destroy();
+                if (callback != null) {
+                    callback(null);
+                }
+            }
         });
     }
 
@@ -52,6 +61,7 @@ export class EditableComponentUIManager{
     public CreateEditableComponentUI(fatherUI: UINameEnum, fatherNode: cc.Node, componentName: ComponentUINameEnum, callback: (ui: EditableComponentUI) => void) {
         let fUI = UIManager.Instance.GetUI(fatherUI);
         if (fUI == null || fUI == undefined) {
+            Logger.log('父UI为空', `CreateEditableComponentUI ${fatherUI} ${fatherNode} ${componentName}`);
             if (callback != null) {
                 callback(null);
             }
@@ -59,6 +69,7 @@ export class EditableComponentUIManager{
         }
         let path = GloableUtils.GetNodePath(fUI.node, fatherNode);
         if (path == null) {
+            Logger.log('找不到父节点', 'CreateEditableComponentUI');
             if (callback != null) {
                 callback(null);
             }
@@ -78,15 +89,18 @@ export class EditableComponentUIManager{
 
             let editableCount = LocalStorageUtils.getNumber(LocalStorageEnum.EDITABLE_UI_COUNT) + 1;
             LocalStorageUtils.setNumber(LocalStorageEnum.EDITABLE_UI_COUNT, editableCount);
-            var conf = new EditableComponentUIConfigure(editableCount.toString());
+            var conf = new EditableComponentUIConfigure(LocalStorageEnum.EDITABLE_UI_PREFIX.concat(editableCount.toString()));
             conf.fatherUI = fatherUI;
             conf.parentNodePath = path;
             conf.pos = node.position;
-            conf.scale = node.scale; 
+            conf.scale = node.scale;
             conf.uiname = componentName;
             conf.Save();
-
-            callback(ui);
+            ui.Conf = conf;
+            ui.show(null);
+            if(callback != null){
+                callback(ui);
+            }
         });
     }
 }

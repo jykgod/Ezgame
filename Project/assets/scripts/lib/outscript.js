@@ -1143,7 +1143,7 @@ var Tools;
     }());
     Tools.LocalStorageBase = LocalStorageBase;
 })(Tools || (Tools = {}));
-var LocalStorageBase = Tools.LocalStorageBase;
+window.LocalStorageBase = Tools.LocalStorageBase;
 var Tools;
 (function (Tools) {
     /**
@@ -1184,7 +1184,7 @@ var Tools;
     }());
     Tools.LocalStorageUtils = LocalStorageUtils;
 })(Tools || (Tools = {}));
-var LocalStorageUtils = Tools.LocalStorageUtils;
+window.LocalStorageUtils = Tools.LocalStorageUtils;
 var Tools;
 (function (Tools) {
     var QueueNode = /** @class */ (function () {

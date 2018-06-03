@@ -19,6 +19,9 @@ export default class GameLauncher extends cc.Component {
     }
 
     onLoad() {
+        //---------------------test----------------------
+        // cc.sys.localStorage.clear();
+        //-----------------------------------------------
         GameLauncher.instance = this;
         cc.game.addPersistRootNode(this.node);
         TimeManager.Instance.Init();
