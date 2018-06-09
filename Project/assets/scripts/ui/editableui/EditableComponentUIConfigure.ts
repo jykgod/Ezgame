@@ -35,6 +35,7 @@ export class EditableComponentUIConfigure extends LocalStorageBase{
         ret.pos = this.pos;
         ret.scale = this.scale;
         ret.fatherUI = this.fatherUI;
+        ret.parentNodePath = this.parentNodePath;
         ret.data =  this.data;
         return ret;
     }

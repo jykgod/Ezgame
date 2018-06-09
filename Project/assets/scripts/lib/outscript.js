@@ -1129,13 +1129,9 @@ var Tools;
         function LocalStorageBase(key) {
             this.key = key;
         }
-        Object.defineProperty(LocalStorageBase.prototype, "Key", {
-            get: function () {
-                return this.key;
-            },
-            enumerable: true,
-            configurable: true
-        });
+        LocalStorageBase.prototype.Key = function () {
+            return this.key;
+        };
         LocalStorageBase.prototype.Save = function () {
             Tools.LocalStorageUtils.setObject(this.key, this);
         };
@@ -1143,7 +1139,7 @@ var Tools;
     }());
     Tools.LocalStorageBase = LocalStorageBase;
 })(Tools || (Tools = {}));
-window.LocalStorageBase = Tools.LocalStorageBase;
+var LocalStorageBase = Tools.LocalStorageBase;
 var Tools;
 (function (Tools) {
     /**
@@ -1172,7 +1168,10 @@ var Tools;
             return JSON.parse(cc.sys.localStorage.getItem(key));
         };
         LocalStorageUtils.loadStorageObject = function (key) {
-            return LocalStorageUtils.getObject(key);
+            var ret = LocalStorageUtils.getObject(key);
+            ret.Key = Tools.LocalStorageBase.prototype.Key;
+            ret.Save = Tools.LocalStorageBase.prototype.Save;
+            return ret;
         };
         // public static loadStorageObject<T extends LocalStorageBase>(): T{
         //     return <T>LocalStorageUtils.getObject();
@@ -1184,7 +1183,7 @@ var Tools;
     }());
     Tools.LocalStorageUtils = LocalStorageUtils;
 })(Tools || (Tools = {}));
-window.LocalStorageUtils = Tools.LocalStorageUtils;
+var LocalStorageUtils = Tools.LocalStorageUtils;
 var Tools;
 (function (Tools) {
     var QueueNode = /** @class */ (function () {

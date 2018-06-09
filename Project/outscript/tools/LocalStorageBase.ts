@@ -1,7 +1,7 @@
 namespace Tools {
     export class LocalStorageBase {
         private key: string;
-        public get Key(): string {
+        public Key(): string {
             return this.key;
         }
 

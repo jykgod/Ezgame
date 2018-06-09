@@ -9,20 +9,26 @@ export default class MainUIEquipComponent extends EditableComponentUI {
     private sprEquip: cc.Sprite;
     private txtName: cc.Label;
 
-    private priRefresh(itemID: number): void{
+    private priRefresh(itemID: number): void {
         this.itemID = itemID;
     }
 
     public pubRefresh(itemID: number): void {
         this.itemID = itemID;
-        this.conf.data = {'itemID': itemID};
+        this.conf.data = { 'itemID': itemID };
         this.conf.Save();
     }
 
     show(data) {
+        Logger.log('show', 'MainUIEquipComponent');
         this.sprEquip = this.node.getChildByName("equip").getComponent(cc.Sprite);
         this.txtName = this.node.getChildByName("name").getComponent(cc.Label);
         if (data == null) return;
         this.priRefresh(data.itemID);
+        this.node.on(cc.Node.EventType.MOUSE_DOWN, () => this.onPressCallBack);
+    }
+
+    private onPressCallBack(): void {
+        Logger.log('onPressCallBack', 'MainUIEquipComponent');
     }
 }
