@@ -30,6 +30,7 @@ namespace Tools {
 
         public static loadStorageObject<T extends LocalStorageBase>(key: string): T{
             let ret = LocalStorageUtils.getObject(key) as any;
+            if (ret == null || ret == undefined) return null;
             ret.Key = LocalStorageBase.prototype.Key;
             ret.Save = LocalStorageBase.prototype.Save;
             return ret;
