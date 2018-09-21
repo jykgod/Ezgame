@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -23,8 +26,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -377,6 +380,7 @@ var FSM;
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
+            var _a;
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
                 Tools.Logger.error("attemp to change to the " + nextStateType + " which " + name + " not has!", "FSM");
                 return;
@@ -391,7 +395,6 @@ var FSM;
             this.currentState = this.statesMap[nextStateType];
             this.timer.Reset();
             (_a = this.currentState).StateEnter.apply(_a, args);
-            var _a;
         };
         /**
          * 异步切换状态机状态,hint:
@@ -697,8 +700,8 @@ var RpcClient = /** @class */ (function () {
      */
     RpcClient.prototype.GetResponce = function (sequence) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             var ret;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
@@ -1169,6 +1172,8 @@ var Tools;
         };
         LocalStorageUtils.loadStorageObject = function (key) {
             var ret = LocalStorageUtils.getObject(key);
+            if (ret == null || ret == undefined)
+                return null;
             ret.Key = Tools.LocalStorageBase.prototype.Key;
             ret.Save = Tools.LocalStorageBase.prototype.Save;
             return ret;
