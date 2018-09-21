@@ -19,8 +19,8 @@ export class JsonConigUtils {
             return;
         }
         cc.loader.loadRes(path, cc.TextAsset, (error, res) => {
-            JsonConigUtils.jsonObjectDict[path] = res;
-            callBack(error, res);
+            JsonConigUtils.jsonObjectDict[path] = res.json;
+            callBack(error, res.json);
         });
     }
 
@@ -35,8 +35,8 @@ export class JsonConigUtils {
             return;
         }
         cc.loader.loadRes(GloableConstantUtils.JsonPath.concat(name), (error, res) => {
-            JsonConigUtils.jsonObjectDict[name] = res;
-            callBack(error, res);
+            JsonConigUtils.jsonObjectDict[name] = res.json;
+            callBack(error, res.json);
         });
     }
 }
