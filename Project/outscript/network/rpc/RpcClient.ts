@@ -79,7 +79,7 @@ class RpcClient {
         reader.onload = function (ev: ProgressEvent) {
             let obj: SimCivil.Rpc.RpcResponse = JSON.parse(reader.result);
             self.resultQueue[obj.Sequence] = obj;
-            if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null){
+            if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null) {
                 self.promiseQueue[obj.Sequence]();
             }
         }
@@ -99,7 +99,7 @@ class RpcClient {
             setTimeout(() => {
                 reject('timeout in ' + this.timeOut + ' seconds.');
             }, this.timeOut * 1000);
-        }).catch(()=>{
+        }).catch(() => {
             //TODO:需要更详细的结果（具体是哪个协议超时了）
             Tools.Logger.log("TimeOut", "RPC");
         });
@@ -123,21 +123,32 @@ class RpcClient {
             "Sequnce": sequence,
             "TimeStamp": new Date().toISOString()
         }
-        if (!("TextEncoder" in window)) {
-            Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
-            return;
-        }
+        // if (!("TextEncoder" in window)) {
+        //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
+        //     return;
+        // }
         Tools.Logger.info(json);
-        let enc = new TextEncoder();
-        let str = JSON.stringify(json);
-        // let length = enc.encode(str).length;
-        // str = "  ".concat(str);
-        // let arr = enc.encode(str);
-        // arr.set([length / 256, length % 256], 0);
-        this.session.SendMessage(enc.encode(str).buffer);
+        // let enc = new TextEncoder();
+        // let str = JSON.stringify(json);
+        // // Logger.log(str, "RPC");
+        // // let length = enc.encode(str).length;
+        // // str = "  ".concat(str);
+        // // let arr = enc.encode(str);
+        // // arr.set([length / 256, length % 256], 0);
+        // this.session.SendMessage(enc.encode(str).buffer);
+        this.session.SendMessage(this.str2ab(JSON.stringify(json)));
     }
 
-    public Disconnect(){
+    private str2ab(str): ArrayBuffer {
+        var buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
+        var bufView = new Uint16Array(buf);
+        for (var i = 0, strLen = str.length; i < strLen; i++) {
+            bufView[i] = str.charCodeAt(i);
+        }
+        return buf;
+    }
+
+    public Disconnect() {
         this._session.Close();
     }
 }

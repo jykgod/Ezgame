@@ -511,6 +511,7 @@ var NetWork;
             }
             var self = this;
             this.ws = new WebSocket("ws://" + url);
+            Logger.log(this.ws.url, "ServerSession");
             this.name = name;
             this.sesionState = SessionState.CONNECTING;
             this.ws.onopen = function (event) {
@@ -738,18 +739,28 @@ var RpcClient = /** @class */ (function () {
             "Sequnce": sequence,
             "TimeStamp": new Date().toISOString()
         };
-        if (!("TextEncoder" in window)) {
-            Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
-            return;
-        }
+        // if (!("TextEncoder" in window)) {
+        //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
+        //     return;
+        // }
         Tools.Logger.info(json);
-        var enc = new TextEncoder();
-        var str = JSON.stringify(json);
-        // let length = enc.encode(str).length;
-        // str = "  ".concat(str);
-        // let arr = enc.encode(str);
-        // arr.set([length / 256, length % 256], 0);
-        this.session.SendMessage(enc.encode(str).buffer);
+        // let enc = new TextEncoder();
+        // let str = JSON.stringify(json);
+        // // Logger.log(str, "RPC");
+        // // let length = enc.encode(str).length;
+        // // str = "  ".concat(str);
+        // // let arr = enc.encode(str);
+        // // arr.set([length / 256, length % 256], 0);
+        // this.session.SendMessage(enc.encode(str).buffer);
+        this.session.SendMessage(this.str2ab(JSON.stringify(json)));
+    };
+    RpcClient.prototype.str2ab = function (str) {
+        var buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
+        var bufView = new Uint16Array(buf);
+        for (var i = 0, strLen = str.length; i < strLen; i++) {
+            bufView[i] = str.charCodeAt(i);
+        }
+        return buf;
     };
     RpcClient.prototype.Disconnect = function () {
         this._session.Close();
@@ -1188,7 +1199,7 @@ var Tools;
     }());
     Tools.LocalStorageUtils = LocalStorageUtils;
 })(Tools || (Tools = {}));
-window.LocalStorageUtils = Tools.LocalStorageUtils;
+var LocalStorageUtils = Tools.LocalStorageUtils;
 var Tools;
 (function (Tools) {
     var QueueNode = /** @class */ (function () {

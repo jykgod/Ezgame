@@ -41,18 +41,18 @@ export default class LoginUI extends UIBase {
      */
     public onClickLogin() {
         this.loginButton.interactable = false;
-        
+
         // 尝试与服务器建立连接，初始化rpcclient
         if (RpcClient.Instance.session == null || RpcClient.Instance.session.connected == false) {
             JsonConigUtils.ReadJsonObjectByName(JsonConfigNameEnum.Client_Config, (error, clientConfig) => {
                 if (error == null) {
                     // offline模式不链接服务器直接进入游戏
-                    if (clientConfig.OfflineMode == true){
+                    if (clientConfig.OfflineMode == true) {
                         GameManager.Instance.stateMachine.ChangeState(GameStateEnum.GAME_STATE_SCENE_LOADING, SceneEnum.MAIN, GameStateEnum.GAME_STATE_MAIN_NORMAL);
-                    }else{
+                    } else {
                         RpcClient.Instance.Init(clientConfig.ServerIP, () => this.onClickLogin());
                     }
-                }else{
+                } else {
                     this.loginButton.interactable = true;
                     GloableUtils.ShowTips(LocalizationManager.Instance.GetLocalizationTextByKey("login_text_tips_error"));
                 }
@@ -62,9 +62,9 @@ export default class LoginUI extends UIBase {
             SimCivil.Contract.IAuth.LogIn(this.accountEditBox.string, this.passwrodEditBox.string).then(
                 (logined) => {
                     this.loginButton.interactable = true;
-                    if(logined == null || logined == false){
+                    if (logined == null || logined == false) {
                         GloableUtils.ShowTips(LocalizationManager.Instance.GetLocalizationTextByKey("login_text_tips_error"));
-                    }else{
+                    } else {
                         GameManager.Instance.stateMachine.ChangeState(GameStateEnum.GAME_STATE_SCENE_LOADING, SceneEnum.MAIN, GameStateEnum.GAME_STATE_MAIN_NORMAL);
                     }
                 });

@@ -1,6 +1,6 @@
 import { UIManager } from "../manager/UIManager";
 import { UINameEnum } from "../enum/UINameEnum";
-import PopupWarningUI from "../ui/PopUpWarningUI";
+import PopupWarningUI from "../ui/PopupWarningUI";
 import GameLauncher from "../logic/GameLauncher";
 
 class TipsStruct {
