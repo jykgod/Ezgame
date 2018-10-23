@@ -511,7 +511,6 @@ var NetWork;
             }
             var self = this;
             this.ws = new WebSocket("ws://" + url);
-            Logger.log(this.ws.url, "ServerSession");
             this.name = name;
             this.sesionState = SessionState.CONNECTING;
             this.ws.onopen = function (event) {
@@ -683,6 +682,7 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
+            Logger.info(reader.result);
             var obj = JSON.parse(reader.result);
             self.resultQueue[obj.Sequence] = obj;
             if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null) {
@@ -756,7 +756,7 @@ var RpcClient = /** @class */ (function () {
     };
     RpcClient.prototype.str2ab = function (str) {
         var buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
-        var bufView = new Uint16Array(buf);
+        var bufView = new Uint8Array(buf);
         for (var i = 0, strLen = str.length; i < strLen; i++) {
             bufView[i] = str.charCodeAt(i);
         }
@@ -815,6 +815,37 @@ var SimCivil;
         // template: The template to repeat for each matched item
         // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
         // More info: http://frhagn.github.io/Typewriter/
+        var EntityInspection = /** @class */ (function () {
+            function EntityInspection() {
+                // ENTITYID
+                this.EntityId = "00000000-0000-0000-0000-000000000000";
+                // TIMESTAMP
+                this.TimeStamp = new Date(0);
+                // OBSERVERID
+                this.ObserverId = "00000000-0000-0000-0000-000000000000";
+                // VALUES
+                this.Values = {};
+            }
+            return EntityInspection;
+        }());
+        Contract.EntityInspection = EntityInspection;
+        var EntityInspectionValue = /** @class */ (function () {
+            function EntityInspectionValue() {
+            }
+            return EntityInspectionValue;
+        }());
+        Contract.EntityInspectionValue = EntityInspectionValue;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
         var Gender;
         (function (Gender) {
             Gender[Gender["male"] = 0] = "male";
@@ -836,6 +867,7 @@ var SimCivil;
         var IAuth = /** @class */ (function () {
             function IAuth() {
             }
+            /** Obsolete*/
             IAuth.LogIn = function (username, password) {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
@@ -843,6 +875,14 @@ var SimCivil;
                     });
                 });
             };
+            IAuth.LogInAsync = function (username, password) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, false];
+                    });
+                });
+            };
+            /** Obsolete*/
             IAuth.LogOut = function () {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
@@ -850,6 +890,14 @@ var SimCivil;
                     });
                 });
             };
+            IAuth.LogOutAsync = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, void (0)];
+                    });
+                });
+            };
+            /** Obsolete*/
             IAuth.GetToken = function () {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
@@ -857,15 +905,31 @@ var SimCivil;
                     });
                 });
             };
+            IAuth.Register = function (username, password) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, false];
+                    });
+                });
+            };
             __decorate([
                 RPC("SimCivil.Contract.IAuth", false)
             ], IAuth, "LogIn", null);
             __decorate([
+                RPC("SimCivil.Contract.IAuth", false)
+            ], IAuth, "LogInAsync", null);
+            __decorate([
                 RPC("SimCivil.Contract.IAuth", true)
             ], IAuth, "LogOut", null);
             __decorate([
+                RPC("SimCivil.Contract.IAuth", true)
+            ], IAuth, "LogOutAsync", null);
+            __decorate([
                 RPC("SimCivil.Contract.IAuth", false)
             ], IAuth, "GetToken", null);
+            __decorate([
+                RPC("SimCivil.Contract.IAuth", false)
+            ], IAuth, "Register", null);
             return IAuth;
         }());
         Contract.IAuth = IAuth;
@@ -880,30 +944,13 @@ var SimCivil;
         // template: The template to repeat for each matched item
         // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
         // More info: http://frhagn.github.io/Typewriter/
-        var InteractionType;
-        (function (InteractionType) {
-        })(InteractionType = Contract.InteractionType || (Contract.InteractionType = {}));
         var IPlayerController = /** @class */ (function () {
             function IPlayerController() {
             }
-            IPlayerController.GetMoveState = function () {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, null];
-                    });
-                });
-            };
             IPlayerController.Move = function (direction, speed) {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
-                        return [2 /*return*/, null];
-                    });
-                });
-            };
-            IPlayerController.MovePercentage = function (direction, relativeSpeed) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, null];
+                        return [2 /*return*/, void (0)];
                     });
                 });
             };
@@ -914,14 +961,7 @@ var SimCivil;
                     });
                 });
             };
-            IPlayerController.Interaction = function (target, interactionType) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, void (0)];
-                    });
-                });
-            };
-            IPlayerController.Build = function (tileElement, position) {
+            IPlayerController.MoveTo = function (position, timestamp) {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         return [2 /*return*/, void (0)];
@@ -929,23 +969,14 @@ var SimCivil;
                 });
             };
             __decorate([
-                RPC("SimCivil.Contract.IPlayerController", false)
-            ], IPlayerController, "GetMoveState", null);
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController", false)
+                RPC("SimCivil.Contract.IPlayerController", true)
             ], IPlayerController, "Move", null);
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController", false)
-            ], IPlayerController, "MovePercentage", null);
             __decorate([
                 RPC("SimCivil.Contract.IPlayerController", true)
             ], IPlayerController, "Stop", null);
             __decorate([
                 RPC("SimCivil.Contract.IPlayerController", true)
-            ], IPlayerController, "Interaction", null);
-            __decorate([
-                RPC("SimCivil.Contract.IPlayerController", true)
-            ], IPlayerController, "Build", null);
+            ], IPlayerController, "MoveTo", null);
             return IPlayerController;
         }());
         Contract.IPlayerController = IPlayerController;
@@ -1027,6 +1058,10 @@ var SimCivil;
                 this.EntityChange = [];
                 // EVENTS
                 this.Events = [];
+                // POSITION
+                this.Position = null;
+                // SPEED
+                this.Speed = 0;
             }
             ViewChange.prototype.ToString = function () {
                 return null;
@@ -1086,9 +1121,19 @@ var SimCivil;
                     });
                 });
             };
+            IViewSynchronizer.DeregisterViewSync = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, void (0)];
+                    });
+                });
+            };
             __decorate([
                 RPC("SimCivil.Contract.IViewSynchronizer", true)
             ], IViewSynchronizer, "RegisterViewSync", null);
+            __decorate([
+                RPC("SimCivil.Contract.IViewSynchronizer", true)
+            ], IViewSynchronizer, "DeregisterViewSync", null);
             return IViewSynchronizer;
         }());
         Contract.IViewSynchronizer = IViewSynchronizer;

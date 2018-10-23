@@ -17,21 +17,25 @@ module SimCivil.Contract {
 		
 		
 		
+        
         @RPC("SimCivil.Contract.IRoleManager", false)
 		public static async CreateRole(option: CreateRoleOption): Promise<boolean>{
             return false;
         }
 		
+        
         @RPC("SimCivil.Contract.IRoleManager", false)
 		public static async GetRoleList(): Promise<RoleSummary[]>{
             return [];
         }
 		
+        
         @RPC("SimCivil.Contract.IRoleManager", false)
 		public static async UseRole(eid: string): Promise<boolean>{
             return false;
         }
 		
+        
         @RPC("SimCivil.Contract.IRoleManager", false)
 		public static async ReleaseRole(): Promise<boolean>{
             return false;

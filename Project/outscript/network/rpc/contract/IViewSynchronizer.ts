@@ -19,6 +19,10 @@ module SimCivil.Contract {
         public EntityChange: EntityDto[] = [];
         // EVENTS
         public Events: ViewEvent[] = [];
+        // POSITION
+        public Position: { X: number, Y: number } = null;
+        // SPEED
+        public Speed: number = 0;
 		
 		public ToString(): string{
 			return null;
@@ -77,8 +81,15 @@ module SimCivil.Contract {
 		
 		
 		
+        
         @RPC("SimCivil.Contract.IViewSynchronizer", true)
 		public static async RegisterViewSync(callback: Action<ViewChange>): Promise<void>{
+            return void(0);
+        }
+		
+        
+        @RPC("SimCivil.Contract.IViewSynchronizer", true)
+		public static async DeregisterViewSync(): Promise<void>{
             return void(0);
         }
 		

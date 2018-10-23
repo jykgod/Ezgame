@@ -28,6 +28,8 @@ export default class LoginUI extends UIBase {
     public passwrodEditBox: cc.EditBox = null;
     @property(cc.Button)
     public loginButton: cc.Button = null;
+    @property(cc.Button)
+    public registerButton: cc.Button = null;
 
     public hide() {
         UIAnimationUtils.ScaleOut(this.node);
@@ -40,28 +42,12 @@ export default class LoginUI extends UIBase {
      * 点击登录按钮
      */
     public onClickLogin() {
-        this.loginButton.interactable = false;
-
-        // 尝试与服务器建立连接，初始化rpcclient
-        if (RpcClient.Instance.session == null || RpcClient.Instance.session.connected == false) {
-            JsonConigUtils.ReadJsonObjectByName(JsonConfigNameEnum.Client_Config, (error, clientConfig) => {
-                if (error == null) {
-                    // offline模式不链接服务器直接进入游戏
-                    if (clientConfig.OfflineMode == true) {
-                        GameManager.Instance.stateMachine.ChangeState(GameStateEnum.GAME_STATE_SCENE_LOADING, SceneEnum.MAIN, GameStateEnum.GAME_STATE_MAIN_NORMAL);
-                    } else {
-                        RpcClient.Instance.Init(clientConfig.ServerIP, () => this.onClickLogin());
-                    }
-                } else {
-                    this.loginButton.interactable = true;
-                    GloableUtils.ShowTips(LocalizationManager.Instance.GetLocalizationTextByKey("login_text_tips_error"));
-                }
-            });
-        } else {
+        this.SetButtonEnable(false);
+        if (this.CheckIfConnectServer(() => this.onClickRegister())) {
             //已经建立后直接调用登录接口
-            SimCivil.Contract.IAuth.LogIn(this.accountEditBox.string, this.passwrodEditBox.string).then(
+            SimCivil.Contract.IAuth.LogInAsync(this.accountEditBox.string, this.passwrodEditBox.string).then(
                 (logined) => {
-                    this.loginButton.interactable = true;
+                    this.SetButtonEnable(true);
                     if (logined == null || logined == false) {
                         GloableUtils.ShowTips(LocalizationManager.Instance.GetLocalizationTextByKey("login_text_tips_error"));
                     } else {
@@ -69,5 +55,53 @@ export default class LoginUI extends UIBase {
                     }
                 });
         }
+    }
+
+    /**
+     * 点击注册按钮
+     */
+    public onClickRegister() {
+        this.SetButtonEnable(false);
+        if (this.CheckIfConnectServer(() => this.onClickRegister())) {
+            //已经建立后直接调用注册接口
+            SimCivil.Contract.IAuth.Register(this.accountEditBox.string, this.passwrodEditBox.string).then(
+                (success) => {
+                    this.SetButtonEnable(true);
+                    if (success == null || success == false) {
+                        GloableUtils.ShowTips(LocalizationManager.Instance.GetLocalizationTextByKey("register_text_tips_error"));
+                    } else {
+                        GloableUtils.ShowTips(LocalizationManager.Instance.GetLocalizationTextByKey("register_text_tips_success"));
+                    }
+                });
+        }
+    }
+
+    private SetButtonEnable(enable: boolean) {
+        this.loginButton.interactable = enable;
+        this.registerButton.interactable = enable;
+    }
+
+    /**
+     * 检查是否和服务器建立了连接，如果没有则创建连接
+     * @param callback 建立连接过后的回到函数
+     */
+    private CheckIfConnectServer(callback): boolean {
+        if (RpcClient.Instance.session == null || RpcClient.Instance.session.connected == false) {
+            JsonConigUtils.ReadJsonObjectByName(JsonConfigNameEnum.Client_Config, (error, clientConfig) => {
+                if (error == null) {
+                    // offline模式不链接服务器直接进入游戏
+                    if (clientConfig.OfflineMode == true) {
+                        GameManager.Instance.stateMachine.ChangeState(GameStateEnum.GAME_STATE_SCENE_LOADING, SceneEnum.MAIN, GameStateEnum.GAME_STATE_MAIN_NORMAL);
+                    } else {
+                        RpcClient.Instance.Init(clientConfig.ServerIP, callback);
+                    }
+                } else {
+                    this.SetButtonEnable(true);
+                    GloableUtils.ShowTips(LocalizationManager.Instance.GetLocalizationTextByKey("connet_server_error"));
+                }
+            });
+            return false;
+        }
+        return true;
     }
 }

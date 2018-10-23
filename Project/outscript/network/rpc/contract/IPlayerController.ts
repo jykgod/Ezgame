@@ -11,43 +11,27 @@ module SimCivil.Contract {
     
 
 	
-	export enum InteractionType{
-		
-	}	
-	
 
 	
 	export class IPlayerController{
 		
 		
 		
-        @RPC("SimCivil.Contract.IPlayerController", false)
-		public static async GetMoveState(): Promise<{ X: number, Y: number, Speed: number }>{
-            return null;
+        
+        @RPC("SimCivil.Contract.IPlayerController", true)
+		public static async Move(direction: { X: number, Y: number }, speed: number): Promise<void>{
+            return void(0);
         }
 		
-        @RPC("SimCivil.Contract.IPlayerController", false)
-		public static async Move(direction: { X: number, Y: number }, speed: number): Promise<{ X: number, Y: number, Speed: number }>{
-            return null;
-        }
-		
-        @RPC("SimCivil.Contract.IPlayerController", false)
-		public static async MovePercentage(direction: { X: number, Y: number }, relativeSpeed: number): Promise<{ X: number, Y: number, Speed: number }>{
-            return null;
-        }
-		
+        
         @RPC("SimCivil.Contract.IPlayerController", true)
 		public static async Stop(): Promise<void>{
             return void(0);
         }
 		
+        
         @RPC("SimCivil.Contract.IPlayerController", true)
-		public static async Interaction(target: string, interactionType: InteractionType): Promise<void>{
-            return void(0);
-        }
-		
-        @RPC("SimCivil.Contract.IPlayerController", true)
-		public static async Build(tileElement: string, position: { X: number, Y: number }): Promise<void>{
+		public static async MoveTo(position: { X: number, Y: number }, timestamp: Date): Promise<void>{
             return void(0);
         }
 		

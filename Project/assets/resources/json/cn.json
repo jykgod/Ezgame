@@ -1,8 +1,12 @@
 {
     "login_btn_login" : "登录",
     "login_text_id" : "账号:",
+    "register_text_id" : "注册",
     "login_text_id_edit" : "请输入账号...",
     "login_text_psw": "密码:",
     "login_text_psw_edit" : "请输入密码...",
-    "login_text_tips_error" : "登录失败"
+    "login_text_tips_error" : "登录失败",
+    "connet_server_error" : "建立服务器连接失败",
+    "register_text_tips_error" : "注册失败",
+    "register_text_tips_success" : "注册账号成功"
 }

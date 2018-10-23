@@ -77,6 +77,7 @@ class RpcClient {
         let reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev: ProgressEvent) {
+            Logger.info(reader.result);
             let obj: SimCivil.Rpc.RpcResponse = JSON.parse(reader.result);
             self.resultQueue[obj.Sequence] = obj;
             if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null) {
@@ -141,7 +142,7 @@ class RpcClient {
 
     private str2ab(str): ArrayBuffer {
         var buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
-        var bufView = new Uint16Array(buf);
+        var bufView = new Uint8Array(buf);
         for (var i = 0, strLen = str.length; i < strLen; i++) {
             bufView[i] = str.charCodeAt(i);
         }
