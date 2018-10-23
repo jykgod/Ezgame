@@ -15,4 +15,4 @@ namespace Tools {
     }
 }
 
-var LocalStorageBase = Tools.LocalStorageBase
+(<any>window).LocalStorageBase = Tools.LocalStorageBase
