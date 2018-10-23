@@ -10,6 +10,7 @@ module SimCivil.Contract {
 
     
     export class RoleSummary {
+        public $type = "SimCivil.Contract.RoleSummary, SimCivil.Contract"
         
         // ID
         public Id: string = "00000000-0000-0000-0000-000000000000";

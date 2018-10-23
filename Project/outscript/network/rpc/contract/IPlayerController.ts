@@ -17,19 +17,16 @@ module SimCivil.Contract {
 		
 		
 		
-        
         @RPC("SimCivil.Contract.IPlayerController", true)
 		public static async Move(direction: { X: number, Y: number }, speed: number): Promise<void>{
             return void(0);
         }
 		
-        
         @RPC("SimCivil.Contract.IPlayerController", true)
 		public static async Stop(): Promise<void>{
             return void(0);
         }
 		
-        
         @RPC("SimCivil.Contract.IPlayerController", true)
 		public static async MoveTo(position: { X: number, Y: number }, timestamp: Date): Promise<void>{
             return void(0);

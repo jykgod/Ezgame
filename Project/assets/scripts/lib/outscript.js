@@ -52,43 +52,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var ECS;
-(function (ECS) {
-    var SystemManager = /** @class */ (function () {
-        function SystemManager() {
-        }
-        return SystemManager;
-    }());
-    ECS.SystemManager = SystemManager;
-})(ECS || (ECS = {}));
-var ECS;
-(function (ECS) {
-    var World = /** @class */ (function () {
-        /**
-         * 构造函数
-         * @param name 命名
-         */
-        function World(name) {
-            this._name = name;
-        }
-        Object.defineProperty(World, "active", {
-            get: function () {
-                return this._active;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(World.prototype, "name", {
-            get: function () {
-                return this._name;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        return World;
-    }());
-    ECS.World = World;
-})(ECS || (ECS = {}));
 /**
  * 统一管理UI的切换时动画
  * 保持游戏UI动画风格的一致性
@@ -186,6 +149,52 @@ var UIAnimationUtils = /** @class */ (function () {
     };
     return UIAnimationUtils;
 }());
+var ECS;
+(function (ECS) {
+    var ComponentSystem = /** @class */ (function () {
+        function ComponentSystem() {
+        }
+        return ComponentSystem;
+    }());
+    ECS.ComponentSystem = ComponentSystem;
+})(ECS || (ECS = {}));
+var ECS;
+(function (ECS) {
+    var SystemManager = /** @class */ (function () {
+        function SystemManager() {
+        }
+        return SystemManager;
+    }());
+    ECS.SystemManager = SystemManager;
+})(ECS || (ECS = {}));
+var ECS;
+(function (ECS) {
+    var World = /** @class */ (function () {
+        /**
+         * 构造函数
+         * @param name 命名
+         */
+        function World(name) {
+            this._name = name;
+        }
+        Object.defineProperty(World, "active", {
+            get: function () {
+                return this._active;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(World.prototype, "name", {
+            get: function () {
+                return this._name;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return World;
+    }());
+    ECS.World = World;
+})(ECS || (ECS = {}));
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -773,23 +782,24 @@ var RpcClient = /** @class */ (function () {
             "ServiceName": serviceName,
             "MethodName": methodName,
             "Arguments": args,
-            "Sequnce": sequence,
+            "Sequence": sequence,
             "TimeStamp": new Date().toISOString()
         };
         // if (!("TextEncoder" in window)) {
         //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
         //     return;
         // }
+        Tools.Logger.log(JSON.stringify(json), "RPC");
         Tools.Logger.info(json);
-        // let enc = new TextEncoder();
-        // let str = JSON.stringify(json);
+        var enc = new TextEncoder();
+        var str = JSON.stringify(json);
         // // Logger.log(str, "RPC");
         // // let length = enc.encode(str).length;
         // // str = "  ".concat(str);
         // // let arr = enc.encode(str);
         // // arr.set([length / 256, length % 256], 0);
-        // this.session.SendMessage(enc.encode(str).buffer);
-        this.session.SendMessage(this.str2ab(JSON.stringify(json)));
+        this.session.SendMessage(enc.encode(str).buffer);
+        // this.session.SendMessage(this.str2ab(JSON.stringify(json)));
     };
     RpcClient.prototype.str2ab = function (str) {
         var buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
@@ -831,6 +841,7 @@ var SimCivil;
         // More info: http://frhagn.github.io/Typewriter/
         var CreateRoleOption = /** @class */ (function () {
             function CreateRoleOption() {
+                this.$type = "SimCivil.Contract.CreateRoleOption, SimCivil.Contract";
                 // NAME
                 this.Name = null;
                 // GENDER
@@ -854,6 +865,7 @@ var SimCivil;
         // More info: http://frhagn.github.io/Typewriter/
         var EntityInspection = /** @class */ (function () {
             function EntityInspection() {
+                this.$type = "SimCivil.Contract.EntityInspection, SimCivil.Contract";
                 // ENTITYID
                 this.EntityId = "00000000-0000-0000-0000-000000000000";
                 // TIMESTAMP
@@ -868,6 +880,7 @@ var SimCivil;
         Contract.EntityInspection = EntityInspection;
         var EntityInspectionValue = /** @class */ (function () {
             function EntityInspectionValue() {
+                this.$type = "SimCivil.Contract.EntityInspectionValue, SimCivil.Contract";
             }
             return EntityInspectionValue;
         }());
@@ -904,7 +917,6 @@ var SimCivil;
         var IAuth = /** @class */ (function () {
             function IAuth() {
             }
-            /** Obsolete*/
             IAuth.LogIn = function (username, password) {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
@@ -919,7 +931,6 @@ var SimCivil;
                     });
                 });
             };
-            /** Obsolete*/
             IAuth.LogOut = function () {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
@@ -934,7 +945,6 @@ var SimCivil;
                     });
                 });
             };
-            /** Obsolete*/
             IAuth.GetToken = function () {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
@@ -1087,6 +1097,7 @@ var SimCivil;
         // More info: http://frhagn.github.io/Typewriter/
         var ViewChange = /** @class */ (function () {
             function ViewChange() {
+                this.$type = "SimCivil.Contract.ViewChange, SimCivil.Contract";
                 // TICKCOUNT
                 this.TickCount = 0;
                 // TILECHANGE
@@ -1108,6 +1119,7 @@ var SimCivil;
         Contract.ViewChange = ViewChange;
         var ViewEvent = /** @class */ (function () {
             function ViewEvent() {
+                this.$type = "SimCivil.Contract.ViewEvent, SimCivil.Contract";
                 // EVENTTYPE
                 this.EventType = null;
                 // TARGETENTITYID
@@ -1121,6 +1133,7 @@ var SimCivil;
         Contract.ViewEvent = ViewEvent;
         var EntityDto = /** @class */ (function () {
             function EntityDto() {
+                this.$type = "SimCivil.Contract.EntityDto, SimCivil.Contract";
                 // ID
                 this.Id = "00000000-0000-0000-0000-000000000000";
                 // NAME
@@ -1136,6 +1149,7 @@ var SimCivil;
         Contract.EntityDto = EntityDto;
         var TileDto = /** @class */ (function () {
             function TileDto() {
+                this.$type = "SimCivil.Contract.TileDto, SimCivil.Contract";
                 // POSITION
                 this.Position = null;
                 // SURFACE
@@ -1202,6 +1216,7 @@ var SimCivil;
         // More info: http://frhagn.github.io/Typewriter/
         var RoleSummary = /** @class */ (function () {
             function RoleSummary() {
+                this.$type = "SimCivil.Contract.RoleSummary, SimCivil.Contract";
                 // ID
                 this.Id = "00000000-0000-0000-0000-000000000000";
                 // NAME

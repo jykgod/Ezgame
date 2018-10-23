@@ -17,37 +17,31 @@ module SimCivil.Contract {
 		
 		
 		
-        /** Obsolete*/
         @RPC("SimCivil.Contract.IAuth", false)
 		public static async LogIn(username: string, password: string): Promise<boolean>{
             return false;
         }
 		
-        
         @RPC("SimCivil.Contract.IAuth", false)
 		public static async LogInAsync(username: string, password: string): Promise<boolean>{
             return false;
         }
 		
-        /** Obsolete*/
         @RPC("SimCivil.Contract.IAuth", true)
 		public static async LogOut(): Promise<void>{
             return void(0);
         }
 		
-        
         @RPC("SimCivil.Contract.IAuth", true)
 		public static async LogOutAsync(): Promise<void>{
             return void(0);
         }
 		
-        /** Obsolete*/
         @RPC("SimCivil.Contract.IAuth", false)
 		public static async GetToken(): Promise<string>{
             return null;
         }
 		
-        
         @RPC("SimCivil.Contract.IAuth", false)
 		public static async Register(username: string, password: string): Promise<boolean>{
             return false;

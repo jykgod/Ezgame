@@ -10,6 +10,7 @@ module SimCivil.Contract {
 
     
     export class CreateRoleOption {
+        public $type = "SimCivil.Contract.CreateRoleOption, SimCivil.Contract"
         
         // NAME
         public Name: string = null;

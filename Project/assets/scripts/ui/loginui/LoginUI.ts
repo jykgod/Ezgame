@@ -43,7 +43,7 @@ export default class LoginUI extends UIBase {
      */
     public onClickLogin() {
         this.SetButtonEnable(false);
-        if (this.CheckIfConnectServer(() => this.onClickRegister())) {
+        if (this.CheckIfConnectServer(() => this.onClickLogin())) {
             //已经建立后直接调用登录接口
             SimCivil.Contract.IAuth.LogInAsync(this.accountEditBox.string, this.passwrodEditBox.string).then(
                 (logined) => {

@@ -121,23 +121,24 @@ class RpcClient {
             "ServiceName": serviceName,
             "MethodName": methodName,
             "Arguments": args,
-            "Sequnce": sequence,
+            "Sequence": sequence,
             "TimeStamp": new Date().toISOString()
         }
         // if (!("TextEncoder" in window)) {
         //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
         //     return;
         // }
+        Tools.Logger.log(JSON.stringify(json), "RPC");
         Tools.Logger.info(json);
-        // let enc = new TextEncoder();
-        // let str = JSON.stringify(json);
+        let enc = new TextEncoder();
+        let str = JSON.stringify(json);
         // // Logger.log(str, "RPC");
         // // let length = enc.encode(str).length;
         // // str = "  ".concat(str);
         // // let arr = enc.encode(str);
         // // arr.set([length / 256, length % 256], 0);
-        // this.session.SendMessage(enc.encode(str).buffer);
-        this.session.SendMessage(this.str2ab(JSON.stringify(json)));
+        this.session.SendMessage(enc.encode(str).buffer);
+        // this.session.SendMessage(this.str2ab(JSON.stringify(json)));
     }
 
     private str2ab(str): ArrayBuffer {

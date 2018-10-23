@@ -10,6 +10,7 @@ module SimCivil.Contract {
 
     
     export class EntityInspection {
+        public $type = "SimCivil.Contract.EntityInspection, SimCivil.Contract"
         
         // ENTITYID
         public EntityId: string = "00000000-0000-0000-0000-000000000000";
@@ -23,6 +24,7 @@ module SimCivil.Contract {
 
     }
     export class EntityInspectionValue {
+        public $type = "SimCivil.Contract.EntityInspectionValue, SimCivil.Contract"
         
 		
 
