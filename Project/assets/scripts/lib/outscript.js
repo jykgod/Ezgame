@@ -52,6 +52,43 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var ECS;
+(function (ECS) {
+    var SystemManager = /** @class */ (function () {
+        function SystemManager() {
+        }
+        return SystemManager;
+    }());
+    ECS.SystemManager = SystemManager;
+})(ECS || (ECS = {}));
+var ECS;
+(function (ECS) {
+    var World = /** @class */ (function () {
+        /**
+         * 构造函数
+         * @param name 命名
+         */
+        function World(name) {
+            this._name = name;
+        }
+        Object.defineProperty(World, "active", {
+            get: function () {
+                return this._active;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(World.prototype, "name", {
+            get: function () {
+                return this._name;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return World;
+    }());
+    ECS.World = World;
+})(ECS || (ECS = {}));
 /**
  * 统一管理UI的切换时动画
  * 保持游戏UI动画风格的一致性
