@@ -1,6 +1,4 @@
-﻿
-module SimCivil.Contract {
-
+﻿module SimCivil.Contract {
     // $Classes/Enums/Interfaces(filter)[template][separator]
     // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
     // template: The template to repeat for each matched item
@@ -18,7 +16,7 @@ module SimCivil.Contract {
 		
 		
         @RPC("SimCivil.Contract.IPlayerController", true)
-		public static async Move(direction: { X: number, Y: number }, speed: number): Promise<void>{
+		public static async Move(direction: { Item1: number, Item2: number }, speed: number): Promise<void>{
             return void(0);
         }
 		
@@ -28,7 +26,7 @@ module SimCivil.Contract {
         }
 		
         @RPC("SimCivil.Contract.IPlayerController", true)
-		public static async MoveTo(position: { X: number, Y: number }, timestamp: Date): Promise<void>{
+		public static async MoveTo(value: ValueTuple, timestamp: Date): Promise<void>{
             return void(0);
         }
 		
