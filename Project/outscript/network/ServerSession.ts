@@ -41,7 +41,7 @@ namespace NetWork {
                 }
             }
             this.ws.onmessage = function (event: MessageEvent) {
-                Tools.Logger.log("getmessage:" + event.data, self.name);
+               // Tools.Logger.log("getmessage:" + event.data, self.name);
                 if (self.OnGetMessage != undefined) {
                     self.OnGetMessage(event);
                 }
