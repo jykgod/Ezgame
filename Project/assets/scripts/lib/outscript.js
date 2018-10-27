@@ -333,10 +333,81 @@ var Tools;
 })(Tools || (Tools = {}));
 var Tools;
 (function (Tools) {
+    /**
+     * 用于从本地读写数据
+     */
+    var LocalStorageUtils = /** @class */ (function () {
+        function LocalStorageUtils() {
+        }
+        LocalStorageUtils.setNumber = function (key, value) {
+            cc.sys.localStorage.setItem(key, value.toString());
+        };
+        LocalStorageUtils.setString = function (key, value) {
+            cc.sys.localStorage.setItem(key, value);
+        };
+        LocalStorageUtils.setObject = function (key, value) {
+            cc.sys.localStorage.setItem(key, JSON.stringify(value));
+        };
+        LocalStorageUtils.getNumber = function (key, value) {
+            if (value === void 0) { value = 0; }
+            var ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined)
+                return value;
+            return +ret;
+        };
+        LocalStorageUtils.getString = function (key, value) {
+            if (value === void 0) { value = null; }
+            var ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined)
+                return value;
+            return ret;
+        };
+        LocalStorageUtils.getObject = function (key, value) {
+            if (value === void 0) { value = null; }
+            var ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined)
+                return value;
+            return JSON.parse(ret);
+        };
+        LocalStorageUtils.loadStorageObject = function (key) {
+            var ret = LocalStorageUtils.getObject(key);
+            if (ret == null || ret == undefined)
+                return null;
+            ret.Key = Tools.LocalStorageBase.prototype.Key;
+            ret.Save = Tools.LocalStorageBase.prototype.Save;
+            return ret;
+        };
+        // public static loadStorageObject<T extends LocalStorageBase>(): T{
+        //     return <T>LocalStorageUtils.getObject();
+        // }
+        LocalStorageUtils.saveStorageObject = function (obj) {
+            obj.Save();
+        };
+        return LocalStorageUtils;
+    }());
+    Tools.LocalStorageUtils = LocalStorageUtils;
+})(Tools || (Tools = {}));
+window.LocalStorageUtils = Tools.LocalStorageUtils;
+///<reference path="./LocalStorageUtils.ts"/>
+var Tools;
+(function (Tools) {
     var Logger = /** @class */ (function () {
         function Logger() {
         }
+        Object.defineProperty(Logger, "EnableLog", {
+            get: function () {
+                return this._enableLog;
+            },
+            set: function (value) {
+                this._enableLog = value;
+                Tools.LocalStorageUtils.setNumber("5_", value ? 1 : 0);
+            },
+            enumerable: true,
+            configurable: true
+        });
         Logger.log = function (arg, tag) {
+            if (this._enableLog == false)
+                return;
             if (tag != null && tag != undefined) {
                 console.log("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg + " ");
             }
@@ -345,6 +416,8 @@ var Tools;
             }
         };
         Logger.warn = function (arg, tag) {
+            if (this._enableLog == false)
+                return;
             if (tag != null && tag != undefined) {
                 console.warn("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
             }
@@ -353,6 +426,8 @@ var Tools;
             }
         };
         Logger.error = function (arg, tag) {
+            if (this._enableLog == false)
+                return;
             if (tag != null && tag != undefined) {
                 console.error("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
             }
@@ -361,8 +436,14 @@ var Tools;
             }
         };
         Logger.info = function (arg) {
+            if (this._enableLog == false)
+                return;
             console.info(arg);
         };
+        /**
+        * 是否开启log
+        */
+        Logger._enableLog = Tools.LocalStorageUtils.getNumber("5_", 0) == 1;
         return Logger;
     }());
     Tools.Logger = Logger;
@@ -574,7 +655,7 @@ var NetWork;
                 }
             };
             this.ws.onmessage = function (event) {
-                Tools.Logger.log("getmessage:" + event.data, self.name);
+                // Tools.Logger.log("getmessage:" + event.data, self.name);
                 if (self.OnGetMessage != undefined) {
                     self.OnGetMessage(event);
                 }
@@ -635,9 +716,25 @@ var NetWork;
         SessionState[SessionState["DISCONNECTING"] = 3] = "DISCONNECTING";
     })(SessionState = NetWork.SessionState || (NetWork.SessionState = {}));
 })(NetWork || (NetWork = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Rpc;
+    (function (Rpc) {
+        var Callback;
+        (function (Callback) {
+            var RpcCallback = /** @class */ (function () {
+                function RpcCallback() {
+                }
+                return RpcCallback;
+            }());
+            Callback.RpcCallback = RpcCallback;
+        })(Callback = Rpc.Callback || (Rpc.Callback = {}));
+    })(Rpc = SimCivil.Rpc || (SimCivil.Rpc = {}));
+})(SimCivil || (SimCivil = {}));
 /**
  * RPC修饰器
  * 用来修饰客户端发起的RPC调用函数
+ * 整个RPC的包都建立在c#服务器端使用Json.net对数据结构进行序列化的情况下完成的,并不通用！
  */
 function RPC(serviceName, noReturn) {
     /**
@@ -650,12 +747,17 @@ function RPC(serviceName, noReturn) {
                 args[_i] = arguments[_i];
             }
             return __awaiter(this, void 0, void 0, function () {
-                var _sequence, ret;
+                var i, _sequence, ret;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            Tools.Logger.log(typeof target);
-                            Tools.Logger.log(serviceName);
+                            // Tools.Logger.log(typeof target);
+                            // Tools.Logger.log(serviceName);
+                            for (i = 0; i < args.length; i++) {
+                                if (typeof (args[i]) == "function") {
+                                    args[i] = RpcClient.Instance.AddCallBack(target, args[i]);
+                                }
+                            }
                             _sequence = RpcClient.Instance.GetSequence();
                             RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
                             if (!(noReturn == false)) return [3 /*break*/, 2];
@@ -664,6 +766,12 @@ function RPC(serviceName, noReturn) {
                             ret = _a.sent();
                             if (ret == null || ret == undefined)
                                 return [2 /*return*/, null];
+                            if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
+                                return [2 /*return*/, ret.ReturnValue["$values"]];
+                            }
+                            if (ret.ReturnValue["$value"] != null && ret.ReturnValue["$value"] != undefined) {
+                                return [2 /*return*/, ret.ReturnValue["$value"]];
+                            }
                             return [2 /*return*/, ret.ReturnValue];
                         case 2: return [2 /*return*/];
                     }
@@ -693,6 +801,14 @@ var RpcClient = /** @class */ (function () {
          * 消息promise队列
          */
         this.promiseQueue = new Array();
+        /**
+         * 消息回调函数队列
+         */
+        this.callbackQueue = new Array();
+        /**
+         * 消息回调函数目标对象队列
+         */
+        this.callbackTargetQueue = new Array();
         /**
          * 超时时间
          */
@@ -728,11 +844,26 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
-            Logger.info(reader.result);
-            var obj = JSON.parse(reader.result);
-            self.resultQueue[obj.Sequence] = obj;
-            if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null) {
-                self.promiseQueue[obj.Sequence]();
+            var _a;
+            //Logger.info(reader.result);
+            var ret = JSON.parse(reader.result);
+            if (ret["$type"].indexOf("SimCivil.Rpc.RpcResponse") != -1) {
+                var obj = JSON.parse(reader.result);
+                self.resultQueue[obj.Sequence] = obj;
+                if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null) {
+                    self.promiseQueue[obj.Sequence]();
+                }
+            }
+            if (ret["$type"].indexOf("SimCivil.Rpc.Callback.RpcCallback") != -1) {
+                var obj = JSON.parse(reader.result);
+                if (self.callbackQueue[obj.CallbackId] != undefined && self.callbackQueue[obj.CallbackId] != null) {
+                    if (obj.Parameters != null && obj.Parameters != undefined) {
+                        (_a = self.callbackQueue[obj.CallbackId]).call.apply(_a, [self.callbackTargetQueue[obj.CallbackId]].concat(obj.Parameters));
+                    }
+                    else {
+                        self.callbackQueue[obj.CallbackId].call(self.callbackTargetQueue[obj.CallbackId]);
+                    }
+                }
             }
         };
     };
@@ -741,6 +872,15 @@ var RpcClient = /** @class */ (function () {
      */
     RpcClient.prototype.GetSequence = function () {
         return this._sequence++;
+    };
+    /**
+     * 添加回调函数并返回id
+     * @param func 回调函数
+     */
+    RpcClient.prototype.AddCallBack = function (target, func) {
+        this.callbackQueue.push(func);
+        this.callbackTargetQueue.push(target);
+        return this.callbackQueue.length - 1;
     };
     /**
      * 通过序列号获取消息类型
@@ -790,22 +930,47 @@ var RpcClient = /** @class */ (function () {
         //     return;
         // }
         Tools.Logger.log(JSON.stringify(json), "RPC");
-        Tools.Logger.info(json);
-        var enc = new TextEncoder();
-        var str = JSON.stringify(json);
+        //Tools.Logger.info(json);
+        // let enc = new TextEncoder();
+        // let str = JSON.stringify(json);
         // // Logger.log(str, "RPC");
         // // let length = enc.encode(str).length;
         // // str = "  ".concat(str);
         // // let arr = enc.encode(str);
         // // arr.set([length / 256, length % 256], 0);
-        this.session.SendMessage(enc.encode(str).buffer);
-        // this.session.SendMessage(this.str2ab(JSON.stringify(json)));
+        // this.session.SendMessage(enc.encode(str).buffer);
+        this.session.SendMessage(this.stringToByte(JSON.stringify(json)));
     };
-    RpcClient.prototype.str2ab = function (str) {
-        var buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
+    //字符串转ArrayBuffer
+    RpcClient.prototype.stringToByte = function (str) {
+        var bytes = new Array();
+        var len, c;
+        len = str.length;
+        for (var i = 0; i < len; i++) {
+            c = str.charCodeAt(i);
+            if (c >= 0x010000 && c <= 0x10FFFF) {
+                bytes.push(((c >> 18) & 0x07) | 0xF0);
+                bytes.push(((c >> 12) & 0x3F) | 0x80);
+                bytes.push(((c >> 6) & 0x3F) | 0x80);
+                bytes.push((c & 0x3F) | 0x80);
+            }
+            else if (c >= 0x000800 && c <= 0x00FFFF) {
+                bytes.push(((c >> 12) & 0x0F) | 0xE0);
+                bytes.push(((c >> 6) & 0x3F) | 0x80);
+                bytes.push((c & 0x3F) | 0x80);
+            }
+            else if (c >= 0x000080 && c <= 0x0007FF) {
+                bytes.push(((c >> 6) & 0x1F) | 0xC0);
+                bytes.push((c & 0x3F) | 0x80);
+            }
+            else {
+                bytes.push(c & 0xFF);
+            }
+        }
+        var buf = new ArrayBuffer(bytes.length);
         var bufView = new Uint8Array(buf);
         for (var i = 0, strLen = str.length; i < strLen; i++) {
-            bufView[i] = str.charCodeAt(i);
+            bufView[i] = bytes[i];
         }
         return buf;
     };
@@ -1008,7 +1173,7 @@ var SimCivil;
                     });
                 });
             };
-            IPlayerController.MoveTo = function (position, timestamp) {
+            IPlayerController.MoveTo = function (value, timestamp) {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         return [2 /*return*/, void (0)];
@@ -1234,6 +1399,21 @@ var SimCivil;
         Contract.RoleSummary = RoleSummary;
     })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
 })(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        var ValueTuple = /** @class */ (function () {
+            function ValueTuple(value) {
+                this.$type = "System.ValueTuple`2[[System.Single, mscorlib],[System.Single, mscorlib]], System.ValueTuple";
+                this.Item1 = +value.Item1.toPrecision(6);
+                this.Item2 = +value.Item2.toPrecision(6);
+            }
+            return ValueTuple;
+        }());
+        Contract.ValueTuple = ValueTuple;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
 var Tools;
 (function (Tools) {
     var LocalStorageBase = /** @class */ (function () {
@@ -1251,52 +1431,6 @@ var Tools;
     Tools.LocalStorageBase = LocalStorageBase;
 })(Tools || (Tools = {}));
 window.LocalStorageBase = Tools.LocalStorageBase;
-var Tools;
-(function (Tools) {
-    /**
-     * 用于从本地读写数据
-     */
-    var LocalStorageUtils = /** @class */ (function () {
-        function LocalStorageUtils() {
-        }
-        LocalStorageUtils.setNumber = function (key, value) {
-            cc.sys.localStorage.setItem(key, value.toString());
-        };
-        LocalStorageUtils.setString = function (key, value) {
-            cc.sys.localStorage.setItem(key, value);
-        };
-        LocalStorageUtils.setObject = function (key, value) {
-            cc.sys.localStorage.setItem(key, JSON.stringify(value));
-        };
-        LocalStorageUtils.getNumber = function (key) {
-            var ret = cc.sys.localStorage.getItem(key);
-            return +ret;
-        };
-        LocalStorageUtils.getString = function (key) {
-            return cc.sys.localStorage.getItem(key);
-        };
-        LocalStorageUtils.getObject = function (key) {
-            return JSON.parse(cc.sys.localStorage.getItem(key));
-        };
-        LocalStorageUtils.loadStorageObject = function (key) {
-            var ret = LocalStorageUtils.getObject(key);
-            if (ret == null || ret == undefined)
-                return null;
-            ret.Key = Tools.LocalStorageBase.prototype.Key;
-            ret.Save = Tools.LocalStorageBase.prototype.Save;
-            return ret;
-        };
-        // public static loadStorageObject<T extends LocalStorageBase>(): T{
-        //     return <T>LocalStorageUtils.getObject();
-        // }
-        LocalStorageUtils.saveStorageObject = function (obj) {
-            obj.Save();
-        };
-        return LocalStorageUtils;
-    }());
-    Tools.LocalStorageUtils = LocalStorageUtils;
-})(Tools || (Tools = {}));
-var LocalStorageUtils = Tools.LocalStorageUtils;
 var Tools;
 (function (Tools) {
     var QueueNode = /** @class */ (function () {

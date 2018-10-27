@@ -17,9 +17,11 @@ export default class MovementTest extends cc.Component {
     private pressing_s: boolean;
     private pressing_d: boolean;
     private speed: number = 1;
-    private v :cc.Vec2 = cc.Vec2.ZERO;
+    public static deltaTimePreFrame: number = 1;
 
     async start() {
+        this.node.position = cc.Vec2.ZERO;
+        let inited = false;
         Logger.log("start", "MovementTest");
         this.pressing_w = false;
         this.pressing_a = false;
@@ -38,19 +40,29 @@ export default class MovementTest extends cc.Component {
         success = await SimCivil.Contract.IRoleManager.UseRole((await SimCivil.Contract.IRoleManager.GetRoleList())[0].Id);
         if (success == true) {
             Logger.log("UseRole success！", "MovementTest");
-            SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
+            await SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
                 viewChanged = <SimCivil.Contract.ViewChange>viewChanged;
-                // Logger.info(viewChanged);
+                if (inited == false) {
+                    this.node.position = this.serverPosToUIPos(new cc.Vec2(viewChanged.Position.Item1, viewChanged.Position.Item2));
+                    inited = true;
+                    this.schedule(() => this.logicUpdate(), MovementTest.deltaTimePreFrame);
+                }
+                Logger.info(viewChanged);
             });
         } else {
             Logger.log("UseRole faild", "MovementTest");
         }
-        this.schedule(() => this.logicUpdate(), 0.5);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     }
 
     logicUpdate() {
+        Logger.log(this.node.position, name);
+        let serverPos = this.uiPosToServerPos(this.node.position);
+        SimCivil.Contract.IPlayerController.MoveTo(new SimCivil.Contract.ValueTuple({ Item1: serverPos.x, Item2: serverPos.y }), new Date());
+    }
+
+    update(dt) {
         let v = new cc.Vec2(0, 0);
         if (this.pressing_w) {
             v.addSelf(cc.Vec2.UP);
@@ -65,14 +77,15 @@ export default class MovementTest extends cc.Component {
             v.addSelf(cc.Vec2.RIGHT);
         }
         v.normalizeSelf();
-        Logger.log(this.node.position, name);
-        Logger.log(v, name);
-        this.v = v;
-        SimCivil.Contract.IPlayerController.MoveTo(new SimCivil.Contract.ValueTuple({Item1:this.node.position.x,Item2:this.node.position.y}), new Date());
+        this.node.position = this.node.position.add(this.serverPosToUIPos(v.mul(this.speed * dt)));
     }
 
-    update (dt) {
-        this.node.position = this.node.position.add(this.v.mul(this.speed * dt * 100));
+    uiPosToServerPos(pos: cc.Vec2) {
+        return new cc.Vec2(pos.x / 100, pos.y / 100);
+    }
+
+    serverPosToUIPos(pos: cc.Vec2) {
+        return pos.mul(100);
     }
 
     onKeyDown(event) {

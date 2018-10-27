@@ -2,6 +2,7 @@ import { UIManager } from "../manager/UIManager";
 import { UINameEnum } from "../enum/UINameEnum";
 import PopupWarningUI from "../ui/PopupWarningUI";
 import GameLauncher from "../logic/GameLauncher";
+import { LocalStorageEnum } from "../enum/LocalStorageEnum";
 
 class TipsStruct {
     public content: string;
@@ -80,12 +81,12 @@ export class GloableUtils {
     /**
      * 查找节点路径
      */
-    public static GetNodePath(from: cc.Node, to: cc.Node){
+    public static GetNodePath(from: cc.Node, to: cc.Node) {
         let ret = null;
-        while(to != null && to != undefined && from != to){
-            if (ret != null){
+        while (to != null && to != undefined && from != to) {
+            if (ret != null) {
                 ret = to.name.concat('/'.concat(ret));
-            }else{
+            } else {
                 ret = to.name;
             }
             to = to.parent;

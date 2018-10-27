@@ -15,17 +15,22 @@ namespace Tools {
             cc.sys.localStorage.setItem(key, JSON.stringify(value));
         }
 
-        public static getNumber(key: string): number {
-            let ret: string = cc.sys.localStorage.getItem(key);
+        public static getNumber(key: string, value: number = 0): number {
+            let ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined) return value;
             return +ret;
         }
 
-        public static getString(key: string): string {
-            return cc.sys.localStorage.getItem(key);
+        public static getString(key: string, value: string = null): string {
+            let ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined) return value;
+            return ret;
         }
 
-        public static getObject(key: string): object {
-            return JSON.parse(cc.sys.localStorage.getItem(key))
+        public static getObject(key: string, value: object = null): object {
+            let ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined) return value;
+            return JSON.parse(ret)
         }
 
         public static loadStorageObject<T extends LocalStorageBase>(key: string): T{
@@ -45,4 +50,4 @@ namespace Tools {
     }
 }
 
-var LocalStorageUtils = Tools.LocalStorageUtils;
+(<any>window).LocalStorageUtils = Tools.LocalStorageUtils;
