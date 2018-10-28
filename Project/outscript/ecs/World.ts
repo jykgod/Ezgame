@@ -14,7 +14,7 @@ module ECS {
          * @param name 名字
          */
         public static CreateAWorld(name: string): World {
-            return new World(name); 
+            return new World(name);
         }
 
         //not static--------------------------
@@ -34,7 +34,7 @@ module ECS {
          * 获取实体管理对象
          */
         public get EntitisManager(): EntitisManager {
-            return null;
+            return this._entitisManager;
         }
 
         /**
@@ -45,7 +45,5 @@ module ECS {
             this._name = name;
             this._entitisManager = new EntitisManager();
         }
-
-
     }
 }

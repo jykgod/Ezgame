@@ -1,10 +1,7 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -26,8 +23,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -151,21 +148,212 @@ var UIAnimationUtils = /** @class */ (function () {
 }());
 var ECS;
 (function (ECS) {
-    var ComponentSystem = /** @class */ (function () {
-        function ComponentSystem() {
+    var ScriptBehaviourManager = /** @class */ (function () {
+        function ScriptBehaviourManager() {
         }
-        return ComponentSystem;
+        ScriptBehaviourManager.prototype.Update = function () {
+            //...
+            this.InternalUpdate();
+            //...
+        };
+        return ScriptBehaviourManager;
     }());
+    ECS.ScriptBehaviourManager = ScriptBehaviourManager;
+})(ECS || (ECS = {}));
+/// <reference path="./ScriptBehaviourManager.ts"/>
+var ECS;
+(function (ECS) {
+    var ComponentSystem = /** @class */ (function (_super) {
+        __extends(ComponentSystem, _super);
+        function ComponentSystem() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        ComponentSystem.prototype.InternalUpdate = function () {
+            this.OnUpdate();
+        };
+        return ComponentSystem;
+    }(ECS.ScriptBehaviourManager));
     ECS.ComponentSystem = ComponentSystem;
+    Object.seal(ComponentSystem.prototype.InternalUpdate);
 })(ECS || (ECS = {}));
 var ECS;
 (function (ECS) {
-    var SystemManager = /** @class */ (function () {
-        function SystemManager() {
+    var EntitisManager = /** @class */ (function () {
+        function EntitisManager() {
+            this._entitiIDTop = 0;
+            this._entities = new Array();
+            this._components = new Array();
+            this._entitisComponents = new Array();
         }
-        return SystemManager;
+        /**
+         * 给实体添加组件(暂时不对重复添加组件做处理)
+         * @param entity 实体
+         * @param componentDataType 组件
+         */
+        EntitisManager.prototype.addComponent = function (entity) {
+            var componentDataType = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                componentDataType[_i - 1] = arguments[_i];
+            }
+            if (entity == null || entity == undefined) {
+                return;
+            }
+            for (var i = 0; i < componentDataType.length; i++) {
+                if (componentDataType[i].typeID == undefined) {
+                    componentDataType[i].typeID = EntitisManager._componentTypeIdTop;
+                    this._components[EntitisManager._componentTypeIdTop] = new Array();
+                    EntitisManager._componentTypeIdTop++;
+                }
+                var typeID = componentDataType[i].typeID;
+                var component_entities = this._components[typeID];
+                var j = void 0;
+                for (j = component_entities.length - 1; j >= 0; j--) {
+                    if (component_entities[j] < entity) {
+                        component_entities[j + 1] = entity;
+                        break;
+                    }
+                    else {
+                        component_entities[j + 1] = component_entities[j];
+                    }
+                }
+                if (j == -1) {
+                    component_entities[0] = entity;
+                }
+                var component = new componentDataType[i]();
+                this._entitisComponents[entity].push(component);
+            }
+        };
+        /**
+         * 添加公有组件
+         * @param sharedComponentType 组件
+         */
+        EntitisManager.prototype.addSharedComponent = function () {
+            var sharedComponentType = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                sharedComponentType[_i] = arguments[_i];
+            }
+            for (var i = 0; i < sharedComponentType.length; i++) {
+                if (sharedComponentType[i].instance == undefined) {
+                    sharedComponentType[i].instance = new sharedComponentType[i]();
+                }
+            }
+        };
+        /**
+         * 创建一个实体
+         */
+        EntitisManager.prototype.CreateAEntity = function () {
+            this._entitisComponents[this._entitiIDTop] = new Array();
+            this._entities[this._entities.length] = this._entitiIDTop;
+            return this._entitiIDTop++;
+        };
+        /**
+         * 删除实体上的某些类型的组件
+         * 这里用的splice方法。效率不高！
+         * @param entity 实体
+         * @param componentDataType 组件
+         */
+        EntitisManager.prototype.removeComponent = function (entity) {
+            var componentDataType = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                componentDataType[_i - 1] = arguments[_i];
+            }
+            for (var i = 0; i < componentDataType.length; i++) {
+                var temp = this._components[componentDataType[i].typeID];
+                var index = temp.indexOf(entity);
+                if (index >= 0) {
+                    temp.splice(temp.indexOf(entity), 1);
+                }
+                for (var j = 0; j < this._entitisComponents[entity].length; j++) {
+                    if (this._entitisComponents[entity][j] instanceof (componentDataType[i])) {
+                        this._entitisComponents[entity].splice(j, 1);
+                        break;
+                    }
+                }
+            }
+        };
+        /**
+         * 删除实体上的某些类型的共享组件
+         * @param entity 实体
+         * @param componentDataType 组件
+         */
+        EntitisManager.prototype.removeSharedComponent = function () {
+            var sharedComponentType = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                sharedComponentType[_i] = arguments[_i];
+            }
+            for (var i = 0; i < sharedComponentType.length; i++) {
+                componentDataType[i].instance = undefined;
+            }
+        };
+        /**
+         * 删除一个实体
+         */
+        EntitisManager.prototype.RemoveAEntity = function (entity) {
+            for (var i = 0; i < this._components.length; i++) {
+                var temp = this._components[i];
+                var index_1 = temp.indexOf(entity);
+                if (index_1 >= 0) {
+                    temp.splice(index_1, 1);
+                }
+            }
+            var index = this._entities.indexOf(entity);
+            if (index >= 0) {
+                this._entities.splice(index, 1);
+            }
+            this._entitisComponents[entity] = undefined;
+        };
+        /**
+         * 获取满足条件的实体,时间复杂度O(n*m)，n是组件个数，m是组件类型数
+         * @param componentDataType
+         */
+        EntitisManager.prototype.GetEntities = function () {
+            var componentDataType = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                componentDataType[_i] = arguments[_i];
+            }
+            if (componentDataType == null || componentDataType == undefined || componentDataType.length == 0) {
+                return this._entities;
+            }
+            var ret = new Array();
+            var i = new Array();
+            var max = 0;
+            for (var loop = 0; loop < componentDataType.length; loop++) {
+                if (this._components[componentDataType[loop].typeID] == undefined || this._components[componentDataType[loop].typeID] == null)
+                    return null;
+                i[loop] = 0;
+                max = Math.max(max, this._components[componentDataType[loop].typeID][0]);
+            }
+            while (true) {
+                for (var loop = 0; loop < componentDataType.length; loop++) {
+                    while (this._components[componentDataType[loop].typeID][i[loop]] < max) {
+                        i[loop]++;
+                        if (i[loop] >= this._components[componentDataType[loop].typeID].length) {
+                            return ret;
+                        }
+                        max = Math.max(max, this._components[componentDataType[loop].typeID][i[loop]]);
+                    }
+                }
+                var f = true;
+                for (var loop = 0; loop < componentDataType.length; loop++) {
+                    if (this._components[componentDataType[loop].typeID][i[loop]] < max) {
+                        f = false;
+                        break;
+                    }
+                }
+                if (f == true) {
+                    ret.push(max);
+                    max += 1;
+                }
+            }
+            return ret;
+        };
+        /**
+         * 给下一个新组件类型分配的ID
+         */
+        EntitisManager._componentTypeIdTop = 0;
+        return EntitisManager;
     }());
-    ECS.SystemManager = SystemManager;
+    ECS.EntitisManager = EntitisManager;
 })(ECS || (ECS = {}));
 var ECS;
 (function (ECS) {
@@ -176,6 +364,7 @@ var ECS;
          */
         function World(name) {
             this._name = name;
+            this._entitisManager = new ECS.EntitisManager();
         }
         Object.defineProperty(World, "active", {
             get: function () {
@@ -184,9 +373,26 @@ var ECS;
             enumerable: true,
             configurable: true
         });
+        /**
+         * 创建一个世界
+         * @param name 名字
+         */
+        World.CreateAWorld = function (name) {
+            return new World(name);
+        };
         Object.defineProperty(World.prototype, "name", {
             get: function () {
                 return this._name;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(World.prototype, "EntitisManager", {
+            /**
+             * 获取实体管理对象
+             */
+            get: function () {
+                return this._entitisManager;
             },
             enumerable: true,
             configurable: true
@@ -426,7 +632,6 @@ var FSM;
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
                 Tools.Logger.error("attemp to change to the " + nextStateType + " which " + name + " not has!", "FSM");
                 return;
@@ -441,6 +646,7 @@ var FSM;
             this.currentState = this.statesMap[nextStateType];
             this.timer.Reset();
             (_a = this.currentState).StateEnter.apply(_a, args);
+            var _a;
         };
         /**
          * 异步切换状态机状态,hint:
@@ -574,7 +780,7 @@ var NetWork;
                 }
             };
             this.ws.onmessage = function (event) {
-                Tools.Logger.log("getmessage:" + event.data, self.name);
+                // Tools.Logger.log("getmessage:" + event.data, self.name);
                 if (self.OnGetMessage != undefined) {
                     self.OnGetMessage(event);
                 }
@@ -635,9 +841,25 @@ var NetWork;
         SessionState[SessionState["DISCONNECTING"] = 3] = "DISCONNECTING";
     })(SessionState = NetWork.SessionState || (NetWork.SessionState = {}));
 })(NetWork || (NetWork = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Rpc;
+    (function (Rpc) {
+        var Callback;
+        (function (Callback) {
+            var RpcCallback = /** @class */ (function () {
+                function RpcCallback() {
+                }
+                return RpcCallback;
+            }());
+            Callback.RpcCallback = RpcCallback;
+        })(Callback = Rpc.Callback || (Rpc.Callback = {}));
+    })(Rpc = SimCivil.Rpc || (SimCivil.Rpc = {}));
+})(SimCivil || (SimCivil = {}));
 /**
  * RPC修饰器
  * 用来修饰客户端发起的RPC调用函数
+ * 整个RPC的包都建立在c#服务器端使用Json.net对数据结构进行序列化的情况下完成的,并不通用！
  */
 function RPC(serviceName, noReturn) {
     /**
@@ -650,12 +872,17 @@ function RPC(serviceName, noReturn) {
                 args[_i] = arguments[_i];
             }
             return __awaiter(this, void 0, void 0, function () {
-                var _sequence, ret;
+                var i, _sequence, ret;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            Tools.Logger.log(typeof target);
-                            Tools.Logger.log(serviceName);
+                            // Tools.Logger.log(typeof target);
+                            // Tools.Logger.log(serviceName);
+                            for (i = 0; i < args.length; i++) {
+                                if (typeof (args[i]) == "function") {
+                                    args[i] = RpcClient.Instance.AddCallBack(target, args[i]);
+                                }
+                            }
                             _sequence = RpcClient.Instance.GetSequence();
                             RpcClient.Instance.SendRpc(_sequence, serviceName, methodName, args);
                             if (!(noReturn == false)) return [3 /*break*/, 2];
@@ -664,6 +891,12 @@ function RPC(serviceName, noReturn) {
                             ret = _a.sent();
                             if (ret == null || ret == undefined)
                                 return [2 /*return*/, null];
+                            if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
+                                return [2 /*return*/, ret.ReturnValue["$values"]];
+                            }
+                            if (ret.ReturnValue["$value"] != null && ret.ReturnValue["$value"] != undefined) {
+                                return [2 /*return*/, ret.ReturnValue["$value"]];
+                            }
                             return [2 /*return*/, ret.ReturnValue];
                         case 2: return [2 /*return*/];
                     }
@@ -693,6 +926,14 @@ var RpcClient = /** @class */ (function () {
          * 消息promise队列
          */
         this.promiseQueue = new Array();
+        /**
+         * 消息回调函数队列
+         */
+        this.callbackQueue = new Array();
+        /**
+         * 消息回调函数目标对象队列
+         */
+        this.callbackTargetQueue = new Array();
         /**
          * 超时时间
          */
@@ -728,12 +969,27 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
-            Logger.info(reader.result);
-            var obj = JSON.parse(reader.result);
-            self.resultQueue[obj.Sequence] = obj;
-            if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null) {
-                self.promiseQueue[obj.Sequence]();
+            //Logger.info(reader.result);
+            var ret = JSON.parse(reader.result);
+            if (ret["$type"].indexOf("SimCivil.Rpc.RpcResponse") != -1) {
+                var obj = JSON.parse(reader.result);
+                self.resultQueue[obj.Sequence] = obj;
+                if (self.promiseQueue[obj.Sequence] != undefined && self.promiseQueue[obj.Sequence] != null) {
+                    self.promiseQueue[obj.Sequence]();
+                }
             }
+            if (ret["$type"].indexOf("SimCivil.Rpc.Callback.RpcCallback") != -1) {
+                var obj = JSON.parse(reader.result);
+                if (self.callbackQueue[obj.CallbackId] != undefined && self.callbackQueue[obj.CallbackId] != null) {
+                    if (obj.Parameters != null && obj.Parameters != undefined) {
+                        (_a = self.callbackQueue[obj.CallbackId]).call.apply(_a, [self.callbackTargetQueue[obj.CallbackId]].concat(obj.Parameters));
+                    }
+                    else {
+                        self.callbackQueue[obj.CallbackId].call(self.callbackTargetQueue[obj.CallbackId]);
+                    }
+                }
+            }
+            var _a;
         };
     };
     /**
@@ -743,12 +999,21 @@ var RpcClient = /** @class */ (function () {
         return this._sequence++;
     };
     /**
+     * 添加回调函数并返回id
+     * @param func 回调函数
+     */
+    RpcClient.prototype.AddCallBack = function (target, func) {
+        this.callbackQueue.push(func);
+        this.callbackTargetQueue.push(target);
+        return this.callbackQueue.length - 1;
+    };
+    /**
      * 通过序列号获取消息类型
      */
     RpcClient.prototype.GetResponce = function (sequence) {
         return __awaiter(this, void 0, void 0, function () {
-            var ret;
             var _this = this;
+            var ret;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
@@ -790,22 +1055,47 @@ var RpcClient = /** @class */ (function () {
         //     return;
         // }
         Tools.Logger.log(JSON.stringify(json), "RPC");
-        Tools.Logger.info(json);
-        var enc = new TextEncoder();
-        var str = JSON.stringify(json);
+        //Tools.Logger.info(json);
+        // let enc = new TextEncoder();
+        // let str = JSON.stringify(json);
         // // Logger.log(str, "RPC");
         // // let length = enc.encode(str).length;
         // // str = "  ".concat(str);
         // // let arr = enc.encode(str);
         // // arr.set([length / 256, length % 256], 0);
-        this.session.SendMessage(enc.encode(str).buffer);
-        // this.session.SendMessage(this.str2ab(JSON.stringify(json)));
+        // this.session.SendMessage(enc.encode(str).buffer);
+        this.session.SendMessage(this.stringToByte(JSON.stringify(json)));
     };
-    RpcClient.prototype.str2ab = function (str) {
-        var buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
+    //字符串转ArrayBuffer
+    RpcClient.prototype.stringToByte = function (str) {
+        var bytes = new Array();
+        var len, c;
+        len = str.length;
+        for (var i = 0; i < len; i++) {
+            c = str.charCodeAt(i);
+            if (c >= 0x010000 && c <= 0x10FFFF) {
+                bytes.push(((c >> 18) & 0x07) | 0xF0);
+                bytes.push(((c >> 12) & 0x3F) | 0x80);
+                bytes.push(((c >> 6) & 0x3F) | 0x80);
+                bytes.push((c & 0x3F) | 0x80);
+            }
+            else if (c >= 0x000800 && c <= 0x00FFFF) {
+                bytes.push(((c >> 12) & 0x0F) | 0xE0);
+                bytes.push(((c >> 6) & 0x3F) | 0x80);
+                bytes.push((c & 0x3F) | 0x80);
+            }
+            else if (c >= 0x000080 && c <= 0x0007FF) {
+                bytes.push(((c >> 6) & 0x1F) | 0xC0);
+                bytes.push((c & 0x3F) | 0x80);
+            }
+            else {
+                bytes.push(c & 0xFF);
+            }
+        }
+        var buf = new ArrayBuffer(bytes.length);
         var bufView = new Uint8Array(buf);
         for (var i = 0, strLen = str.length; i < strLen; i++) {
-            bufView[i] = str.charCodeAt(i);
+            bufView[i] = bytes[i];
         }
         return buf;
     };
@@ -1008,7 +1298,7 @@ var SimCivil;
                     });
                 });
             };
-            IPlayerController.MoveTo = function (position, timestamp) {
+            IPlayerController.MoveTo = function (value, timestamp) {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         return [2 /*return*/, void (0)];
@@ -1234,6 +1524,147 @@ var SimCivil;
         Contract.RoleSummary = RoleSummary;
     })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
 })(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        var ValueTuple = /** @class */ (function () {
+            function ValueTuple(value) {
+                this.$type = "System.ValueTuple`2[[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]], System.Private.CoreLib";
+                this.Item1 = value.Item1;
+                this.Item2 = value.Item2;
+            }
+            return ValueTuple;
+        }());
+        Contract.ValueTuple = ValueTuple;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var Tools;
+(function (Tools) {
+    /**
+     * 二叉堆
+     */
+    var BinaryHeap = /** @class */ (function () {
+        /**
+         * 构造函数
+         * @param compare 排序函数返回true表示a应该排在b上面，否则b在a上面
+         */
+        function BinaryHeap(compare) {
+            this._count = 0;
+            this._compare = compare;
+            this._arr = new Array();
+        }
+        /**
+         * 从末尾向上整理数据
+         * @param startPos 起始点
+         */
+        BinaryHeap.prototype.upTree = function () {
+            var startPos = this._count - 1;
+            var f = 0;
+            var t = null;
+            while (startPos > 0) {
+                f = (startPos - 1) >> 1;
+                if (this._compare(this._arr[startPos], this._arr[f])) {
+                    t = this._arr[f];
+                    this._arr[f] = this._arr[startPos];
+                    this._arr[startPos] = t;
+                    startPos = f;
+                }
+                else {
+                    break;
+                }
+            }
+        };
+        /**
+         * 从起始点向下整理数据
+         * @param startPos 起始点
+         */
+        BinaryHeap.prototype.downTree = function (startPos) {
+            var lch = 0;
+            var rch = 0;
+            var minch = 0;
+            var t = null;
+            while (startPos < this._count) {
+                lch = startPos * 2 + 1;
+                if (lch >= this._count) {
+                    return;
+                }
+                rch = startPos * 2 + 2;
+                minch = (rch >= this._count || this._compare(this._arr[lch], this._arr[rch])) ? lch : rch;
+                if (this._compare(this._arr[minch], this._arr[startPos])) {
+                    t = this._arr[minch];
+                    this._arr[minch] = this._arr[startPos];
+                    this._arr[startPos] = t;
+                    startPos = minch;
+                }
+                else {
+                    break;
+                }
+            }
+        };
+        /**
+         * 删除一个任意位置的数据(时间复杂度O(n)+O(log(n)))
+         * @param t 数据
+         */
+        BinaryHeap.prototype.Remove = function (t) {
+            for (var i = 0; i < this._count; i++) {
+                if (this._arr[i] === t) {
+                    this._arr[i] = this._arr[this._count - 1];
+                    this._count--;
+                    this.downTree(i);
+                    return;
+                }
+            }
+        };
+        /**
+         * 添加一个数据(时间复杂度O(log(n)))
+         * @param t 数据
+         */
+        BinaryHeap.prototype.Push = function (t) {
+            this._arr[this._count] = t;
+            this._count++;
+            this.upTree();
+        };
+        /**
+         * 取出顶端数据并将其删除(时间复杂度O(log(n)))
+         */
+        BinaryHeap.prototype.Pop = function () {
+            if (this._count == 0) {
+                return null;
+            }
+            var ret = this._arr[0];
+            this._count--;
+            this._arr[0] = this._arr[this._count];
+            this.downTree(0);
+            return ret;
+        };
+        /**
+         * 取出堆排序后的数组(时间复杂度O(n*log(n) + O(n)));
+         */
+        BinaryHeap.prototype.GetSortArray = function () {
+            var ret = new Array();
+            var c = 0;
+            while (this._count > 0) {
+                ret[c] = this._arr[0];
+                this._count--;
+                this._arr[0] = this._arr[this._count];
+                this.downTree(0);
+                this._arr[this._count] = ret[c];
+                c++;
+            }
+            this._count = c;
+            c = c >> 1;
+            for (var i = 0; i < c; i++) {
+                var t = this._arr[i];
+                this._arr[i] = this._arr[this._count - i - 1];
+                this._arr[this._count - i - 1] = t;
+            }
+            return ret;
+        };
+        return BinaryHeap;
+    }());
+    Tools.BinaryHeap = BinaryHeap;
+})(Tools || (Tools = {}));
 var Tools;
 (function (Tools) {
     var LocalStorageBase = /** @class */ (function () {
