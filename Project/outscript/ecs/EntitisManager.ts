@@ -139,9 +139,11 @@ module ECS {
 
         /**
          * 获取满足条件的实体,时间复杂度O(n*m)，n是组件个数，m是组件类型数
+         * TODO:需要实现一个用于按某种排序规则进行插入排序或堆排序后取出实体的方法，某些情况下可以增加效率。
+         *      比如对Graphic组件中的layer排序。
          * @param componentDataType 
          */
-        public GetEntities(...componentDataType: Function[]): Array<number> {
+        public GetEntities(...componentDataType: Function[]): Array<number>{
             if (componentDataType == null || componentDataType == undefined || componentDataType.length == 0) {
                 return this._entities;
             }

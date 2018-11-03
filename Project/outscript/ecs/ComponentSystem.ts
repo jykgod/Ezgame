@@ -6,6 +6,10 @@ module ECS {
         }
 
         protected abstract OnUpdate(): void;
+        public OnDestroy(): void{
+        }
+        public OnStart(): void{
+        }
     }
 
     Object.seal(ComponentSystem.prototype.InternalUpdate);

@@ -7,4 +7,5 @@ module ECS {
             //...
         }
     }
+    Object.seal(ScriptBehaviourManager.prototype.Update);
 }

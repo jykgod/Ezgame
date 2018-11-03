@@ -3,6 +3,7 @@ import { UIManager } from "../manager/UIManager";
 import { LocalizationManager } from "../manager/LocalizationManager";
 import TestComponent from "../ecs/component/TestComponent";
 import TestComponent2 from "../ecs/component/TestComponent2";
+import InputSystem from "../ecs/system/InputSystem";
 
 const { ccclass, property } = cc._decorator;
 
@@ -30,6 +31,8 @@ export default class GameLauncher extends cc.Component {
         LocalizationManager.Instance.Init("cn");
         UIManager.Instance.Init();
         GameManager.Instance.Init();
+        let world = ECS.World.CreateAWorld("hello");
+        world.addSystem(InputSystem);
         // let heap = new Tools.BinaryHeap<number>((a,b)=>{return a > b});
         // heap.Push(5);
         // heap.Push(10);
@@ -67,6 +70,9 @@ export default class GameLauncher extends cc.Component {
     update(dt) {
         TimeManager.Instance.Update(dt);
         GameManager.Instance.Update(dt);
+        if (ECS.World.active != null && ECS.World.active != undefined) {
+            ECS.World.active.update();
+        }
     }
 
     onDestroy() {

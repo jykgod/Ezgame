@@ -159,6 +159,7 @@ var ECS;
         return ScriptBehaviourManager;
     }());
     ECS.ScriptBehaviourManager = ScriptBehaviourManager;
+    Object.seal(ScriptBehaviourManager.prototype.Update);
 })(ECS || (ECS = {}));
 /// <reference path="./ScriptBehaviourManager.ts"/>
 var ECS;
@@ -170,6 +171,10 @@ var ECS;
         }
         ComponentSystem.prototype.InternalUpdate = function () {
             this.OnUpdate();
+        };
+        ComponentSystem.prototype.OnDestroy = function () {
+        };
+        ComponentSystem.prototype.OnStart = function () {
         };
         return ComponentSystem;
     }(ECS.ScriptBehaviourManager));
@@ -304,6 +309,8 @@ var ECS;
         };
         /**
          * 获取满足条件的实体,时间复杂度O(n*m)，n是组件个数，m是组件类型数
+         * TODO:需要实现一个用于按某种排序规则进行插入排序或堆排序后取出实体的方法，某些情况下可以增加效率。
+         *      比如对Graphic组件中的layer排序。
          * @param componentDataType
          */
         EntitisManager.prototype.GetEntities = function () {
@@ -365,6 +372,7 @@ var ECS;
         function World(name) {
             this._name = name;
             this._entitisManager = new ECS.EntitisManager();
+            this._systems = new Array();
         }
         Object.defineProperty(World, "active", {
             get: function () {
@@ -378,7 +386,35 @@ var ECS;
          * @param name 名字
          */
         World.CreateAWorld = function (name) {
-            return new World(name);
+            this.RemoveWorld(name);
+            this._worlds[name] = new World(name);
+            if (this._active == null) {
+                this._active = this._worlds[name];
+            }
+            return this._worlds[name];
+        };
+        /**
+         * 销毁一个world
+         * @param name 名字
+         */
+        World.RemoveWorld = function (name) {
+            if (this._worlds[name] == undefined) {
+                return;
+            }
+            if (this._worlds[name] == this._active) {
+                this._active = null;
+            }
+            this._worlds[name].destroy();
+            this._worlds[name] = undefined;
+        };
+        /**
+         * 激活一个world
+         * 只有被激活的世界中的system的OnUpdate会被执行
+         * 同时只会有一个被激活的世界
+         * @param name 名字
+         */
+        World.SetActive = function (name) {
+            this._active = this._worlds[name];
         };
         Object.defineProperty(World.prototype, "name", {
             get: function () {
@@ -397,9 +433,41 @@ var ECS;
             enumerable: true,
             configurable: true
         });
+        /**
+         * 析构函数
+         */
+        World.prototype.destroy = function () {
+            while (this._systems.length > 0) {
+                this._systems.pop().OnDestroy();
+            }
+        };
+        /**
+         * 帧执行函数
+         */
+        World.prototype.update = function () {
+            for (var i = 0; i < this._systems.length; i++) {
+                this._systems[i].Update();
+            }
+        };
+        /**
+         * 添加系统
+         * @param system 系统实例
+         */
+        World.prototype.addSystem = function (system) {
+            var obj = new system();
+            Logger.info(obj);
+            obj.OnStart();
+            this._systems.push(obj);
+        };
+        /**
+         * world表
+         */
+        World._worlds = new Array();
         return World;
     }());
     ECS.World = World;
+    Object.seal(World.prototype.update);
+    Object.seal(World.prototype.addSystem);
 })(ECS || (ECS = {}));
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
