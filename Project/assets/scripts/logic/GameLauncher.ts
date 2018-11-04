@@ -1,6 +1,9 @@
 import { GameManager } from "../manager/GameManager";
 import { UIManager } from "../manager/UIManager";
 import { LocalizationManager } from "../manager/LocalizationManager";
+import TestComponent from "../ecs/component/TestComponent";
+import TestComponent2 from "../ecs/component/TestComponent2";
+import InputSystem from "../ecs/system/InputSystem";
 
 const { ccclass, property } = cc._decorator;
 
@@ -28,7 +31,26 @@ export default class GameLauncher extends cc.Component {
         LocalizationManager.Instance.Init("cn");
         UIManager.Instance.Init();
         GameManager.Instance.Init();
-
+        let world = ECS.World.CreateAWorld("hello");
+        world.addSystem(InputSystem);
+        // let heap = new Tools.BinaryHeap<number>((a,b)=>{return a > b});
+        // heap.Push(5);
+        // heap.Push(10);
+        // heap.Push(3);
+        // heap.Push(7);
+        // Logger.log(heap.GetSortArray());
+        // Logger.log(heap.GetSortArray());
+        // let entityManager = ECS.World.CreateAWorld("myWorld").EntitisManager;
+        // entityManager.addComponent(entityManager.CreateAEntity(), TestComponent, TestComponent2);
+        // entityManager.addComponent(entityManager.CreateAEntity(), TestComponent);
+        // Logger.log(entityManager.GetEntities(TestComponent), "getentities1");
+        // Logger.log(entityManager.GetEntities(TestComponent2), "getentities2");
+        // entityManager.addComponent(1, TestComponent2);
+        // Logger.log(entityManager.GetEntities(TestComponent), "getentities3");
+        // Logger.log(entityManager.GetEntities(TestComponent2), "getentities4");
+        // entityManager.removeComponent(1, TestComponent2);
+        // Logger.log(entityManager.GetEntities(TestComponent), "getentities5");
+        // Logger.log(entityManager.GetEntities(TestComponent2), "getentities6");
         // let node1 = new cc.Node();
         // node1.name = "nihao"
         // node1.parent = UIManager.Instance.Canvas.node;
@@ -48,6 +70,9 @@ export default class GameLauncher extends cc.Component {
     update(dt) {
         TimeManager.Instance.Update(dt);
         GameManager.Instance.Update(dt);
+        if (ECS.World.active != null && ECS.World.active != undefined) {
+            ECS.World.active.update();
+        }
     }
 
     onDestroy() {
