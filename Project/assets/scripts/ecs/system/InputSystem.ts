@@ -1,5 +1,7 @@
 import InputData from "../sharedComponent/InputData";
 import GameLauncher from "../../logic/GameLauncher";
+import TestComponent from "../component/TestComponent";
+import PositionComponent from "../component/PositionComponent";
 
 export default class InputSystem extends ECS.ComponentSystem {
     public OnStart(): void {

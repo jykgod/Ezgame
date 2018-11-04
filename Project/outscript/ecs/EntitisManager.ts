@@ -19,6 +19,7 @@ module ECS {
         private _entities: Array<number>;
         /**
          * 实体所拥有的组件
+         * _entitisComponents[i][j]中i为实体id，j为组件类型id
          */
         private _entitisComponents: Array<Array<IComponentData>>;
 
@@ -34,8 +35,9 @@ module ECS {
          * @param entity 实体
          * @param componentDataType 组件
          */
-        public addComponent(entity: number, ...componentDataType: Function[]) {
-            if (entity == null || entity == undefined) {
+        public addComponent(entity: number, ...componentDataType: IComponentData[]) {
+            if (entity == null || entity == undefined || entity >= this._entitiIDTop) {
+                Logger.error(`找不到实体 id:${entity}`, "EntitisManager.addComponent");
                 return;
             }
             for (let i = 0; i < componentDataType.length; i++) {
@@ -59,7 +61,7 @@ module ECS {
                     component_entities[0] = entity;
                 }
                 let component = new componentDataType[i]();
-                this._entitisComponents[entity].push(component);
+                this._entitisComponents[entity][componentDataType[i].typeID] = component;
             }
         }
 
@@ -67,7 +69,7 @@ module ECS {
          * 添加公有组件
          * @param sharedComponentType 组件
          */
-        public addSharedComponent(...sharedComponentType: Function[]) {
+        public addSharedComponent(...sharedComponentType: ISharedComponentData[]) {
             for (let i = 0; i < sharedComponentType.length; i++) {
                 if (sharedComponentType[i].instance == undefined) {
                     sharedComponentType[i].instance = new sharedComponentType[i]();
@@ -86,36 +88,25 @@ module ECS {
 
         /**
          * 删除实体上的某些类型的组件
-         * 这里用的splice方法。效率不高！
          * @param entity 实体
          * @param componentDataType 组件
          */
-        public removeComponent(entity: number, ...componentDataType: Function[]) {
+        public removeComponent(entity: number, ...componentDataType: IComponentData[]) {
             for (let i = 0; i < componentDataType.length; i++) {
-                let temp = this._components[componentDataType[i].typeID];
-                let index = temp.indexOf(entity);
-                if (index >= 0) {
-                    temp.splice(temp.indexOf(entity), 1);
-                }
-                for (let j = 0; j < this._entitisComponents[entity].length; j++) {
-                    if (this._entitisComponents[entity][j] instanceof (componentDataType[i])) {
-                        this._entitisComponents[entity].splice(j, 1);
-                        break;
-                    }
-                }
+                this._entitisComponents[entity][componentDataType[i].typeID] = undefined;
             }
         }
 
-        /**
-         * 删除实体上的某些类型的共享组件
-         * @param entity 实体
-         * @param componentDataType 组件
-         */
-        public removeSharedComponent(...sharedComponentType: Function[]) {
-            for (let i = 0; i < sharedComponentType.length; i++) {
-                componentDataType[i].instance = undefined;
-            }
-        }
+        // /**
+        //  * 删除实体上的某些类型的共享组件
+        //  * @param entity 实体
+        //  * @param componentDataType 组件
+        //  */
+        // public removeSharedComponent(...sharedComponentType: IComponentData[]) {
+        //     for (let i = 0; i < sharedComponentType.length; i++) {
+        //         componentDataType[i].instance = undefined;
+        //     }
+        // }
 
         /**
          * 删除一个实体
@@ -143,7 +134,7 @@ module ECS {
          *      比如对Graphic组件中的layer排序。
          * @param componentDataType 
          */
-        public GetEntities(...componentDataType: Function[]): Array<number>{
+        public GetEntities(...componentDataType: IComponentData[]): Array<number>{
             if (componentDataType == null || componentDataType == undefined || componentDataType.length == 0) {
                 return this._entities;
             }
@@ -178,6 +169,19 @@ module ECS {
                 }
             }
             return ret;
+        }
+
+        /**
+         * 通过实体和组件类型来获取组件
+         * @param entity 实体
+         * @param type 组件类型
+         */
+        public GetComponent(entity: number, type: IComponentData): IComponentData{
+            if (this._entitisComponents[entity] == null || this._entitisComponents[entity] == undefined) {
+                Logger.error(`找不到实体 id:${entity}`, "EntitisManager.addComponent");
+                return;
+            }
+            return this._entitisComponents[entity][type.typeID];
         }
     }
 }

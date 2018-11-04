@@ -4,6 +4,7 @@ import { LocalizationManager } from "../manager/LocalizationManager";
 import TestComponent from "../ecs/component/TestComponent";
 import TestComponent2 from "../ecs/component/TestComponent2";
 import InputSystem from "../ecs/system/InputSystem";
+import PositionComponent from "../ecs/component/PositionComponent";
 
 const { ccclass, property } = cc._decorator;
 
@@ -31,8 +32,16 @@ export default class GameLauncher extends cc.Component {
         LocalizationManager.Instance.Init("cn");
         UIManager.Instance.Init();
         GameManager.Instance.Init();
-        let world = ECS.World.CreateAWorld("hello");
-        world.addSystem(InputSystem);
+        // let world = ECS.World.CreateAWorld("hello");
+        // world.addSystem(InputSystem);
+        // let entity1 = world.EntitisManager.CreateAEntity();
+        // let entity2 = world.EntitisManager.CreateAEntity();
+        // let entity3 = world.EntitisManager.CreateAEntity();
+        // let entity4 = world.EntitisManager.CreateAEntity();
+        // world.EntitisManager.addComponent(entity1, TestComponent);
+        // world.EntitisManager.addComponent(entity2, TestComponent, PositionComponent);
+        // world.EntitisManager.addComponent(entity3, PositionComponent);
+        // world.EntitisManager.addComponent(entity4, TestComponent, PositionComponent);
         // let heap = new Tools.BinaryHeap<number>((a,b)=>{return a > b});
         // heap.Push(5);
         // heap.Push(10);

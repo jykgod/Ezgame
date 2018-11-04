@@ -151,6 +151,16 @@ var ECS;
     var ScriptBehaviourManager = /** @class */ (function () {
         function ScriptBehaviourManager() {
         }
+        Object.defineProperty(ScriptBehaviourManager.prototype, "entities", {
+            get: function () {
+                return this._entities;
+            },
+            set: function (v) {
+                this._entities = v;
+            },
+            enumerable: true,
+            configurable: true
+        });
         ScriptBehaviourManager.prototype.Update = function () {
             //...
             this.InternalUpdate();
@@ -164,6 +174,9 @@ var ECS;
 /// <reference path="./ScriptBehaviourManager.ts"/>
 var ECS;
 (function (ECS) {
+    /**
+     * 注：禁止包含命名为ctypes和cnames的成员
+     */
     var ComponentSystem = /** @class */ (function (_super) {
         __extends(ComponentSystem, _super);
         function ComponentSystem() {
@@ -180,6 +193,18 @@ var ECS;
     }(ECS.ScriptBehaviourManager));
     ECS.ComponentSystem = ComponentSystem;
     Object.seal(ComponentSystem.prototype.InternalUpdate);
+    function inject(type) {
+        return function (target, propertyName) {
+            if (target.ctypes == undefined) {
+                target.ctypes = new Array();
+                target.cnames = new Array();
+            }
+            target.ctypes.push(type);
+            target.cnames.push(propertyName);
+            Logger.log(target.cnames, "inject");
+        };
+    }
+    ECS.inject = inject;
 })(ECS || (ECS = {}));
 var ECS;
 (function (ECS) {
@@ -200,7 +225,8 @@ var ECS;
             for (var _i = 1; _i < arguments.length; _i++) {
                 componentDataType[_i - 1] = arguments[_i];
             }
-            if (entity == null || entity == undefined) {
+            if (entity == null || entity == undefined || entity >= this._entitiIDTop) {
+                Logger.error("\u627E\u4E0D\u5230\u5B9E\u4F53 id:" + entity, "EntitisManager.addComponent");
                 return;
             }
             for (var i = 0; i < componentDataType.length; i++) {
@@ -225,7 +251,7 @@ var ECS;
                     component_entities[0] = entity;
                 }
                 var component = new componentDataType[i]();
-                this._entitisComponents[entity].push(component);
+                this._entitisComponents[entity][componentDataType[i].typeID] = component;
             }
         };
         /**
@@ -253,7 +279,6 @@ var ECS;
         };
         /**
          * 删除实体上的某些类型的组件
-         * 这里用的splice方法。效率不高！
          * @param entity 实体
          * @param componentDataType 组件
          */
@@ -263,33 +288,19 @@ var ECS;
                 componentDataType[_i - 1] = arguments[_i];
             }
             for (var i = 0; i < componentDataType.length; i++) {
-                var temp = this._components[componentDataType[i].typeID];
-                var index = temp.indexOf(entity);
-                if (index >= 0) {
-                    temp.splice(temp.indexOf(entity), 1);
-                }
-                for (var j = 0; j < this._entitisComponents[entity].length; j++) {
-                    if (this._entitisComponents[entity][j] instanceof (componentDataType[i])) {
-                        this._entitisComponents[entity].splice(j, 1);
-                        break;
-                    }
-                }
+                this._entitisComponents[entity][componentDataType[i].typeID] = undefined;
             }
         };
-        /**
-         * 删除实体上的某些类型的共享组件
-         * @param entity 实体
-         * @param componentDataType 组件
-         */
-        EntitisManager.prototype.removeSharedComponent = function () {
-            var sharedComponentType = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                sharedComponentType[_i] = arguments[_i];
-            }
-            for (var i = 0; i < sharedComponentType.length; i++) {
-                componentDataType[i].instance = undefined;
-            }
-        };
+        // /**
+        //  * 删除实体上的某些类型的共享组件
+        //  * @param entity 实体
+        //  * @param componentDataType 组件
+        //  */
+        // public removeSharedComponent(...sharedComponentType: IComponentData[]) {
+        //     for (let i = 0; i < sharedComponentType.length; i++) {
+        //         componentDataType[i].instance = undefined;
+        //     }
+        // }
         /**
          * 删除一个实体
          */
@@ -353,6 +364,18 @@ var ECS;
                 }
             }
             return ret;
+        };
+        /**
+         * 通过实体和组件类型来获取组件
+         * @param entity 实体
+         * @param type 组件类型
+         */
+        EntitisManager.prototype.GetComponent = function (entity, type) {
+            if (this._entitisComponents[entity] == null || this._entitisComponents[entity] == undefined) {
+                Logger.error("\u627E\u4E0D\u5230\u5B9E\u4F53 id:" + entity, "EntitisManager.addComponent");
+                return;
+            }
+            return this._entitisComponents[entity][type.typeID];
         };
         /**
          * 给下一个新组件类型分配的ID
@@ -446,8 +469,22 @@ var ECS;
          */
         World.prototype.update = function () {
             for (var i = 0; i < this._systems.length; i++) {
+                var ctypes = (this._systems[i]['ctypes']);
+                var cnames = (this._systems[i]['cnames']);
+                var entities = (_a = this._entitisManager).GetEntities.apply(_a, ctypes);
+                this._systems[i].entities = entities;
+                for (var j = 0; j < ctypes.length; j++) {
+                    var newArr = new Array();
+                    this._systems[i][cnames[j]] = newArr;
+                    if (entities != null) {
+                        for (var k = 0; k < entities.length; k++) {
+                            newArr.push(this._entitisManager.GetComponent(entities[k], ctypes[j]));
+                        }
+                    }
+                }
                 this._systems[i].Update();
             }
+            var _a;
         };
         /**
          * 添加系统
@@ -455,7 +492,6 @@ var ECS;
          */
         World.prototype.addSystem = function (system) {
             var obj = new system();
-            Logger.info(obj);
             obj.OnStart();
             this._systems.push(obj);
         };

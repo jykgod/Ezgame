@@ -3,7 +3,7 @@
  * 仅控制渲染开关和渲染的次序
  * 不关心渲染内容
  */
-export default class Graphic implements ECS.IComponentData {
+export default class GraphicComponent implements ECS.IComponentData {
     /**
      * 用于管理渲染顺序,layer越大则越靠后被渲染
      */

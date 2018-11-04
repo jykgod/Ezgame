@@ -83,7 +83,7 @@ module ECS {
          * 析构函数
          */
         private destroy() {
-            while(this._systems.length > 0){
+            while (this._systems.length > 0) {
                 this._systems.pop().OnDestroy();
             }
         }
@@ -92,6 +92,19 @@ module ECS {
          */
         public update(): void {
             for (let i = 0; i < this._systems.length; i++) {
+                let ctypes: IComponentData[] = (this._systems[i]['ctypes']);
+                let cnames: string[] = (this._systems[i]['cnames']);
+                let entities = this._entitisManager.GetEntities(...ctypes);
+                this._systems[i].entities = entities;
+                for (let j = 0; j < ctypes.length; j++) {
+                    let newArr = new Array();
+                    this._systems[i][cnames[j]] = newArr;
+                    if (entities != null) {
+                        for (let k = 0; k < entities.length; k++) {
+                            newArr.push(this._entitisManager.GetComponent(entities[k], ctypes[j]));
+                        }
+                    }
+                }
                 this._systems[i].Update();
             }
         }
@@ -101,7 +114,6 @@ module ECS {
          */
         public addSystem(system: typeof ComponentSystem): void {
             let obj: ComponentSystem = new system();
-            Logger.info(obj);
             obj.OnStart();
             this._systems.push(obj);
         }
