@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -23,8 +26,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -643,10 +646,81 @@ var Tools;
 })(Tools || (Tools = {}));
 var Tools;
 (function (Tools) {
+    /**
+     * 用于从本地读写数据
+     */
+    var LocalStorageUtils = /** @class */ (function () {
+        function LocalStorageUtils() {
+        }
+        LocalStorageUtils.setNumber = function (key, value) {
+            cc.sys.localStorage.setItem(key, value.toString());
+        };
+        LocalStorageUtils.setString = function (key, value) {
+            cc.sys.localStorage.setItem(key, value);
+        };
+        LocalStorageUtils.setObject = function (key, value) {
+            cc.sys.localStorage.setItem(key, JSON.stringify(value));
+        };
+        LocalStorageUtils.getNumber = function (key, value) {
+            if (value === void 0) { value = 0; }
+            var ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined)
+                return value;
+            return +ret;
+        };
+        LocalStorageUtils.getString = function (key, value) {
+            if (value === void 0) { value = null; }
+            var ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined)
+                return value;
+            return ret;
+        };
+        LocalStorageUtils.getObject = function (key, value) {
+            if (value === void 0) { value = null; }
+            var ret = cc.sys.localStorage.getItem(key);
+            if (ret == null || ret == undefined)
+                return value;
+            return JSON.parse(ret);
+        };
+        LocalStorageUtils.loadStorageObject = function (key) {
+            var ret = LocalStorageUtils.getObject(key);
+            if (ret == null || ret == undefined)
+                return null;
+            ret.Key = Tools.LocalStorageBase.prototype.Key;
+            ret.Save = Tools.LocalStorageBase.prototype.Save;
+            return ret;
+        };
+        // public static loadStorageObject<T extends LocalStorageBase>(): T{
+        //     return <T>LocalStorageUtils.getObject();
+        // }
+        LocalStorageUtils.saveStorageObject = function (obj) {
+            obj.Save();
+        };
+        return LocalStorageUtils;
+    }());
+    Tools.LocalStorageUtils = LocalStorageUtils;
+})(Tools || (Tools = {}));
+window.LocalStorageUtils = Tools.LocalStorageUtils;
+///<reference path="./LocalStorageUtils.ts"/>
+var Tools;
+(function (Tools) {
     var Logger = /** @class */ (function () {
         function Logger() {
         }
+        Object.defineProperty(Logger, "EnableLog", {
+            get: function () {
+                return this._enableLog;
+            },
+            set: function (value) {
+                this._enableLog = value;
+                Tools.LocalStorageUtils.setNumber("5_", value ? 1 : 0);
+            },
+            enumerable: true,
+            configurable: true
+        });
         Logger.log = function (arg, tag) {
+            if (this._enableLog == false)
+                return;
             if (tag != null && tag != undefined) {
                 console.log("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg + " ");
             }
@@ -655,6 +729,8 @@ var Tools;
             }
         };
         Logger.warn = function (arg, tag) {
+            if (this._enableLog == false)
+                return;
             if (tag != null && tag != undefined) {
                 console.warn("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
             }
@@ -663,6 +739,8 @@ var Tools;
             }
         };
         Logger.error = function (arg, tag) {
+            if (this._enableLog == false)
+                return;
             if (tag != null && tag != undefined) {
                 console.error("[" + tag + "] [" + TimeManager.Instance.realTimeSinceStartScene.toFixed(3) + "] " + arg);
             }
@@ -671,8 +749,14 @@ var Tools;
             }
         };
         Logger.info = function (arg) {
+            if (this._enableLog == false)
+                return;
             console.info(arg);
         };
+        /**
+        * 是否开启log
+        */
+        Logger._enableLog = Tools.LocalStorageUtils.getNumber("5_", 0) == 1;
         return Logger;
     }());
     Tools.Logger = Logger;
@@ -736,6 +820,7 @@ var FSM;
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
+            var _a;
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
                 Tools.Logger.error("attemp to change to the " + nextStateType + " which " + name + " not has!", "FSM");
                 return;
@@ -750,7 +835,6 @@ var FSM;
             this.currentState = this.statesMap[nextStateType];
             this.timer.Reset();
             (_a = this.currentState).StateEnter.apply(_a, args);
-            var _a;
         };
         /**
          * 异步切换状态机状态,hint:
@@ -1073,6 +1157,7 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
+            var _a;
             //Logger.info(reader.result);
             var ret = JSON.parse(reader.result);
             if (ret["$type"].indexOf("SimCivil.Rpc.RpcResponse") != -1) {
@@ -1093,7 +1178,6 @@ var RpcClient = /** @class */ (function () {
                     }
                 }
             }
-            var _a;
         };
     };
     /**
@@ -1116,8 +1200,8 @@ var RpcClient = /** @class */ (function () {
      */
     RpcClient.prototype.GetResponce = function (sequence) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             var ret;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
@@ -1634,9 +1718,9 @@ var SimCivil;
     (function (Contract) {
         var ValueTuple = /** @class */ (function () {
             function ValueTuple(value) {
-                this.$type = "System.ValueTuple`2[[System.Single, System.Private.CoreLib],[System.Single, System.Private.CoreLib]], System.Private.CoreLib";
-                this.Item1 = value.Item1;
-                this.Item2 = value.Item2;
+                this.$type = "System.ValueTuple`2[[System.Single, mscorlib],[System.Single, mscorlib]], System.ValueTuple";
+                this.Item1 = +value.Item1.toPrecision(6);
+                this.Item2 = +value.Item2.toPrecision(6);
             }
             return ValueTuple;
         }());
@@ -1786,52 +1870,6 @@ var Tools;
     Tools.LocalStorageBase = LocalStorageBase;
 })(Tools || (Tools = {}));
 window.LocalStorageBase = Tools.LocalStorageBase;
-var Tools;
-(function (Tools) {
-    /**
-     * 用于从本地读写数据
-     */
-    var LocalStorageUtils = /** @class */ (function () {
-        function LocalStorageUtils() {
-        }
-        LocalStorageUtils.setNumber = function (key, value) {
-            cc.sys.localStorage.setItem(key, value.toString());
-        };
-        LocalStorageUtils.setString = function (key, value) {
-            cc.sys.localStorage.setItem(key, value);
-        };
-        LocalStorageUtils.setObject = function (key, value) {
-            cc.sys.localStorage.setItem(key, JSON.stringify(value));
-        };
-        LocalStorageUtils.getNumber = function (key) {
-            var ret = cc.sys.localStorage.getItem(key);
-            return +ret;
-        };
-        LocalStorageUtils.getString = function (key) {
-            return cc.sys.localStorage.getItem(key);
-        };
-        LocalStorageUtils.getObject = function (key) {
-            return JSON.parse(cc.sys.localStorage.getItem(key));
-        };
-        LocalStorageUtils.loadStorageObject = function (key) {
-            var ret = LocalStorageUtils.getObject(key);
-            if (ret == null || ret == undefined)
-                return null;
-            ret.Key = Tools.LocalStorageBase.prototype.Key;
-            ret.Save = Tools.LocalStorageBase.prototype.Save;
-            return ret;
-        };
-        // public static loadStorageObject<T extends LocalStorageBase>(): T{
-        //     return <T>LocalStorageUtils.getObject();
-        // }
-        LocalStorageUtils.saveStorageObject = function (obj) {
-            obj.Save();
-        };
-        return LocalStorageUtils;
-    }());
-    Tools.LocalStorageUtils = LocalStorageUtils;
-})(Tools || (Tools = {}));
-var LocalStorageUtils = Tools.LocalStorageUtils;
 var Tools;
 (function (Tools) {
     var QueueNode = /** @class */ (function () {

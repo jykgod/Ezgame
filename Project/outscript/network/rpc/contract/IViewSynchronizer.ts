@@ -21,7 +21,7 @@ module SimCivil.Contract {
         // EVENTS
         public Events: ViewEvent[] = [];
         // POSITION
-        public Position: { X: number, Y: number } = null;
+        public Position: { Item1: number, Item2: number } = null;
         // SPEED
         public Speed: number = 0;
 		

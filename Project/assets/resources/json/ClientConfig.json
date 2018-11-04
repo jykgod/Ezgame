@@ -1,4 +1,5 @@
 {
     "ServerIP" : "localhost:20170",
-    "OfflineMode" : false
+    "OfflineMode" : false,
+    "Test" : true
 }

@@ -30,12 +30,21 @@ export default class LoginUI extends UIBase {
     public loginButton: cc.Button = null;
     @property(cc.Button)
     public registerButton: cc.Button = null;
+    @property(cc.EditBox)
+    public ipEditBox: cc.EditBox = null;
 
     public hide() {
         UIAnimationUtils.ScaleOut(this.node);
     }
     public show() {
-        UIAnimationUtils.ScaleIn(this.node);
+        JsonConigUtils.ReadJsonObjectByName(JsonConfigNameEnum.Client_Config, (error, clientConfig) => {
+            UIAnimationUtils.ScaleIn(this.node);
+            if(clientConfig.Test == false){
+                this.ipEditBox.enabled = false;
+            }else{
+                this.ipEditBox.string = clientConfig.ServerIP;
+            }
+        });
     }
 
     /**
@@ -93,7 +102,11 @@ export default class LoginUI extends UIBase {
                     if (clientConfig.OfflineMode == true) {
                         GameManager.Instance.stateMachine.ChangeState(GameStateEnum.GAME_STATE_SCENE_LOADING, SceneEnum.MAIN, GameStateEnum.GAME_STATE_MAIN_NORMAL);
                     } else {
-                        RpcClient.Instance.Init(clientConfig.ServerIP, callback);
+                        if(clientConfig.Test == false){
+                            RpcClient.Instance.Init(clientConfig.ServerIP, callback);
+                        }else{
+                            RpcClient.Instance.Init(this.ipEditBox.string, callback);
+                        }
                     }
                 } else {
                     this.SetButtonEnable(true);
