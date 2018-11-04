@@ -11,7 +11,8 @@ module ECS {
      * x: Array<TestComponent>;
      * @ECS.inject(PositionComponent)
      * y: Array<PositionComponent>;
-     * 需要注意的是这里声明的数组（上面例子中的x和y）每次update的时候会是一个新的实例。
+     * 需要注意的是这里声明的数组（上面例子中的x和y）每次onupdate触发的时候会是一个新的实例。
+     * 3.如果需要获取系统关联的实体，可以直接在onupdate时通过entities变量取得
      */
     export abstract class ComponentSystem extends ScriptBehaviourManager {
         InternalUpdate(): void {
@@ -35,7 +36,6 @@ module ECS {
             }
             target.ctypes.push(type);
             target.cnames.push(propertyName);
-            Logger.log(target.cnames, "inject");
         }
     }
 }
