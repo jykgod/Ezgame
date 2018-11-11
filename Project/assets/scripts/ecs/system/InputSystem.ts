@@ -14,6 +14,7 @@ export default class InputSystem extends ECS.ComponentSystem {
     }
 
     public OnDestroy(): void {
+        ECS.World.active.EntitisManager.removeSharedComponent(InputData);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
         GameLauncher.Instance.node.off(cc.Node.EventType.MOUSE_DOWN, this.onMouseDown, this);

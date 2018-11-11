@@ -97,16 +97,15 @@ module ECS {
             }
         }
 
-        // /**
-        //  * 删除实体上的某些类型的共享组件
-        //  * @param entity 实体
-        //  * @param componentDataType 组件
-        //  */
-        // public removeSharedComponent(...sharedComponentType: IComponentData[]) {
-        //     for (let i = 0; i < sharedComponentType.length; i++) {
-        //         componentDataType[i].instance = undefined;
-        //     }
-        // }
+        /**
+         * 删除共享组件
+         * @param componentDataType 组件
+         */
+        public removeSharedComponent(...sharedComponentType: IComponentData[]) {
+            for (let i = 0; i < sharedComponentType.length; i++) {
+                componentDataType[i].instance = undefined;
+            }
+        }
 
         /**
          * 删除一个实体

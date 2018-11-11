@@ -1,10 +1,7 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -26,8 +23,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -178,7 +175,18 @@ var ECS;
 var ECS;
 (function (ECS) {
     /**
-     * 注：禁止包含命名为ctypes和cnames的成员
+     * 系统
+     *
+     * 注：
+     * 1.禁止包含命名为ctypes和cnames的成员
+     * 2.声明组件数组变量时需要使用装饰器inject
+     * 例:
+     * @ECS.inject(TestComponent)
+     * x: Array<TestComponent>;
+     * @ECS.inject(PositionComponent)
+     * y: Array<PositionComponent>;
+     * 需要注意的是这里声明的数组（上面例子中的x和y）每次onupdate触发的时候会是一个新的实例。
+     * 3.如果需要获取系统关联的实体，可以直接在onupdate时通过entities变量取得
      */
     var ComponentSystem = /** @class */ (function (_super) {
         __extends(ComponentSystem, _super);
@@ -204,7 +212,6 @@ var ECS;
             }
             target.ctypes.push(type);
             target.cnames.push(propertyName);
-            Logger.log(target.cnames, "inject");
         };
     }
     ECS.inject = inject;
@@ -294,16 +301,19 @@ var ECS;
                 this._entitisComponents[entity][componentDataType[i].typeID] = undefined;
             }
         };
-        // /**
-        //  * 删除实体上的某些类型的共享组件
-        //  * @param entity 实体
-        //  * @param componentDataType 组件
-        //  */
-        // public removeSharedComponent(...sharedComponentType: IComponentData[]) {
-        //     for (let i = 0; i < sharedComponentType.length; i++) {
-        //         componentDataType[i].instance = undefined;
-        //     }
-        // }
+        /**
+         * 删除共享组件
+         * @param componentDataType 组件
+         */
+        EntitisManager.prototype.removeSharedComponent = function () {
+            var sharedComponentType = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                sharedComponentType[_i] = arguments[_i];
+            }
+            for (var i = 0; i < sharedComponentType.length; i++) {
+                componentDataType[i].instance = undefined;
+            }
+        };
         /**
          * 删除一个实体
          */
@@ -396,6 +406,14 @@ var ECS;
          * @param name 命名
          */
         function World(name) {
+            /**
+             * update执行的时间间隔
+             */
+            this._deltaTime = 0.1;
+            /**
+             * 上次更新的时间
+             */
+            this._lastUpdateTime = 0;
             this._name = name;
             this._entitisManager = new ECS.EntitisManager();
             this._systems = new Array();
@@ -471,17 +489,23 @@ var ECS;
          * 帧执行函数
          */
         World.prototype.update = function () {
+            if (TimeManager.Instance.realTimeSinceStartScene - this._lastUpdateTime < this._deltaTime) {
+                return;
+            }
+            this._lastUpdateTime = TimeManager.Instance.realTimeSinceStartScene;
             for (var i = 0; i < this._systems.length; i++) {
                 var ctypes = (this._systems[i]['ctypes']);
-                var cnames = (this._systems[i]['cnames']);
-                var entities = (_a = this._entitisManager).GetEntities.apply(_a, ctypes);
-                this._systems[i].entities = entities;
-                for (var j = 0; j < ctypes.length; j++) {
-                    var newArr = new Array();
-                    this._systems[i][cnames[j]] = newArr;
-                    if (entities != null) {
-                        for (var k = 0; k < entities.length; k++) {
-                            newArr.push(this._entitisManager.GetComponent(entities[k], ctypes[j]));
+                if (ctypes != null && ctypes != undefined) {
+                    var cnames = (this._systems[i]['cnames']);
+                    var entities = (_a = this._entitisManager).GetEntities.apply(_a, ctypes);
+                    this._systems[i].entities = entities;
+                    for (var j = 0; j < ctypes.length; j++) {
+                        var newArr = new Array();
+                        this._systems[i][cnames[j]] = newArr;
+                        if (entities != null) {
+                            for (var k = 0; k < entities.length; k++) {
+                                newArr.push(this._entitisManager.GetComponent(entities[k], ctypes[j]));
+                            }
                         }
                     }
                 }
@@ -820,7 +844,6 @@ var FSM;
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
             if (this.statesMap[nextStateType] == null || this.statesMap[nextStateType] == undefined) {
                 Tools.Logger.error("attemp to change to the " + nextStateType + " which " + name + " not has!", "FSM");
                 return;
@@ -835,6 +858,7 @@ var FSM;
             this.currentState = this.statesMap[nextStateType];
             this.timer.Reset();
             (_a = this.currentState).StateEnter.apply(_a, args);
+            var _a;
         };
         /**
          * 异步切换状态机状态,hint:
@@ -1157,8 +1181,7 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
-            var _a;
-            //Logger.info(reader.result);
+            // Logger.info(reader.result);
             var ret = JSON.parse(reader.result);
             if (ret["$type"].indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 var obj = JSON.parse(reader.result);
@@ -1178,6 +1201,7 @@ var RpcClient = /** @class */ (function () {
                     }
                 }
             }
+            var _a;
         };
     };
     /**
@@ -1200,8 +1224,8 @@ var RpcClient = /** @class */ (function () {
      */
     RpcClient.prototype.GetResponce = function (sequence) {
         return __awaiter(this, void 0, void 0, function () {
-            var ret;
             var _this = this;
+            var ret;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {

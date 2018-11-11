@@ -1,6 +1,7 @@
 import UIBase from "../ui/UIBase";
 import { UINameEnum } from "../enum/UINameEnum";
 import { GloableConstantUtils } from "../tools/GloableConstantUtils";
+import { ResourcesManager } from "./ResourcesManager";
 
 //TODO:因为每个UI需要在UINameEnum中定义其名称并保持脚本名与prefab名字相同，所以最好能用工具实现重复性工作
 /**
@@ -48,7 +49,7 @@ export class UIManager {
         Logger.log(`ShowUI ${uiName}`, "UIManager");
         if (this.uiDictionary[uiName] == undefined) {
             this.uiDictionary[uiName] = null;
-            cc.loader.loadRes(GloableConstantUtils.UIPrefabPath.concat(uiName), (error, res) => {
+            ResourcesManager.Instance.loadRes(GloableConstantUtils.UIPrefabPath.concat(uiName), (error, res) => {
                 if (error != null) {
                     (callBack != null) && callBack(error, null);
                     return;

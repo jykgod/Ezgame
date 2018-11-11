@@ -93,4 +93,8 @@ export class GloableUtils {
         }
         return ret;
     }
+
+    public static Delay(time): Promise<void> {
+        return new Promise<void>((resolve, reject) => { setTimeout(() => resolve(), time) });
+    }
 }

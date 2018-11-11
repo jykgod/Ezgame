@@ -61,6 +61,14 @@ module ECS {
          */
         private _entitisManager: EntitisManager;
         /**
+         * update执行的时间间隔
+         */
+        public _deltaTime = 0.1;
+        /**
+         * 上次更新的时间
+         */
+        private _lastUpdateTime = 0;
+        /**
          * 获取实体管理对象
          */
         public get EntitisManager(): EntitisManager {
@@ -91,17 +99,23 @@ module ECS {
          * 帧执行函数
          */
         public update(): void {
+            if(TimeManager.Instance.realTimeSinceStartScene - this._lastUpdateTime < this._deltaTime){
+                return;
+            }
+            this._lastUpdateTime = TimeManager.Instance.realTimeSinceStartScene;
             for (let i = 0; i < this._systems.length; i++) {
                 let ctypes: IComponentData[] = (this._systems[i]['ctypes']);
-                let cnames: string[] = (this._systems[i]['cnames']);
-                let entities = this._entitisManager.GetEntities(...ctypes);
-                this._systems[i].entities = entities;
-                for (let j = 0; j < ctypes.length; j++) {
-                    let newArr = new Array();
-                    this._systems[i][cnames[j]] = newArr;
-                    if (entities != null) {
-                        for (let k = 0; k < entities.length; k++) {
-                            newArr.push(this._entitisManager.GetComponent(entities[k], ctypes[j]));
+                if (ctypes != null && ctypes != undefined) {
+                    let cnames: string[] = (this._systems[i]['cnames']);
+                    let entities = this._entitisManager.GetEntities(...ctypes);
+                    this._systems[i].entities = entities;
+                    for (let j = 0; j < ctypes.length; j++) {
+                        let newArr = new Array();
+                        this._systems[i][cnames[j]] = newArr;
+                        if (entities != null) {
+                            for (let k = 0; k < entities.length; k++) {
+                                newArr.push(this._entitisManager.GetComponent(entities[k], ctypes[j]));
+                            }
                         }
                     }
                 }

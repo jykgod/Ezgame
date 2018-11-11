@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "66bb89f8-5861-4c46-afb1-8ad9c0113685",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "map_grass_water": {
+      "ver": "1.0.3",
+      "uuid": "29f9610f-6e25-4c18-812f-4b4ac0498392",
+      "rawTextureUuid": "66bb89f8-5861-4c46-afb1-8ad9c0113685",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -24,
+      "offsetY": 24,
+      "trimX": 2,
+      "trimY": 2,
+      "width": 460,
+      "height": 460,
+      "rawWidth": 512,
+      "rawHeight": 512,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

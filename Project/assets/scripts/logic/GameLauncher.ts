@@ -5,6 +5,7 @@ import TestComponent from "../ecs/component/TestComponent";
 import TestComponent2 from "../ecs/component/TestComponent2";
 import InputSystem from "../ecs/system/InputSystem";
 import PositionComponent from "../ecs/component/PositionComponent";
+import { ResourcesManager } from "../manager/ResourcesManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -28,6 +29,7 @@ export default class GameLauncher extends cc.Component {
         //-----------------------------------------------
         GameLauncher.instance = this;
         cc.game.addPersistRootNode(this.node);
+        ResourcesManager.Instance.Init();
         TimeManager.Instance.Init();
         LocalizationManager.Instance.Init("cn");
         UIManager.Instance.Init();

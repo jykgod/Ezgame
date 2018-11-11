@@ -16,6 +16,9 @@ export default class MotionControllerSystem extends ECS.ComponentSystem {
     public motionController: Array<MotionControllerComponent>;
 
     protected OnUpdate(): void {
+        if(this.entities == null){
+            return;
+        }
         let inputData = InputData.instance;
         for (let i = 0; i < this.entities.length; i++) {
             if(this.motions[i].canMove == true){
@@ -23,8 +26,10 @@ export default class MotionControllerSystem extends ECS.ComponentSystem {
                     //case xxx:....
                     default:
                         this.directions[i].direction = cc.Vec2.ZERO;
-                        this.directions[i].direction.x = (inputData.right && 1) + (inputData.left && -1);
-                        this.directions[i].direction.y = (inputData.up && 1) + (inputData.down && -1);
+                        if(inputData.right) this.directions[i].direction.x += 1;
+                        if(inputData.left) this.directions[i].direction.x -= 1;
+                        if(inputData.up) this.directions[i].direction.y += 1;
+                        if(inputData.down) this.directions[i].direction.y -= 1;
                         this.directions[i].direction.normalizeSelf();
                 }
                 this.motions[i].v = this.directions[i].direction.mul(this.motions[i].speed);

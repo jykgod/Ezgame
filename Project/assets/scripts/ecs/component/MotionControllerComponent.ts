@@ -5,5 +5,5 @@ export default class MotionControllerComponent implements ECS.IComponentData {
     /**
      * 操作类型
      */
-    public type: number;
+    public type: number = 0;
 }
