@@ -19,6 +19,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
 
     public OnStart(): void {
         ECS.World.active.EntitisManager.addSharedComponent(ViewChangeData);
+        ViewChangeData.instance.gotData = false;
         EcsUtility.InitedViewSyncSystem = false;
         EcsUtility.RegisterViewSyncOpt = (async () => {
             while (EcsUtility.GotRole == false) {
@@ -41,8 +42,16 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
 
     protected OnUpdate(): void {
         if(ViewChangeData.instance.data != null && this.positions != null && this.positions.length > 0){
-            this.positions[0].position = new cc.Vec2(ViewChangeData.instance.data.Position.Item1, ViewChangeData.instance.data.Position.Item2);
-            this.motions[0].speed = ViewChangeData.instance.data.Speed;
+            let pos = new cc.Vec2(ViewChangeData.instance.data.Position.Item1, ViewChangeData.instance.data.Position.Item2);
+            // Logger.log(this.positions[0].position);
+            // Logger.log(pos);
+            if (this.positions[0].position.sub(pos).magSqr() > 1 || ViewChangeData.instance.gotData == false){
+                Logger.log(`出现客户端和服务器位置不同步的问题！客户端位置:${this.positions[0].position} ; 服务器位置:${pos}`, "ViewChange");
+                EcsUtility.LastSyncMotionTime = new Date();
+                ViewChangeData.instance.gotData = true;
+                this.positions[0].position = pos;
+                this.motions[0].speed = ViewChangeData.instance.data.Speed;
+            }
         }
     }
 }

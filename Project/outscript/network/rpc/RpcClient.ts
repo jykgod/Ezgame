@@ -21,6 +21,7 @@ function RPC(serviceName: string, noReturn: boolean) {
             if (noReturn == false) {
                 let ret = await RpcClient.Instance.GetResponce(_sequence);
                 if (ret == null || ret == undefined) return null;
+                // Logger.info(ret);
                 if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
                     return ret.ReturnValue["$values"];
                 }
@@ -171,7 +172,7 @@ class RpcClient {
         //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
         //     return;
         // }
-        Tools.Logger.log(JSON.stringify(json), "RPC");
+        // Tools.Logger.log(JSON.stringify(json), "RPC");
         //Tools.Logger.info(json);
         // let enc = new TextEncoder();
         // let str = JSON.stringify(json);

@@ -1103,6 +1103,7 @@ function RPC(serviceName, noReturn) {
                             ret = _a.sent();
                             if (ret == null || ret == undefined)
                                 return [2 /*return*/, null];
+                            // Logger.info(ret);
                             if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
                                 return [2 /*return*/, ret.ReturnValue["$values"]];
                             }
@@ -1266,7 +1267,7 @@ var RpcClient = /** @class */ (function () {
         //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
         //     return;
         // }
-        Tools.Logger.log(JSON.stringify(json), "RPC");
+        // Tools.Logger.log(JSON.stringify(json), "RPC");
         //Tools.Logger.info(json);
         // let enc = new TextEncoder();
         // let str = JSON.stringify(json);
@@ -1743,8 +1744,8 @@ var SimCivil;
         var ValueTuple = /** @class */ (function () {
             function ValueTuple(value) {
                 this.$type = "System.ValueTuple`2[[System.Single, mscorlib],[System.Single, mscorlib]], System.ValueTuple";
-                this.Item1 = +value.Item1.toPrecision(6);
-                this.Item2 = +value.Item2.toPrecision(6);
+                this.Item1 = +value.Item1.toPrecision(10);
+                this.Item2 = +value.Item2.toPrecision(10);
             }
             return ValueTuple;
         }());

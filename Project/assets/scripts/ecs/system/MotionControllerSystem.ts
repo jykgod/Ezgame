@@ -33,6 +33,7 @@ export default class MotionControllerSystem extends ECS.ComponentSystem {
                         this.directions[i].direction.normalizeSelf();
                 }
                 this.motions[i].v = this.directions[i].direction.mul(this.motions[i].speed);
+                // Logger.log(this.motions[i].v.mag(), "direct");
             }
         }
     }
