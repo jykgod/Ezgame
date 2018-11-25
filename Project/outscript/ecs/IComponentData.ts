@@ -1,4 +1,4 @@
-module ECS {
+namespace ECS {
     /**
     * 组件数据接口
     */

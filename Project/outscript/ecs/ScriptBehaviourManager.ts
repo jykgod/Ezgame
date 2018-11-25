@@ -1,4 +1,4 @@
-module ECS {
+namespace ECS {
     export abstract class ScriptBehaviourManager {
         
         private _entities : Array<number>;
@@ -18,3 +18,5 @@ module ECS {
     }
     Object.seal(ScriptBehaviourManager.prototype.Update);
 }
+if(!(<any>window).ECS) (<any>window).ECS = {}; 
+(<any>window).ECS.ScriptBehaviourManager = ECS.ScriptBehaviourManager;

@@ -1,5 +1,5 @@
 /// <reference path="./ScriptBehaviourManager.ts"/>
-module ECS {
+namespace ECS {
     /**
      * 系统
      * 
@@ -39,3 +39,6 @@ module ECS {
         }
     }
 }
+if(!(<any>window).ECS) (<any>window).ECS = {}; 
+(<any>window).ECS.ComponentSystem = ECS.ComponentSystem;
+(<any>window).ECS.inject = ECS.inject;
