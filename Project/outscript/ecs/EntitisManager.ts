@@ -1,4 +1,4 @@
-module ECS {
+namespace ECS {
     export class EntitisManager {
         /**
          * 给下一个新组件类型分配的ID
@@ -184,3 +184,5 @@ module ECS {
         }
     }
 }
+if(!(<any>window).ECS) (<any>window).ECS = {}; 
+(<any>window).ECS.EntitisManager = ECS.EntitisManager;

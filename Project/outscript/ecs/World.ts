@@ -1,4 +1,4 @@
-module ECS {
+namespace ECS {
     export class World {
         //static-----------------------------
         /**
@@ -136,3 +136,5 @@ module ECS {
     Object.seal(World.prototype.update);
     Object.seal(World.prototype.addSystem);
 }
+if(!(<any>window).ECS) (<any>window).ECS = {}; 
+(<any>window).ECS.World = ECS.World;
