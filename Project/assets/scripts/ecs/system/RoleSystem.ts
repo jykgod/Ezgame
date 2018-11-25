@@ -19,6 +19,10 @@ export default class RoleSystem extends ECS.ComponentSystem {
             EcsUtility.GotRole = await SimCivil.Contract.IRoleManager.UseRole((await SimCivil.Contract.IRoleManager.GetRoleList())[0].Id);
             if (EcsUtility.GotRole == true) {
                 ResourcesManager.Instance.loadRes(GloableConstantUtils.GamePrefabPath.concat("Player"), (error, res)=>{
+                    if(error){
+                        Logger.log(error.message);
+                        return;
+                    }
                     let node:cc.Node = cc.instantiate<cc.Node>(res);
                     node.setParent(cc.Canvas.instance.node);
                 });
