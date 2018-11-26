@@ -94,6 +94,11 @@ module SimCivil.Contract {
 		public static async DeregisterViewSync(): Promise<void>{
             return void(0);
         }
+
+        @RPC("SimCivil.Contract.IViewSynchronizer", false)
+		public static async GetAtlas(index: { X: number, Y: number }): Promise<TileDto[]>{
+            return [];
+        }
 		
 	}
 	
