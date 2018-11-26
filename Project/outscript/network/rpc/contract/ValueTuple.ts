@@ -5,8 +5,8 @@ module SimCivil.Contract {
         public Item2: number;
 
         constructor(value: { Item1: number, Item2: number }) {
-            this.Item1 = +value.Item1.toPrecision(6);
-            this.Item2 = +value.Item2.toPrecision(6);
+            this.Item1 = +value.Item1.toPrecision(10);
+            this.Item2 = +value.Item2.toPrecision(10);
         }
     }
 }

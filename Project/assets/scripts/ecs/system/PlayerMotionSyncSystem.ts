@@ -1,6 +1,7 @@
 import MotionComponent from "../component/MotionComponent";
 import MotionControllerComponent from "../component/MotionControllerComponent";
 import PositionComponent from "../component/PositionComponent";
+import { EcsUtility } from "../utility/EcsUtility";
 
 /**
  * 更新玩家位置信息
@@ -14,17 +15,20 @@ export default class PlayerMotionSyncSystem extends ECS.ComponentSystem {
     @ECS.inject(MotionControllerComponent)
     public controller: Array<MotionControllerComponent>;
 
-    private lastTime: number;
-
-    public OnStart(): void{
-        this.lastTime = TimeManager.Instance.realTimeSinceStartScene;
+    public OnStart(): void {
+        EcsUtility.LastSyncMotionTime = new Date();
     }
 
     protected OnUpdate(): void {
-        if(this.motion.length > 0){
-            this.pos[0].position = this.pos[0].position.add(this.motion[0].v.mul(TimeManager.Instance.realTimeSinceStartScene - this.lastTime));
-            SimCivil.Contract.IPlayerController.MoveTo(new SimCivil.Contract.ValueTuple({ Item1: this.pos[0].position.x, Item2: this.pos[0].position.y }), new Date());
+        let now = new Date();
+        if (this.motion.length > 0) {
+            let motionV = this.motion[0].v.mul((now - EcsUtility.LastSyncMotionTime) / 1000);
+            this.pos[0].position = this.pos[0].position.add(motionV);
+            Logger.log(`(${motionV.x},${motionV.y})`, "PlayerMotionSyncSystem");
+            // Logger.log((now - this.lastTime) / 1000, "PlayerMotionSyncSystem");
+            // Logger.log(motionV.mag(), "PlayerMotionSyncSystem");
+            SimCivil.Contract.IPlayerController.MoveTo(new SimCivil.Contract.ValueTuple({ Item1: this.pos[0].position.x, Item2: this.pos[0].position.y }), now);
         }
-        this.lastTime = TimeManager.Instance.realTimeSinceStartScene;
+        EcsUtility.LastSyncMotionTime = now;
     }
 }

@@ -21,6 +21,7 @@ function RPC(serviceName: string, noReturn: boolean) {
             if (noReturn == false) {
                 let ret = await RpcClient.Instance.GetResponce(_sequence);
                 if (ret == null || ret == undefined) return null;
+                // Logger.info(ret);
                 if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
                     return ret.ReturnValue["$values"];
                 }
