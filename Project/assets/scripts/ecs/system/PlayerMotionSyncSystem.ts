@@ -24,10 +24,10 @@ export default class PlayerMotionSyncSystem extends ECS.ComponentSystem {
         if (this.motion.length > 0) {
             let motionV = this.motion[0].v.mul((now - EcsUtility.LastSyncMotionTime) / 1000);
             this.pos[0].position = this.pos[0].position.add(motionV);
-            Logger.log(`(${motionV.x},${motionV.y})`, "PlayerMotionSyncSystem");
+            // Logger.log(`(${motionV.x},${motionV.y})`, "PlayerMotionSyncSystem");
             // Logger.log((now - this.lastTime) / 1000, "PlayerMotionSyncSystem");
             // Logger.log(motionV.mag(), "PlayerMotionSyncSystem");
-            SimCivil.Contract.IPlayerController.MoveTo(new SimCivil.Contract.ValueTuple({ Item1: this.pos[0].position.x, Item2: this.pos[0].position.y }), now);
+            SimCivil.Contract.IPlayerController.MoveTo(new SimCivil.Contract.ValueTupleFloat({ Item1: this.pos[0].position.x, Item2: this.pos[0].position.y }), now);
         }
         EcsUtility.LastSyncMotionTime = now;
     }

@@ -98,7 +98,7 @@ class RpcClient {
         let reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev: ProgressEvent) {
-            // Logger.info(reader.result);
+            Logger.info(reader.result);
             let ret = JSON.parse(reader.result);
             if ((<string>ret["$type"]).indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 let obj: SimCivil.Rpc.RpcResponse = JSON.parse(reader.result);

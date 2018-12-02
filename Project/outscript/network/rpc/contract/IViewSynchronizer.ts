@@ -96,7 +96,7 @@ module SimCivil.Contract {
         }
 
         @RPC("SimCivil.Contract.IViewSynchronizer", false)
-		public static async GetAtlas(index: { X: number, Y: number }): Promise<TileDto[]>{
+		public static async GetAtlas(index: ValueTupleInt32): Promise<TileDto[]>{
             return [];
         }
 		

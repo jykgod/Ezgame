@@ -19,6 +19,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
 
     public OnStart(): void {
         ECS.World.active.EntitisManager.addSharedComponent(ViewChangeData);
+        ViewChangeData.instance.data = null;
         ViewChangeData.instance.gotData = false;
         EcsUtility.InitedViewSyncSystem = false;
         EcsUtility.RegisterViewSyncOpt = (async () => {
@@ -27,6 +28,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
             }
             await SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
                 ViewChangeData.instance.data = viewChanged;
+                // Logger.log(viewChanged);
             });
             EcsUtility.InitedViewSyncSystem = true;
         })();
@@ -41,16 +43,22 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
     }
 
     protected OnUpdate(): void {
-        if(ViewChangeData.instance.data != null && this.positions != null && this.positions.length > 0){
+        if (ViewChangeData.instance.data != null && this.positions != null && this.positions.length > 0) {
             let pos = new cc.Vec2(ViewChangeData.instance.data.Position.Item1, ViewChangeData.instance.data.Position.Item2);
             // Logger.log(this.positions[0].position);
             // Logger.log(pos);
-            if (this.positions[0].position.sub(pos).magSqr() > 1 || ViewChangeData.instance.gotData == false){
+            if (this.positions[0].position.sub(pos).magSqr() > 1 || ViewChangeData.instance.gotData == false) {
                 Logger.log(`出现客户端和服务器位置不同步的问题！客户端位置:${this.positions[0].position} ; 服务器位置:${pos}`, "ViewChange");
                 EcsUtility.LastSyncMotionTime = new Date();
-                ViewChangeData.instance.gotData = true;
+                if (ViewChangeData.instance.gotData == false) {
+                    ViewChangeData.instance.gotData = true;
+                    SimCivil.Contract.IViewSynchronizer.GetAtlas(new SimCivil.Contract.ValueTupleInt32({ Item1: 0, Item2: 0 })).then((v)=>{
+                        Logger.info(v);
+                    });
+                }
                 this.positions[0].position = pos;
                 this.motions[0].speed = ViewChangeData.instance.data.Speed;
+
             }
         }
     }
