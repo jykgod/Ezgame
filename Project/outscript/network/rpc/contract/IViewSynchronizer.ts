@@ -64,10 +64,10 @@ module SimCivil.Contract {
     export class TileDto {
         public $type = "SimCivil.Contract.TileDto, SimCivil.Contract"
         
-        // POSITION
+        // { X: number, Y: number } System
         public Position: { X: number, Y: number } = null;
-        // SURFACE
-        public Surface: string = null;
+        // number System
+        public Terrain: number = 0;
 		
 
     }
