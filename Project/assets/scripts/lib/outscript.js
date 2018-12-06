@@ -1195,7 +1195,7 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
-            Logger.info(reader.result);
+            // Logger.info(reader.result);
             var ret = JSON.parse(reader.result);
             if (ret["$type"].indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 var obj = JSON.parse(reader.result);
@@ -1666,10 +1666,10 @@ var SimCivil;
         var TileDto = /** @class */ (function () {
             function TileDto() {
                 this.$type = "SimCivil.Contract.TileDto, SimCivil.Contract";
-                // POSITION
+                // { X: number, Y: number } System
                 this.Position = null;
-                // SURFACE
-                this.Surface = null;
+                // number System
+                this.Terrain = 0;
             }
             return TileDto;
         }());

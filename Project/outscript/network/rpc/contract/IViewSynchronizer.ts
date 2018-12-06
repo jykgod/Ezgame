@@ -65,7 +65,7 @@ module SimCivil.Contract {
         public $type = "SimCivil.Contract.TileDto, SimCivil.Contract"
         
         // { X: number, Y: number } System
-        public Position: { X: number, Y: number } = null;
+        public Position: { Item1: number, Item2: number } = null;
         // number System
         public Terrain: number = 0;
 		

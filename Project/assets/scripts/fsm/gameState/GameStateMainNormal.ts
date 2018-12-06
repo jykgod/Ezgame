@@ -9,6 +9,7 @@ import ViewSyncSystem from "../../ecs/system/ViewSyncSystem";
 import MotionControllerSystem from "../../ecs/system/MotionControllerSystem";
 import PlayerMotionSyncSystem from "../../ecs/system/PlayerMotionSyncSystem";
 import RoleSystem from "../../ecs/system/RoleSystem";
+import CameraSystem from "../../ecs/system/CameraSystem";
 
 export class GameStateMainNormal implements FSM.IState {
     stateType = GameStateEnum.GAME_STATE_MAIN_NORMAL;
@@ -19,6 +20,7 @@ export class GameStateMainNormal implements FSM.IState {
         this.world.addSystem(RoleSystem);
         this.world.addSystem(InputSystem);
         this.world.addSystem(MapSystem);
+        this.world.addSystem(CameraSystem);
         this.world.addSystem(ViewSyncSystem);
         this.world.addSystem(MotionControllerSystem);
         this.world.addSystem(PlayerMotionSyncSystem);

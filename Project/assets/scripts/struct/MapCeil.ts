@@ -17,7 +17,7 @@ export default class MapCeil{
     }
     
 
-    public constructor (type: string, id: number){
+    public constructor (type: number, id: number){
         this._type = type;
         this._id = id;
     }

@@ -3,6 +3,7 @@ import PositionComponent from "../../ecs/component/PositionComponent";
 import MotionControllerComponent from "../../ecs/component/MotionControllerComponent";
 import DirectionComponent from "../../ecs/component/DirectionComponent";
 import Npc from "./Npc";
+import { EcsUtility } from "../../ecs/utility/EcsUtility";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -33,6 +34,6 @@ export default class Player extends Npc {
     }
 
     update(){
-        this.node.position = this.posComp.position.mul(10);
+        this.node.position = this.posComp.position.mul(EcsUtility.LogicToUIRatio);
     }
 }

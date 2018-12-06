@@ -1,0 +1,24 @@
+{
+    "0": [
+        {
+            "other_type": 1,
+            "atlas": "map_grass_water"
+        },
+        {
+            "other_type": 2,
+            "atlas": "map_grass_path"
+        }
+    ],
+    "1": [
+        {
+            "other_type": 0,
+            "atlas": "map_grass_water"
+        }
+    ],
+    "2": [
+        {
+            "other_type": 0,
+            "atlas": "map_grass_path"
+        }
+    ]
+}

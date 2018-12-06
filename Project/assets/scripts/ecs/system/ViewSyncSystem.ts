@@ -4,6 +4,7 @@ import { GloableUtils } from "../../tools/GloableUtils";
 import PositionComponent from "../component/PositionComponent";
 import MotionControllerComponent from "../component/MotionControllerComponent";
 import MotionComponent from "../component/MotionComponent";
+import MapDataComponent from "../sharedComponent/MapDataComponent";
 
 /**
  * 视野同步系统
@@ -53,7 +54,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
                 if (ViewChangeData.instance.gotData == false) {
                     ViewChangeData.instance.gotData = true;
                     SimCivil.Contract.IViewSynchronizer.GetAtlas(new SimCivil.Contract.ValueTupleInt32({ Item1: 0, Item2: 0 })).then((v)=>{
-                        Logger.info(v);
+                        MapDataComponent.instance.ceilsFromServer.concat(v);
                     });
                 }
                 this.positions[0].position = pos;

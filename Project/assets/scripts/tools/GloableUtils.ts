@@ -3,6 +3,8 @@ import { UINameEnum } from "../enum/UINameEnum";
 import PopupWarningUI from "../ui/PopupWarningUI";
 import GameLauncher from "../logic/GameLauncher";
 import { LocalStorageEnum } from "../enum/LocalStorageEnum";
+import { MapCeilTypeEnum } from "../enum/MapCeilTypEnum";
+import { JsonConigUtils } from "./JsonConfigUtils";
 
 class TipsStruct {
     public content: string;
@@ -97,4 +99,58 @@ export class GloableUtils {
     public static Delay(time): Promise<void> {
         return new Promise<void>((resolve, reject) => { setTimeout(() => resolve(), time) });
     }
+
+    /**
+     * @param centerType 中心ceil的地形
+     * @param roundType 如果中心ceil周围存在不同种类的类型，则该值代表其他的类型
+     * @param mask 用8位二进制位代表周围的地形是否和自己想同，相同则表示为1，不同为0
+     * @return 返回一个对象，对象中atlas表示应该使用的图集，id表示使用哪张纹理
+     */
+    private GetAtalasAndCeilName(centerType: number, roundType: number, mask: number, callback: (ret: { atlas: string, id: string }) => {}) {
+        JsonConigUtils.ReadJsonObjectByName("MapAtlasNameConfig", (error, conf) => {
+            if (error) {
+                Logger.error(error, "GetAtalasAndCeilName");
+                return;
+            }
+            conf = conf[centerType.toString()];
+            if (!conf) {
+                Logger.error(`找不到地形${centerType}对应的图集配置`, "GetAtalasAndCeilName");
+                return;
+            }
+            if (centerType == roundType) {
+                conf = conf[0];
+                roundType = conf[0].other_type;
+            }
+            else {
+                let flag = false;
+                for (let i = 0; i < conf.length; i++) {
+                    if (conf[i].other_type == roundType) {
+                        conf = conf[i];
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag == false) {
+                    Logger.error(`找不到地形${centerType}在周围地形为${roundType}的情况下所对应的图集配置`, "GetAtalasAndCeilName");
+                    return;
+                }
+            }
+            let ret: { atlas: string, id: string } = <any>{};
+            ret.atlas = conf.atals;
+            if(centerType > roundType){
+                ret.id = (mask & 0b11111111).toString();
+            }else{
+                ret.id = mask.toString();
+            }
+            if (callback) {
+                callback(ret);
+            }
+        });
+    }
+
+    /**
+     * 对周围地块周围的节点遍历用数组
+     */
+    public static dx = [1,0,-1,1,-1,1,0,-1];
+    public static dy = [-1,-1,-1,0,0,1,1,1];
 }
