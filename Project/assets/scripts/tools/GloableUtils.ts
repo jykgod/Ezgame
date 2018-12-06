@@ -137,9 +137,9 @@ export class GloableUtils {
             }
             let ret: { atlas: string, id: string } = <any>{};
             ret.atlas = conf.atals;
-            if(centerType > roundType){
+            if (centerType > roundType) {
                 ret.id = (mask & 0b11111111).toString();
-            }else{
+            } else {
                 ret.id = mask.toString();
             }
             if (callback) {
@@ -151,6 +151,6 @@ export class GloableUtils {
     /**
      * 对周围地块周围的节点遍历用数组
      */
-    public static dx = [1,0,-1,1,-1,1,0,-1];
-    public static dy = [-1,-1,-1,0,0,1,1,1];
+    public static dx = [1, 0, -1, 1, -1, 1, 0, -1];
+    public static dy = [-1, -1, -1, 0, 0, 1, 1, 1];
 }
