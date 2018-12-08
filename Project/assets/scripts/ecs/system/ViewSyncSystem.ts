@@ -53,9 +53,33 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
                 EcsUtility.LastSyncMotionTime = new Date();
                 if (ViewChangeData.instance.gotData == false) {
                     ViewChangeData.instance.gotData = true;
-                    SimCivil.Contract.IViewSynchronizer.GetAtlas(new SimCivil.Contract.ValueTupleInt32({ Item1: 0, Item2: 0 })).then((v)=>{
-                        MapDataComponent.instance.ceilsFromServer.concat(v);
+                    let count = 0;
+                    let nowx = 0;
+                    let nowy = 0;
+                    SimCivil.Contract.IViewSynchronizer.GetAtlas(new SimCivil.Contract.ValueTupleInt32({ Item1: nowx, Item2: nowy })).then((v) => {
+                        // Logger.log("nextX:" + nowx + ";nextY:" + nowy + ";");
+                        // Logger.info(v);
+                        if (!v) return;
+                        MapDataComponent.instance.ceilsFromServer = MapDataComponent.instance.ceilsFromServer.concat(v);
+                        count++;
+                        if (count == 9) {
+                            MapDataComponent.instance.centerPositionDirty = true;
+                        }
                     });
+                    for (let i = 0; i < 8; i++) {
+                        let nextX = nowx + GloableUtils.dx[i];
+                        let nextY = nowy + GloableUtils.dy[i];
+                        SimCivil.Contract.IViewSynchronizer.GetAtlas(new SimCivil.Contract.ValueTupleInt32({ Item1: nowx + GloableUtils.dx[i], Item2: nowy + GloableUtils.dy[i] })).then((v) => {
+                            // Logger.log("nextX:" + nextX + ";nextY:" + nextY + ";");
+                            // Logger.info(v);
+                            if (!v) return;
+                            MapDataComponent.instance.ceilsFromServer = MapDataComponent.instance.ceilsFromServer.concat(v);
+                            count++;
+                            if (count == 9) {
+                                MapDataComponent.instance.centerPositionDirty = true;
+                            }
+                        });
+                    }
                 }
                 this.positions[0].position = pos;
                 this.motions[0].speed = ViewChangeData.instance.data.Speed;

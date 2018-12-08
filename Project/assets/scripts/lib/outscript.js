@@ -1776,8 +1776,8 @@ var SimCivil;
         var ValueTupleInt32 = /** @class */ (function () {
             function ValueTupleInt32(value) {
                 this.$type = "System.ValueTuple`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], System.ValueTuple";
-                this.Item1 = +value.Item1.toPrecision(10);
-                this.Item2 = +value.Item2.toPrecision(10);
+                this.Item1 = +Math.round(value.Item1);
+                this.Item2 = +Math.round(value.Item2);
             }
             return ValueTupleInt32;
         }());

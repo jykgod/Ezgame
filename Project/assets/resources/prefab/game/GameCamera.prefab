@@ -17,7 +17,7 @@
     "_parent": null,
     "_children": [],
     "_active": true,
-    "_level": 1,
+    "_level": 2,
     "_components": [
       {
         "__id__": 2
@@ -80,7 +80,7 @@
     },
     "_enabled": true,
     "_cullingMask": -2,
-    "_clearFlags": 6,
+    "_clearFlags": 7,
     "_backgroundColor": {
       "__type__": "cc.Color",
       "r": 0,
@@ -88,10 +88,10 @@
       "b": 0,
       "a": 255
     },
-    "_depth": 0,
+    "_depth": -1,
     "_zoomRatio": 1,
     "_targetTexture": null,
-    "_id": "94w91qo0tL86m6Ob5PapLJ"
+    "_id": "aa0C5QzQBEBrmFtf6JWjBV"
   },
   {
     "__type__": "cc.PrefabInfo",

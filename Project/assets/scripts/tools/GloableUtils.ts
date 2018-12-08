@@ -153,4 +153,12 @@ export class GloableUtils {
      */
     public static dx = [1, 0, -1, 1, -1, 1, 0, -1];
     public static dy = [-1, -1, -1, 0, 0, 1, 1, 1];
+
+    public static GetMaskString(mask: number): string {
+        let ret = "";
+        for (let i = 7; i >= 0; i--) {
+            ret += (mask & (1 << i)) > 0 ? '1' : '0';
+        }
+        return ret;
+    }
 }

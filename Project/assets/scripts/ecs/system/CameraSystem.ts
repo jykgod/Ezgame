@@ -41,8 +41,12 @@ export default class CameraSystem extends ECS.ComponentSystem {
         // Logger.log(`mag = ${mag}`, "cameraSystem");
         if(mag * EcsUtility.LogicToUIRatio > 100){
             temp.mulSelf(100 / (mag * EcsUtility.LogicToUIRatio));
-            MapDataComponent.instance.centerPosition = playerPos.sub(temp);
-            MapDataComponent.instance.cameraNode.position = MapDataComponent.instance.centerPosition.mul(EcsUtility.LogicToUIRatio);
+            temp = playerPos.sub(temp);
+            if(temp != MapDataComponent.instance.centerPosition){
+                MapDataComponent.instance.centerPositionDirty = true;
+                MapDataComponent.instance.centerPosition = temp;
+                MapDataComponent.instance.cameraNode.position = MapDataComponent.instance.centerPosition.mul(EcsUtility.LogicToUIRatio);
+            }
         }
     }
 }
