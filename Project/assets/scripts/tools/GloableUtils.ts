@@ -151,8 +151,8 @@ export class GloableUtils {
     /**
      * 对周围地块周围的节点遍历用数组
      */
-    public static dx = [1, 0, -1, 1, -1, 1, 0, -1];
-    public static dy = [-1, -1, -1, 0, 0, 1, 1, 1];
+    public static dx = [-1, 0, 1, -1, 1, -1, 0, 1];
+    public static dy = [1, 1, 1, 0, 0, -1, -1, -1];
 
     public static GetMaskString(mask: number): string {
         let ret = "";

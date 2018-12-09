@@ -1163,7 +1163,7 @@ var RpcClient = /** @class */ (function () {
         /**
          * 超时时间
          */
-        this.timeOut = 2;
+        this.timeOut = 5;
     }
     Object.defineProperty(RpcClient.prototype, "session", {
         /**

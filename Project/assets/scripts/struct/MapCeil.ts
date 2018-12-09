@@ -54,6 +54,7 @@ export default class MapCeil {
             if (roundsType[i] == type) {
                 mask = 1 + (mask << 1);
             } else {
+                mask = mask << 1;
                 roundType = roundsType[i];
             }
         }
@@ -68,11 +69,15 @@ export default class MapCeil {
         this._mask[2] = 0b01101000 + ((mask & (1 << 4)) << 3) + (mask & (1 << 4)) + (mask & (1 << 2)) + (mask & (1 << 1)) + ((mask & (1 << 1)) >> 1);
         this._mask[3] = 0b11010000 + ((mask & (1 << 3)) << 2) + (mask & (1 << 3)) + ((mask & (1 << 1)) << 1) + (mask & (1 << 1)) + (mask & (1 << 0));
 
-        if (roundType > type) {
+        if (roundType < type) {
             for (let i = 0; i < 4; i++) {
                 this._mask[i] = this._mask[i] ^ 0b11111111;
             }
         }
+        // Logger.info(type);
+        // Logger.info(roundsType);
+        // Logger.info(this.mask);
+        // Logger.info(this._mask);
 
         JsonConigUtils.ReadJsonObjectByName(JsonConfigNameEnum.Map_Atlas_Name, (error, res) => {
             let conf = res[type.toString()];

@@ -72,7 +72,7 @@ class RpcClient {
     /**
      * 超时时间
      */
-    private timeOut = 2;
+    private timeOut = 5;
     /**
      * 与rpc服务器建立的会话
      */

@@ -13,6 +13,7 @@ export default class MapSystem extends ECS.ComponentSystem {
 
     public OnStart(): void {
         ECS.World.active.EntitisManager.addSharedComponent(MapDataComponent);
+        MapDataComponent.instance.centerPositionDirty = false;
         MapDataComponent.instance.viewWidth = Math.ceil(cc.Canvas.instance.node.width / EcsUtility.LogicToUIRatio);
         MapDataComponent.instance.viewHeight = Math.ceil(cc.Canvas.instance.node.height / EcsUtility.LogicToUIRatio);
         this.InitCeilsPosition();
@@ -35,7 +36,7 @@ export default class MapSystem extends ECS.ComponentSystem {
                 if (!MapDataComponent.instance.ceilsData[serverData[i].Position.Item1]) {
                     MapDataComponent.instance.ceilsData[serverData[i].Position.Item1] = [];
                 }
-                MapDataComponent.instance.ceilsData[serverData[i].Position.Item1][serverData[i].Position.Item2] = Math.floor(Math.random() * 3);//serverData[i].Terrain;
+                MapDataComponent.instance.ceilsData[serverData[i].Position.Item1][serverData[i].Position.Item2] = serverData[i].Terrain;
                 /**
                  * TODO:这个地方应该将发生了地形改变的mapceil的dirty参数置为true!!!
                  */
@@ -122,13 +123,15 @@ export default class MapSystem extends ECS.ComponentSystem {
                 let roundType = [0, 0, 0, 0, 0, 0, 0, 0];
                 try {
                     let ceilsData = MapDataComponent.instance.ceilsData;
-                    let type = ceilsData[x][y];
+                    type = ceilsData[x][y];
                     for (let k = 0; k < 8; k++) {
-                        roundType.push(ceilsData[x + GloableUtils.dx[i]][y + GloableUtils.dy[i]]);
+                        roundType[k] = ceilsData[x + GloableUtils.dx[k]][y + GloableUtils.dy[k]];
                     }
-                } catch{
+                } catch(e){
+                    Logger.info(e);
                     Logger.error(`地形信息获取失败！(${x}, ${y})`, "MAPSYS");
                 }
+                // Logger.info(roundType);
                 this.ceils[i].dirty = false;
                 this.ceils[i].uiDirty = this.ceils[i].ceil.Reset(type, roundType);
             }
