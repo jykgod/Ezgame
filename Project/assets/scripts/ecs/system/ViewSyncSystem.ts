@@ -45,11 +45,12 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
 
     protected OnUpdate(): void {
         if (ViewChangeData.instance.data != null && this.positions != null && this.positions.length > 0) {
-            let pos = new cc.Vec2(ViewChangeData.instance.data.Position.Item1, ViewChangeData.instance.data.Position.Item2);
+            let pos = new cc.Vec2(ViewChangeData.instance.data.Position[0], ViewChangeData.instance.data.Position[1]);
             // Logger.log(this.positions[0].position);
             // Logger.log(pos);
             if (this.positions[0].position.sub(pos).magSqr() > 1 || ViewChangeData.instance.gotData == false) {
-                Logger.log(`出现客户端和服务器位置不同步的问题！客户端位置:${this.positions[0].position} ; 服务器位置:${pos}`, "ViewChange");
+                Logger.log(`出现客户端和服务器位置不同步的问题！客户端位置:${this.positions[0].position} ; 服务器位置:${pos};`, "ViewChange");
+                Logger.info(ViewChangeData.instance.data);
                 EcsUtility.LastSyncMotionTime = new Date();
                 if (ViewChangeData.instance.gotData == false) {
                     ViewChangeData.instance.gotData = true;
