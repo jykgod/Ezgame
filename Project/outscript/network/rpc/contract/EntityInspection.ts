@@ -15,7 +15,7 @@ module SimCivil.Contract {
         // ENTITYID
         public EntityId: string = "00000000-0000-0000-0000-000000000000";
         // TIMESTAMP
-        public TimeStamp: Date = new Date(0);
+        public TimeStamp: number = 0;
         // OBSERVERID
         public ObserverId: string = "00000000-0000-0000-0000-000000000000";
         // VALUES

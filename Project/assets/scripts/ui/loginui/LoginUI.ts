@@ -6,6 +6,9 @@ import { LocalizationManager } from "../../manager/LocalizationManager";
 import { JsonConfigNameEnum } from "../../enum/JsonConfigNameEnum";
 import { GloableUtils } from "../../tools/GloableUtils";
 import { JsonConigUtils } from "../../tools/JsonConfigUtils";
+import { UI2EcsSessionManager } from "../../manager/UI2EcsSessionManager";
+import UIProto from "../../struct/UIProto";
+import { UIProtoTypeEnum } from "../../enum/UIProtoTypeEnum";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -60,6 +63,7 @@ export default class LoginUI extends UIBase {
                     if (logined == null || logined == false) {
                         GloableUtils.ShowTips(LocalizationManager.Instance.GetLocalizationTextByKey("login_text_tips_error"));
                     } else {
+                        UI2EcsSessionManager.Instance.Send(new UIProto(UIProtoTypeEnum.REQ_LOGIN));
                         GameManager.Instance.stateMachine.ChangeState(GameStateEnum.GAME_STATE_SCENE_LOADING, SceneEnum.MAIN, GameStateEnum.GAME_STATE_MAIN_NORMAL);
                     }
                 });

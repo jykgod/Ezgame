@@ -43,7 +43,7 @@ export default class MovementTest extends cc.Component {
             await SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
                 viewChanged = <SimCivil.Contract.ViewChange>viewChanged;
                 if (inited == false) {
-                    this.node.position = this.serverPosToUIPos(new cc.Vec2(viewChanged.Position.Item1, viewChanged.Position.Item2));
+                    this.node.position = this.serverPosToUIPos(new cc.Vec2(viewChanged.Position[0], viewChanged.Position[1]));
                     inited = true;
                     this.schedule(() => this.logicUpdate(), MovementTest.deltaTimePreFrame);
                 }
@@ -59,7 +59,7 @@ export default class MovementTest extends cc.Component {
     logicUpdate() {
         Logger.log(this.node.position, name);
         let serverPos = this.uiPosToServerPos(this.node.position);
-        SimCivil.Contract.IPlayerController.MoveTo(new SimCivil.Contract.ValueTuple({ Item1: serverPos.x, Item2: serverPos.y }), new Date());
+        SimCivil.Contract.IPlayerController.MoveTo([serverPos.x, serverPos.y], TimeManager.Instance.GetCurrentServerTIme());
     }
 
     update(dt) {

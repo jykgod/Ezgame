@@ -51,13 +51,13 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
             if (this.positions[0].position.sub(pos).magSqr() > 1 || ViewChangeData.instance.gotData == false) {
                 Logger.log(`出现客户端和服务器位置不同步的问题！客户端位置:${this.positions[0].position} ; 服务器位置:${pos};`, "ViewChange");
                 Logger.info(ViewChangeData.instance.data);
-                EcsUtility.LastSyncMotionTime = new Date();
+                EcsUtility.LastSyncMotionTime = TimeManager.Instance.GetCurrentServerTIme();
                 if (ViewChangeData.instance.gotData == false) {
                     ViewChangeData.instance.gotData = true;
                     let count = 0;
                     let nowx = 0;
                     let nowy = 0;
-                    SimCivil.Contract.IViewSynchronizer.GetAtlas(new SimCivil.Contract.ValueTupleInt32({ Item1: nowx, Item2: nowy })).then((v) => {
+                    SimCivil.Contract.IViewSynchronizer.GetAtlas([nowx, nowy]).then((v) => {
                         // Logger.log("nextX:" + nowx + ";nextY:" + nowy + ";");
                         // Logger.info(v);
                         if (!v) return;
@@ -70,7 +70,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
                     for (let i = 0; i < 8; i++) {
                         let nextX = nowx + GloableUtils.dx[i];
                         let nextY = nowy + GloableUtils.dy[i];
-                        SimCivil.Contract.IViewSynchronizer.GetAtlas(new SimCivil.Contract.ValueTupleInt32({ Item1: nowx + GloableUtils.dx[i], Item2: nowy + GloableUtils.dy[i] })).then((v) => {
+                        SimCivil.Contract.IViewSynchronizer.GetAtlas([nowx + GloableUtils.dx[i], nowy + GloableUtils.dy[i]]).then((v) => {
                             // Logger.log("nextX:" + nextX + ";nextY:" + nextY + ";");
                             // Logger.info(v);
                             if (!v) return;

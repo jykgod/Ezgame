@@ -22,6 +22,7 @@ function RPC(serviceName: string, noReturn: boolean) {
                 let ret = await RpcClient.Instance.GetResponce(_sequence);
                 if (ret == null || ret == undefined) return null;
                 // Logger.info(ret);
+                TimeManager.Instance.SaveServerTime(ret.TimeStamp);
                 if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
                     return ret.ReturnValue["$values"];
                 }
@@ -98,7 +99,7 @@ class RpcClient {
         let reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev: ProgressEvent) {
-            //Logger.info(reader.result);
+            Logger.info(reader.result);
             let ret = JSON.parse(reader.result);
             if ((<string>ret["$type"]).indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 let obj: SimCivil.Rpc.RpcResponse = JSON.parse(reader.result);
@@ -166,13 +167,13 @@ class RpcClient {
             "MethodName": methodName,
             "Arguments": args,
             "Sequence": sequence,
-            "TimeStamp": new Date().toISOString()
+            "TimeStamp": TimeManager.Instance.GetCurrentServerTIme()
         }
         // if (!("TextEncoder" in window)) {
         //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
         //     return;
         // }
-        // Tools.Logger.log(JSON.stringify(json), "RPC");
+        Tools.Logger.log(JSON.stringify(json), "RPC");
         //Tools.Logger.info(json);
         // let enc = new TextEncoder();
         // let str = JSON.stringify(json);

@@ -15,6 +15,14 @@ class TimeManager {
         return this._realTimeSinceStartScene;
     }
     /**
+     * 登录时的服务器时间
+     */
+    private _loginServerTime: number = 0;
+    /**
+     * 登录时的客户端时间
+     */
+    private _loginDateTime: Date = new Date(0);
+    /**
      * 初始化函数
      */
     public Init() {
@@ -26,5 +34,28 @@ class TimeManager {
      */
     public Update(dt: number) {
         this._realTimeSinceStartScene += dt;
+    }
+    /**
+     * 获取当前本地时间
+     */
+    public GetDateTime(): Date {
+        return new Date();
+    }
+    /**
+     * 存储服务器时间
+     * @param loginServerTime 登录时的服务器时间
+     */
+    public SaveServerTime(loginServerTime: number): void {
+        if (this._loginServerTime == 0) {
+            this._loginDateTime = new Date();
+            this._loginServerTime = loginServerTime;
+        }
+    }
+
+    /**
+     * 获取当前的服务器时间
+     */
+    public GetCurrentServerTIme(): number {
+        return Math.round(new Date() - this._loginDateTime) + this._loginServerTime;
     }
 }

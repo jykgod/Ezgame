@@ -560,6 +560,14 @@ var TimeManager = /** @class */ (function () {
          * 游戏第一个场景加载完成时到当前帧经过的帧时间
          */
         this._realTimeSinceStartScene = 0;
+        /**
+         * 登录时的服务器时间
+         */
+        this._loginServerTime = 0;
+        /**
+         * 登录时的客户端时间
+         */
+        this._loginDateTime = new Date(0);
     }
     Object.defineProperty(TimeManager.prototype, "realTimeSinceStartScene", {
         /**
@@ -583,6 +591,28 @@ var TimeManager = /** @class */ (function () {
      */
     TimeManager.prototype.Update = function (dt) {
         this._realTimeSinceStartScene += dt;
+    };
+    /**
+     * 获取当前本地时间
+     */
+    TimeManager.prototype.GetDateTime = function () {
+        return new Date();
+    };
+    /**
+     * 存储服务器时间
+     * @param loginServerTime 登录时的服务器时间
+     */
+    TimeManager.prototype.SaveServerTime = function (loginServerTime) {
+        if (this._loginServerTime == 0) {
+            this._loginDateTime = new Date();
+            this._loginServerTime = loginServerTime;
+        }
+    };
+    /**
+     * 获取当前的服务器时间
+     */
+    TimeManager.prototype.GetCurrentServerTIme = function () {
+        return Math.round(new Date() - this._loginDateTime) + this._loginServerTime;
     };
     /**
      * 单例模式声明
@@ -1117,6 +1147,7 @@ function RPC(serviceName, noReturn) {
                             if (ret == null || ret == undefined)
                                 return [2 /*return*/, null];
                             // Logger.info(ret);
+                            TimeManager.Instance.SaveServerTime(ret.TimeStamp);
                             if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
                                 return [2 /*return*/, ret.ReturnValue["$values"]];
                             }
@@ -1195,7 +1226,7 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
-            //Logger.info(reader.result);
+            Logger.info(reader.result);
             var ret = JSON.parse(reader.result);
             if (ret["$type"].indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 var obj = JSON.parse(reader.result);
@@ -1274,13 +1305,13 @@ var RpcClient = /** @class */ (function () {
             "MethodName": methodName,
             "Arguments": args,
             "Sequence": sequence,
-            "TimeStamp": new Date().toISOString()
+            "TimeStamp": TimeManager.Instance.GetCurrentServerTIme()
         };
         // if (!("TextEncoder" in window)) {
         //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
         //     return;
         // }
-        // Tools.Logger.log(JSON.stringify(json), "RPC");
+        Tools.Logger.log(JSON.stringify(json), "RPC");
         //Tools.Logger.info(json);
         // let enc = new TextEncoder();
         // let str = JSON.stringify(json);
@@ -1385,7 +1416,7 @@ var SimCivil;
                 // ENTITYID
                 this.EntityId = "00000000-0000-0000-0000-000000000000";
                 // TIMESTAMP
-                this.TimeStamp = new Date(0);
+                this.TimeStamp = 0;
                 // OBSERVERID
                 this.ObserverId = "00000000-0000-0000-0000-000000000000";
                 // VALUES

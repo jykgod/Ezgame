@@ -21,7 +21,7 @@ module SimCivil.Contract {
         // EVENTS
         public Events: ViewEvent[] = [];
         // POSITION
-        public Position: { Item1: number, Item2: number } = null;
+        public Position: number[] = null;
         // SPEED
         public Speed: number = 0;
 		
@@ -53,7 +53,7 @@ module SimCivil.Contract {
         // NAME
         public Name: string = null;
         // POS
-        public Pos: { X: number, Y: number } = null;
+        public Pos: number[] = null;
 		
 		public ToString(): string{
 			return null;
@@ -65,7 +65,7 @@ module SimCivil.Contract {
         public $type = "SimCivil.Contract.TileDto, SimCivil.Contract"
         
         // { X: number, Y: number } System
-        public Position: { Item1: number, Item2: number } = null;
+        public Position: number[] = null;
         // number System
         public Terrain: number = 0;
 		
@@ -96,7 +96,7 @@ module SimCivil.Contract {
         }
 
         @RPC("SimCivil.Contract.IViewSynchronizer", false)
-		public static async GetAtlas(index: ValueTupleInt32): Promise<TileDto[]>{
+		public static async GetAtlas(index: number[]): Promise<TileDto[]>{
             return [];
         }
 		

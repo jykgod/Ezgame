@@ -26,7 +26,7 @@
         }
 		
         @RPC("SimCivil.Contract.IPlayerController", true)
-		public static async MoveTo(value: ValueTupleFloat, timestamp: Date): Promise<void>{
+		public static async MoveTo(value: number[], timestamp: number): Promise<void>{
             return void(0);
         }
 		

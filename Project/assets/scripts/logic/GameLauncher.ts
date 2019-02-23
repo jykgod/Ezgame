@@ -2,6 +2,11 @@ import { GameManager } from "../manager/GameManager";
 import { UIManager } from "../manager/UIManager";
 import { LocalizationManager } from "../manager/LocalizationManager";
 import { ResourcesManager } from "../manager/ResourcesManager";
+import { UI2EcsSessionManager } from "../manager/UI2EcsSessionManager";
+import InputSystem from "../ecs/system/InputSystem";
+import CameraSystem from "../ecs/system/CameraSystem";
+import MapSystem from "../ecs/system/MapSystem";
+import UISessionSystem from "../ecs/system/UISessionSystem";
 
 const { ccclass, property } = cc._decorator;
 
@@ -30,6 +35,12 @@ export default class GameLauncher extends cc.Component {
         LocalizationManager.Instance.Init("cn");
         UIManager.Instance.Init();
         GameManager.Instance.Init();
+        UI2EcsSessionManager.Instance.Init();
+        let world = ECS.World.CreateAWorld('simsivil');
+        //添加输入系统
+        world.addSystem(InputSystem);
+        //添加UI会话系统
+        world.addSystem(UISessionSystem);
         // let world = ECS.World.CreateAWorld("hello");
         // world.addSystem(InputSystem);
         // let entity1 = world.EntitisManager.CreateAEntity();
@@ -77,12 +88,14 @@ export default class GameLauncher extends cc.Component {
     update(dt) {
         TimeManager.Instance.Update(dt);
         GameManager.Instance.Update(dt);
+        UI2EcsSessionManager.Instance.Update(dt);
         if (ECS.World.active != null && ECS.World.active != undefined) {
             ECS.World.active.update();
         }
     }
 
     onDestroy() {
+        ECS.World.RemoveWorld('simsivil');
     }
 
     private setScreenFit() {

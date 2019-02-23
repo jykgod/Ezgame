@@ -99,7 +99,7 @@ namespace ECS {
          * 帧执行函数
          */
         public update(): void {
-            if(TimeManager.Instance.realTimeSinceStartScene - this._lastUpdateTime < this._deltaTime){
+            if (TimeManager.Instance.realTimeSinceStartScene - this._lastUpdateTime < this._deltaTime) {
                 return;
             }
             this._lastUpdateTime = TimeManager.Instance.realTimeSinceStartScene;
@@ -131,10 +131,30 @@ namespace ECS {
             obj.OnStart();
             this._systems.push(obj);
         }
+
+        /**
+         * 移除系统
+         * @param system 系统实例
+         */
+        public removeSystem(system: typeof ComponentSystem): void {
+            let flag = false;
+            for (let i = 0; i < this._systems.length; i++) {
+                if (flag == false && this._systems[i] instanceof system) {
+                    this._systems[i].OnDestroy();
+                    flag = true;
+                }
+                if (flag == true && i < this._systems.length - 1) {
+                    this._systems[i] = this._systems[i + 1];
+                }
+            }
+            if (flag) {
+                this._systems.pop();
+            }
+        }
     }
 
     Object.seal(World.prototype.update);
     Object.seal(World.prototype.addSystem);
 }
-if(!(<any>window).ECS) (<any>window).ECS = {}; 
+if (!(<any>window).ECS) (<any>window).ECS = {};
 (<any>window).ECS.World = ECS.World;

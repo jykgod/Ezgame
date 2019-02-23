@@ -3,6 +3,6 @@ module SimCivil.Rpc {
         public ReturnValue?: object;
         public Sequence?: number;
         public ErrorInfo?: string;
-        public TimeStamp?: Date;
+        public TimeStamp?: number;
     }
 }
