@@ -5,5 +5,8 @@ export enum UINameEnum{
     MAIN_UI = 'MainUI',
     MAIN_UI_EQUIP_COMPONENT = 'MainUIEquipComponent',
     EDITE_UI = 'EditUI',
-    DEFAULT = 'null'
+    DEFAULT = 'null',
+    CHOOSE_ROLE_UI = "ChooseRoleUI",
+    CHOOSE_ROLE_UI_COMPONENT = "ChooseRoleUIComponent",
+    POP_UP_CREATE_ROLE_UI = "PopUpCreateRoleUI"
 }

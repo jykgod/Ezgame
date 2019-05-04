@@ -73,7 +73,7 @@ class RpcClient {
     /**
      * 超时时间
      */
-    private timeOut = 5;
+    private timeOut = 20;
     /**
      * 与rpc服务器建立的会话
      */
@@ -99,7 +99,7 @@ class RpcClient {
         let reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev: ProgressEvent) {
-            Logger.info(reader.result);
+            // Logger.info(reader.result);
             let ret = JSON.parse(reader.result);
             if ((<string>ret["$type"]).indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 let obj: SimCivil.Rpc.RpcResponse = JSON.parse(reader.result);
@@ -173,7 +173,7 @@ class RpcClient {
         //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
         //     return;
         // }
-        Tools.Logger.log(JSON.stringify(json), "RPC");
+        // Tools.Logger.log(JSON.stringify(json), "RPC");
         //Tools.Logger.info(json);
         // let enc = new TextEncoder();
         // let str = JSON.stringify(json);

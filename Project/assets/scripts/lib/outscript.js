@@ -533,6 +533,25 @@ var ECS;
             this._systems.push(obj);
         };
         /**
+         * 移除系统
+         * @param system 系统实例
+         */
+        World.prototype.removeSystem = function (system) {
+            var flag = false;
+            for (var i = 0; i < this._systems.length; i++) {
+                if (flag == false && this._systems[i] instanceof system) {
+                    this._systems[i].OnDestroy();
+                    flag = true;
+                }
+                if (flag == true && i < this._systems.length - 1) {
+                    this._systems[i] = this._systems[i + 1];
+                }
+            }
+            if (flag) {
+                this._systems.pop();
+            }
+        };
+        /**
          * world表
          */
         World._worlds = new Array();
@@ -1194,7 +1213,7 @@ var RpcClient = /** @class */ (function () {
         /**
          * 超时时间
          */
-        this.timeOut = 5;
+        this.timeOut = 20;
     }
     Object.defineProperty(RpcClient.prototype, "session", {
         /**
@@ -1226,7 +1245,7 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
-            Logger.info(reader.result);
+            // Logger.info(reader.result);
             var ret = JSON.parse(reader.result);
             if (ret["$type"].indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 var obj = JSON.parse(reader.result);
@@ -1311,7 +1330,7 @@ var RpcClient = /** @class */ (function () {
         //     Tools.Logger.error("Sorry, this browser does not support TextEncoder...", "RPC");
         //     return;
         // }
-        Tools.Logger.log(JSON.stringify(json), "RPC");
+        // Tools.Logger.log(JSON.stringify(json), "RPC");
         //Tools.Logger.info(json);
         // let enc = new TextEncoder();
         // let str = JSON.stringify(json);

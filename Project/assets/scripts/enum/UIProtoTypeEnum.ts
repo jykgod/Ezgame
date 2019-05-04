@@ -6,4 +6,7 @@
 export enum UIProtoTypeEnum{
     REQ_LOGIN = 0,
     RLT_ROLES = 1,
+    REQ_CREATE_ROLE = 2,
+    REQ_CHOOSE_ROLE = 3,
+    RLT_ERROR_EVENT = 4,
 }

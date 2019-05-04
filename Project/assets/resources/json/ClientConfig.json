@@ -1,5 +1,5 @@
 {
-    "ServerIP" : "localhost:20170",
+    "ServerIP" : "game.tancoder.com:20170",
     "OfflineMode" : false,
     "Test" : true
 }

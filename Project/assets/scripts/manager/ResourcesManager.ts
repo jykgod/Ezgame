@@ -6,12 +6,12 @@ export class ResourcesManager {
      * 单例模式声明
      */
     public static readonly Instance = new ResourcesManager();
+
     private constructor() { }
 
     private atlasMap: Array<cc.SpriteAtlas> = new Array<cc.SpriteAtlas>();
 
     public Init() {
-
     }
 
     public loadRes(path: string, callback: (error: Error, resource: any) => void) {

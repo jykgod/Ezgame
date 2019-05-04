@@ -4,6 +4,10 @@ import MotionControllerComponent from "../../ecs/component/MotionControllerCompo
 import DirectionComponent from "../../ecs/component/DirectionComponent";
 import Npc from "./Npc";
 import { EcsUtility } from "../../ecs/utility/EcsUtility";
+import ViewSyncSystem from "../../ecs/system/ViewSyncSystem";
+import Avatar from "./Avatar";
+import { ResourcesManager } from "../../manager/ResourcesManager";
+import { GloableConstantUtils } from "../../tools/GloableConstantUtils";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -20,8 +24,9 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class Player extends Npc {
     private posComp: PositionComponent;
+    private avatar: Avatar;
 
-    start() {
+    async start() {
         this._entity = ECS.World.active.EntitisManager.CreateAEntity();
         ECS.World.active.EntitisManager.addComponent(
             this._entity,
@@ -31,6 +36,8 @@ export default class Player extends Npc {
             DirectionComponent);
         Logger.log("add player");
         this.posComp = <PositionComponent>ECS.World.active.EntitisManager.GetComponent(this._entity, PositionComponent);
+        this.avatar = new Avatar(this.node);
+        await this.avatar.load();
     }
 
     update(){

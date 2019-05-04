@@ -4,9 +4,7 @@ import { LocalizationManager } from "../manager/LocalizationManager";
 import { ResourcesManager } from "../manager/ResourcesManager";
 import { UI2EcsSessionManager } from "../manager/UI2EcsSessionManager";
 import InputSystem from "../ecs/system/InputSystem";
-import CameraSystem from "../ecs/system/CameraSystem";
-import MapSystem from "../ecs/system/MapSystem";
-import UISessionSystem from "../ecs/system/UISessionSystem";
+import UISessionData from "../ecs/sharedComponent/UISessionDate";
 
 const { ccclass, property } = cc._decorator;
 
@@ -39,8 +37,8 @@ export default class GameLauncher extends cc.Component {
         let world = ECS.World.CreateAWorld('simsivil');
         //添加输入系统
         world.addSystem(InputSystem);
-        //添加UI会话系统
-        world.addSystem(UISessionSystem);
+        //添加UI会话数据组件
+        ECS.World.active.EntitisManager.addSharedComponent(UISessionData);
         // let world = ECS.World.CreateAWorld("hello");
         // world.addSystem(InputSystem);
         // let entity1 = world.EntitisManager.CreateAEntity();

@@ -17,7 +17,7 @@ export class GameStateMainNormal implements FSM.IState {
         //添加相机系统
         ECS.World.active.addSystem(CameraSystem);
         //添加视野同步系统
-        // ECS.World.active.addSystem(ViewSyncSystem);
+        ECS.World.active.addSystem(ViewSyncSystem);
         //添加移动控制系统
         ECS.World.active.addSystem(MotionControllerSystem);
         //添加玩家移动同步系统
@@ -30,7 +30,7 @@ export class GameStateMainNormal implements FSM.IState {
     StateEnd(currentStateTIme: number): void {
         ECS.World.active.removeSystem(PlayerMotionSyncSystem);
         ECS.World.active.removeSystem(MotionControllerSystem);
-        // ECS.World.active.removeSystem(ViewSyncSystem);
+        ECS.World.active.removeSystem(ViewSyncSystem);
         ECS.World.active.removeSystem(CameraSystem);
         ECS.World.active.removeSystem(MapSystem);
         UIManager.Instance.HideUI(UINameEnum.MAIN_UI);

@@ -24,9 +24,6 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
         ViewChangeData.instance.gotData = false;
         EcsUtility.InitedViewSyncSystem = false;
         EcsUtility.RegisterViewSyncOpt = (async () => {
-            while (EcsUtility.GotRole == false) {
-                await GloableUtils.Delay(500);
-            }
             await SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
                 ViewChangeData.instance.data = viewChanged;
                 // Logger.log(viewChanged);
@@ -64,6 +61,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
                         MapDataComponent.instance.ceilsFromServer = MapDataComponent.instance.ceilsFromServer.concat(v);
                         count++;
                         if (count == 9) {
+                            Logger.info("overed");
                             MapDataComponent.instance.centerPositionDirty = true;
                         }
                     });
@@ -77,6 +75,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
                             MapDataComponent.instance.ceilsFromServer = MapDataComponent.instance.ceilsFromServer.concat(v);
                             count++;
                             if (count == 9) {
+                                Logger.info("overed");
                                 MapDataComponent.instance.centerPositionDirty = true;
                             }
                         });
