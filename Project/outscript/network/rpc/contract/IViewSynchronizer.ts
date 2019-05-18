@@ -9,8 +9,24 @@ module SimCivil.Contract {
     // More info: http://frhagn.github.io/Typewriter/
 
     
+    export class AppearanceDto {
+        
+        // TYPE
+        public Type: AppearanceType = null;
+        // ID
+        public Id: number = 0;
+        // PRIMARYCOLOR
+        public PrimaryColor: number = 0;
+        // SECONDARYCOLOR
+        public SecondaryColor: number = 0;
+        // QUALITY
+        public Quality: number = 0;
+        // MATERIAL
+        public Material: Material = null;
+		
+
+    }
     export class ViewChange {
-        public $type = "SimCivil.Contract.ViewChange, SimCivil.Contract"
         
         // TICKCOUNT
         public TickCount: number = 0;
@@ -21,7 +37,9 @@ module SimCivil.Contract {
         // EVENTS
         public Events: ViewEvent[] = [];
         // POSITION
-        public Position: { Item1: number, Item2: number } = null;
+        public Position: { X: number, Y: number } = null;
+        // ATLASINDEX
+        public AtlasIndex: { X: number, Y: number } = null;
         // SPEED
         public Speed: number = 0;
 		
@@ -32,7 +50,6 @@ module SimCivil.Contract {
 
     }
     export class ViewEvent {
-        public $type = "SimCivil.Contract.ViewEvent, SimCivil.Contract"
         
         // EVENTTYPE
         public EventType: ViewEventType = null;
@@ -46,7 +63,6 @@ module SimCivil.Contract {
 
     }
     export class EntityDto {
-        public $type = "SimCivil.Contract.EntityDto, SimCivil.Contract"
         
         // ID
         public Id: string = "00000000-0000-0000-0000-000000000000";
@@ -54,6 +70,8 @@ module SimCivil.Contract {
         public Name: string = null;
         // POS
         public Pos: { X: number, Y: number } = null;
+        // HP
+        public Hp: number = 0;
 		
 		public ToString(): string{
 			return null;
@@ -62,16 +80,61 @@ module SimCivil.Contract {
 
     }
     export class TileDto {
-        public $type = "SimCivil.Contract.TileDto, SimCivil.Contract"
         
-        // { X: number, Y: number } System
-        public Position: { Item1: number, Item2: number } = null;
-        // number System
+        // POSITION
+        public Position: { X: number, Y: number } = null;
+        // TERRAIN
         public Terrain: number = 0;
+        // HEIGHT
+        public Height: number = 0;
 		
 
     }
 
+	
+	export enum Material{
+		
+		none,
+		
+		wood,
+		
+	}	
+	
+	export enum AppearanceType{
+		
+		block,
+		
+		body,
+		
+		hair,
+		
+		helmet,
+		
+		mask,
+		
+		necklace,
+		
+		shoulder,
+		
+		belt,
+		
+		armor,
+		
+		backpack,
+		
+		rightHanded,
+		
+		leftHanded,
+		
+		twoHanded,
+		
+		gloves,
+		
+		pants,
+		
+		shoes,
+		
+	}	
 	
 	export enum ViewEventType{
 		
@@ -84,9 +147,11 @@ module SimCivil.Contract {
 	export class IViewSynchronizer{
 		
 		
+		public publicAPI: ;
+		
 		
         @RPC("SimCivil.Contract.IViewSynchronizer", true)
-		public static async RegisterViewSync(callback: (viewChange:ViewChange)=>void): Promise<void>{
+		public static async RegisterViewSync(callback: Action<ViewChange>): Promise<void>{
             return void(0);
         }
 		
@@ -94,9 +159,19 @@ module SimCivil.Contract {
 		public static async DeregisterViewSync(): Promise<void>{
             return void(0);
         }
-
+		
         @RPC("SimCivil.Contract.IViewSynchronizer", false)
-		public static async GetAtlas(index: ValueTupleInt32): Promise<TileDto[]>{
+		public static async GetAtlas(index: { X: number, Y: number }): Promise<TileDto[]>{
+            return [];
+        }
+		
+        @RPC("SimCivil.Contract.IViewSynchronizer", false)
+		public static async GetAtlasTimeStamp(index: { X: number, Y: number }): Promise<Date>{
+            return new Date(0);
+        }
+		
+        @RPC("SimCivil.Contract.IViewSynchronizer", false)
+		public static async GetAppearance(entity: string): Promise<AppearanceDto[]>{
             return [];
         }
 		

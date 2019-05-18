@@ -9,8 +9,7 @@ module SimCivil.Contract {
     // More info: http://frhagn.github.io/Typewriter/
 
     
-    export class EntityInspection {
-        public $type = "SimCivil.Contract.EntityInspection, SimCivil.Contract"
+    export class InspectionResult {
         
         // ENTITYID
         public EntityId: string = "00000000-0000-0000-0000-000000000000";
@@ -19,13 +18,7 @@ module SimCivil.Contract {
         // OBSERVERID
         public ObserverId: string = "00000000-0000-0000-0000-000000000000";
         // VALUES
-        public Values: { [key: string]: EntityInspectionValue; } = {};
-		
-
-    }
-    export class EntityInspectionValue {
-        public $type = "SimCivil.Contract.EntityInspectionValue, SimCivil.Contract"
-        
+        public Values: { [key: string]: string; } = {};
 		
 
     }

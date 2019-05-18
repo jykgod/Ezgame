@@ -9,25 +9,19 @@ module SimCivil.Contract {
     // More info: http://frhagn.github.io/Typewriter/
 
     
-    export class RoleSummary {
-        
-        // ID
-        public Id: string = "00000000-0000-0000-0000-000000000000";
-        // NAME
-        public Name: string = null;
-        // GENDER
-        public Gender: Gender = null;
-        // RACE
-        public Race: Race = null;
-		
-		public ToString(): string{
-			return null;
-		}
-		
-
-    }
 
 	
 
+	
+	export class IConnectionControl{
+		
+		
+		
+        @RPC("SimCivil.Contract.IConnectionControl", true)
+		public static async Noop(): Promise<void>{
+            return void(0);
+        }
+		
+	}
 	
 }
