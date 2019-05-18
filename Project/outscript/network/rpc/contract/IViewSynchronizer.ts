@@ -9,6 +9,23 @@ module SimCivil.Contract {
     // More info: http://frhagn.github.io/Typewriter/
 
     
+    export class AppearanceDto {
+        public $type = "SimCivil.Contract.AppearanceDto, SimCivil.Contract"
+        // TYPE
+        public Type: AppearanceType = null;
+        // ID
+        public Id: number = 0;
+        // PRIMARYCOLOR
+        public PrimaryColor: number = 0;
+        // SECONDARYCOLOR
+        public SecondaryColor: number = 0;
+        // QUALITY
+        public Quality: number = 0;
+        // MATERIAL
+        public Material: Material = null;
+		
+
+    }
     export class ViewChange {
         public $type = "SimCivil.Contract.ViewChange, SimCivil.Contract"
         
@@ -22,6 +39,8 @@ module SimCivil.Contract {
         public Events: ViewEvent[] = [];
         // POSITION
         public Position: number[] = null;
+        // ATLASINDEX
+        public AtlasIndex: number[] = null;
         // SPEED
         public Speed: number = 0;
 		
@@ -54,6 +73,8 @@ module SimCivil.Contract {
         public Name: string = null;
         // POS
         public Pos: number[] = null;
+        // HP
+        public Hp: number = 0;
 		
 		public ToString(): string{
 			return null;
@@ -64,14 +85,60 @@ module SimCivil.Contract {
     export class TileDto {
         public $type = "SimCivil.Contract.TileDto, SimCivil.Contract"
         
-        // { X: number, Y: number } System
+        // POSITION
         public Position: number[] = null;
-        // number System
+        // TERRAIN
         public Terrain: number = 0;
+        // HEIGHT
+        public Height: number = 0;
 		
 
     }
 
+	
+	export enum Material{
+		
+		none,
+		
+		wood,
+		
+	}	
+	
+	export enum AppearanceType{
+		
+		block,
+		
+		body,
+		
+		hair,
+		
+		helmet,
+		
+		mask,
+		
+		necklace,
+		
+		shoulder,
+		
+		belt,
+		
+		armor,
+		
+		backpack,
+		
+		rightHanded,
+		
+		leftHanded,
+		
+		twoHanded,
+		
+		gloves,
+		
+		pants,
+		
+		shoes,
+		
+	}	
 	
 	export enum ViewEventType{
 		
@@ -82,8 +149,6 @@ module SimCivil.Contract {
 
 	
 	export class IViewSynchronizer{
-		
-		
 		
         @RPC("SimCivil.Contract.IViewSynchronizer", true)
 		public static async RegisterViewSync(callback: (viewChange:ViewChange)=>void): Promise<void>{
@@ -97,6 +162,16 @@ module SimCivil.Contract {
 
         @RPC("SimCivil.Contract.IViewSynchronizer", false)
 		public static async GetAtlas(index: number[]): Promise<TileDto[]>{
+            return [];
+        }
+		
+        @RPC("SimCivil.Contract.IViewSynchronizer", false)
+		public static async GetAtlasTimeStamp(index: number[]): Promise<Date>{
+            return new Date(0);
+        }
+		
+        @RPC("SimCivil.Contract.IViewSynchronizer", false)
+		public static async GetAppearance(entity: string): Promise<AppearanceDto[]>{
             return [];
         }
 		

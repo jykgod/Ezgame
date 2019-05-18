@@ -1165,7 +1165,7 @@ function RPC(serviceName, noReturn) {
                             ret = _a.sent();
                             if (ret == null || ret == undefined)
                                 return [2 /*return*/, null];
-                            // Logger.info(ret);
+                            Logger.info(ret);
                             TimeManager.Instance.SaveServerTime(ret.TimeStamp);
                             if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
                                 return [2 /*return*/, ret.ReturnValue["$values"]];
@@ -1429,9 +1429,9 @@ var SimCivil;
         // template: The template to repeat for each matched item
         // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
         // More info: http://frhagn.github.io/Typewriter/
-        var EntityInspection = /** @class */ (function () {
-            function EntityInspection() {
-                this.$type = "SimCivil.Contract.EntityInspection, SimCivil.Contract";
+        var InspectionResult = /** @class */ (function () {
+            function InspectionResult() {
+                this.$type = "SimCivil.Contract.InspectionResult, SimCivil.Contract";
                 // ENTITYID
                 this.EntityId = "00000000-0000-0000-0000-000000000000";
                 // TIMESTAMP
@@ -1441,16 +1441,9 @@ var SimCivil;
                 // VALUES
                 this.Values = {};
             }
-            return EntityInspection;
+            return InspectionResult;
         }());
-        Contract.EntityInspection = EntityInspection;
-        var EntityInspectionValue = /** @class */ (function () {
-            function EntityInspectionValue() {
-                this.$type = "SimCivil.Contract.EntityInspectionValue, SimCivil.Contract";
-            }
-            return EntityInspectionValue;
-        }());
-        Contract.EntityInspectionValue = EntityInspectionValue;
+        Contract.InspectionResult = InspectionResult;
     })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
 })(SimCivil || (SimCivil = {}));
 var SimCivil;
@@ -1557,6 +1550,33 @@ var SimCivil;
         // template: The template to repeat for each matched item
         // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
         // More info: http://frhagn.github.io/Typewriter/
+        var IConnectionControl = /** @class */ (function () {
+            function IConnectionControl() {
+            }
+            IConnectionControl.Noop = function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, void (0)];
+                    });
+                });
+            };
+            __decorate([
+                RPC("SimCivil.Contract.IConnectionControl", true)
+            ], IConnectionControl, "Noop", null);
+            return IConnectionControl;
+        }());
+        Contract.IConnectionControl = IConnectionControl;
+    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
+})(SimCivil || (SimCivil = {}));
+var SimCivil;
+(function (SimCivil) {
+    var Contract;
+    (function (Contract) {
+        // $Classes/Enums/Interfaces(filter)[template][separator]
+        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
+        // template: The template to repeat for each matched item
+        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
+        // More info: http://frhagn.github.io/Typewriter/
         var IPlayerController = /** @class */ (function () {
             function IPlayerController() {
             }
@@ -1574,10 +1594,17 @@ var SimCivil;
                     });
                 });
             };
-            IPlayerController.MoveTo = function (value, timestamp) {
+            IPlayerController.MoveTo = function (position, timestamp) {
                 return __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         return [2 /*return*/, void (0)];
+                    });
+                });
+            };
+            IPlayerController.Inspect = function (entityId) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, null];
                     });
                 });
             };
@@ -1590,6 +1617,9 @@ var SimCivil;
             __decorate([
                 RPC("SimCivil.Contract.IPlayerController", true)
             ], IPlayerController, "MoveTo", null);
+            __decorate([
+                RPC("SimCivil.Contract.IPlayerController", false)
+            ], IPlayerController, "Inspect", null);
             return IPlayerController;
         }());
         Contract.IPlayerController = IPlayerController;
@@ -1661,6 +1691,25 @@ var SimCivil;
         // template: The template to repeat for each matched item
         // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
         // More info: http://frhagn.github.io/Typewriter/
+        var AppearanceDto = /** @class */ (function () {
+            function AppearanceDto() {
+                this.$type = "SimCivil.Contract.AppearanceDto, SimCivil.Contract";
+                // TYPE
+                this.Type = null;
+                // ID
+                this.Id = 0;
+                // PRIMARYCOLOR
+                this.PrimaryColor = 0;
+                // SECONDARYCOLOR
+                this.SecondaryColor = 0;
+                // QUALITY
+                this.Quality = 0;
+                // MATERIAL
+                this.Material = null;
+            }
+            return AppearanceDto;
+        }());
+        Contract.AppearanceDto = AppearanceDto;
         var ViewChange = /** @class */ (function () {
             function ViewChange() {
                 this.$type = "SimCivil.Contract.ViewChange, SimCivil.Contract";
@@ -1674,6 +1723,8 @@ var SimCivil;
                 this.Events = [];
                 // POSITION
                 this.Position = null;
+                // ATLASINDEX
+                this.AtlasIndex = null;
                 // SPEED
                 this.Speed = 0;
             }
@@ -1706,6 +1757,8 @@ var SimCivil;
                 this.Name = null;
                 // POS
                 this.Pos = null;
+                // HP
+                this.Hp = 0;
             }
             EntityDto.prototype.ToString = function () {
                 return null;
@@ -1716,14 +1769,40 @@ var SimCivil;
         var TileDto = /** @class */ (function () {
             function TileDto() {
                 this.$type = "SimCivil.Contract.TileDto, SimCivil.Contract";
-                // { X: number, Y: number } System
+                // POSITION
                 this.Position = null;
-                // number System
+                // TERRAIN
                 this.Terrain = 0;
+                // HEIGHT
+                this.Height = 0;
             }
             return TileDto;
         }());
         Contract.TileDto = TileDto;
+        var Material;
+        (function (Material) {
+            Material[Material["none"] = 0] = "none";
+            Material[Material["wood"] = 1] = "wood";
+        })(Material = Contract.Material || (Contract.Material = {}));
+        var AppearanceType;
+        (function (AppearanceType) {
+            AppearanceType[AppearanceType["block"] = 0] = "block";
+            AppearanceType[AppearanceType["body"] = 1] = "body";
+            AppearanceType[AppearanceType["hair"] = 2] = "hair";
+            AppearanceType[AppearanceType["helmet"] = 3] = "helmet";
+            AppearanceType[AppearanceType["mask"] = 4] = "mask";
+            AppearanceType[AppearanceType["necklace"] = 5] = "necklace";
+            AppearanceType[AppearanceType["shoulder"] = 6] = "shoulder";
+            AppearanceType[AppearanceType["belt"] = 7] = "belt";
+            AppearanceType[AppearanceType["armor"] = 8] = "armor";
+            AppearanceType[AppearanceType["backpack"] = 9] = "backpack";
+            AppearanceType[AppearanceType["rightHanded"] = 10] = "rightHanded";
+            AppearanceType[AppearanceType["leftHanded"] = 11] = "leftHanded";
+            AppearanceType[AppearanceType["twoHanded"] = 12] = "twoHanded";
+            AppearanceType[AppearanceType["gloves"] = 13] = "gloves";
+            AppearanceType[AppearanceType["pants"] = 14] = "pants";
+            AppearanceType[AppearanceType["shoes"] = 15] = "shoes";
+        })(AppearanceType = Contract.AppearanceType || (Contract.AppearanceType = {}));
         var ViewEventType;
         (function (ViewEventType) {
             ViewEventType[ViewEventType["entityLeave"] = 0] = "entityLeave";
@@ -1752,6 +1831,20 @@ var SimCivil;
                     });
                 });
             };
+            IViewSynchronizer.GetAtlasTimeStamp = function (index) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, new Date(0)];
+                    });
+                });
+            };
+            IViewSynchronizer.GetAppearance = function (entity) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, []];
+                    });
+                });
+            };
             __decorate([
                 RPC("SimCivil.Contract.IViewSynchronizer", true)
             ], IViewSynchronizer, "RegisterViewSync", null);
@@ -1761,6 +1854,12 @@ var SimCivil;
             __decorate([
                 RPC("SimCivil.Contract.IViewSynchronizer", false)
             ], IViewSynchronizer, "GetAtlas", null);
+            __decorate([
+                RPC("SimCivil.Contract.IViewSynchronizer", false)
+            ], IViewSynchronizer, "GetAtlasTimeStamp", null);
+            __decorate([
+                RPC("SimCivil.Contract.IViewSynchronizer", false)
+            ], IViewSynchronizer, "GetAppearance", null);
             return IViewSynchronizer;
         }());
         Contract.IViewSynchronizer = IViewSynchronizer;

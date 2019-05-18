@@ -9,16 +9,19 @@ module SimCivil.Contract {
     // More info: http://frhagn.github.io/Typewriter/
 
     
-    export class InspectionResult {
-        public $type = "SimCivil.Contract.InspectionResult, SimCivil.Contract"
-        
-        // ENTITYID
-        public EntityId: string = "00000000-0000-0000-0000-000000000000";
-        // TIMESTAMP
-        public TimeStamp: number = 0;
-        // OBSERVERID
-        public ObserverId: string = "00000000-0000-0000-0000-000000000000";
-        // VALUES
-        public Values: { [key: string]: string; } = {};
-    }
+
+	
+
+	
+	export class IConnectionControl{
+		
+		
+		
+        @RPC("SimCivil.Contract.IConnectionControl", true)
+		public static async Noop(): Promise<void>{
+            return void(0);
+        }
+		
+	}
+	
 }

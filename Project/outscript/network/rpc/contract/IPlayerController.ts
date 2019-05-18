@@ -13,8 +13,6 @@
 	
 	export class IPlayerController{
 		
-		
-		
         @RPC("SimCivil.Contract.IPlayerController", true)
 		public static async Move(direction: { Item1: number, Item2: number }, speed: number): Promise<void>{
             return void(0);
@@ -26,10 +24,14 @@
         }
 		
         @RPC("SimCivil.Contract.IPlayerController", true)
-		public static async MoveTo(value: number[], timestamp: number): Promise<void>{
+		public static async MoveTo(position: number[], timestamp: number): Promise<void>{
             return void(0);
         }
-		
+        
+        @RPC("SimCivil.Contract.IPlayerController", false)
+        public static async Inspect(entityId: string): Promise<InspectionResult>{
+            return null;
+        }
 	}
 	
 }
