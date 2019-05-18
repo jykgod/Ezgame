@@ -5,6 +5,7 @@ import PositionComponent from "../component/PositionComponent";
 import MotionControllerComponent from "../component/MotionControllerComponent";
 import MotionComponent from "../component/MotionComponent";
 import MapDataComponent from "../sharedComponent/MapDataComponent";
+import NpcAssetsData from "../sharedComponent/NpcAssetsData";
 
 /**
  * 视野同步系统
@@ -20,13 +21,15 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
 
     public OnStart(): void {
         ECS.World.active.EntitisManager.addSharedComponent(ViewChangeData);
+        ECS.World.active.EntitisManager.addSharedComponent(NpcAssetsData);
+
         ViewChangeData.instance.data = null;
         ViewChangeData.instance.gotData = false;
         EcsUtility.InitedViewSyncSystem = false;
         EcsUtility.RegisterViewSyncOpt = (async () => {
             await SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
                 ViewChangeData.instance.data = viewChanged;
-                // Logger.log(viewChanged);
+                 Logger.log(viewChanged);
             });
             EcsUtility.InitedViewSyncSystem = true;
         })();

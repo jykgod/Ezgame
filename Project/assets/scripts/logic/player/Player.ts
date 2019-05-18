@@ -4,10 +4,9 @@ import MotionControllerComponent from "../../ecs/component/MotionControllerCompo
 import DirectionComponent from "../../ecs/component/DirectionComponent";
 import Npc from "./Npc";
 import { EcsUtility } from "../../ecs/utility/EcsUtility";
-import ViewSyncSystem from "../../ecs/system/ViewSyncSystem";
 import Avatar from "./Avatar";
-import { ResourcesManager } from "../../manager/ResourcesManager";
-import { GloableConstantUtils } from "../../tools/GloableConstantUtils";
+import PlayerAssetsData from "../../ecs/sharedComponent/PlayerAssetsData";
+import { NpcTypeEnum } from "../../enum/NpcTypeEnum";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -34,10 +33,12 @@ export default class Player extends Npc {
             PositionComponent,
             MotionControllerComponent,
             DirectionComponent);
-        Logger.log("add player");
         this.posComp = <PositionComponent>ECS.World.active.EntitisManager.GetComponent(this._entity, PositionComponent);
         this.avatar = new Avatar(this.node);
         await this.avatar.load();
+        let inspect = await SimCivil.Contract.IPlayerController.Inspect(PlayerAssetsData.instance.Role.Id);
+        PlayerAssetsData.instance.npcAssets = 
+        EcsUtility.AddNpc(this._entity, PlayerAssetsData.instance.Role.Id, NpcTypeEnum.player, PlayerAssetsData.instance.Role, inspect);
     }
 
     update(){

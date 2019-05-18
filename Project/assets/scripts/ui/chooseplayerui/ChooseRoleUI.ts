@@ -10,7 +10,6 @@ import { SceneEnum } from "../../enum/SceneEnum";
 import { EventEnum } from "../../enum/EventEnum";
 import PlayerAssetsData from "../../ecs/sharedComponent/PlayerAssetsData";
 import GameLauncher from "../../logic/GameLauncher";
-import { EcsUtility } from "../../ecs/utility/EcsUtility";
 
 const { ccclass, property } = cc._decorator;
 //角色选择界面
@@ -64,14 +63,6 @@ export class ChooseRoleUI extends UIBase {
                 UIManager.Instance.HideUI(UINameEnum.CHOOSE_ROLE_UI);
                 GameManager.Instance.stateMachine.ChangeState(GameStateEnum.GAME_STATE_SCENE_LOADING, SceneEnum.MAIN, GameStateEnum.GAME_STATE_MAIN_NORMAL);
             }
-            ResourcesManager.Instance.loadRes(GloableConstantUtils.GamePrefabPath.concat("Player"), (error, res) => {
-                if (error) {
-                    Logger.log(error.message);
-                    return;
-                }
-                let node: cc.Node = cc.instantiate<cc.Node>(res);
-                node.setParent(cc.Canvas.instance.node);
-            });
         })();
     }
 

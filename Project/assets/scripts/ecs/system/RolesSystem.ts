@@ -52,16 +52,18 @@ export default class RolesSystem extends ECS.ComponentSystem {
             UISessionData.instance.UI2ECSProtos.first.type == UIProtoTypeEnum.REQ_CREATE_ROLE) {
             let proto = UISessionData.instance.UI2ECSProtos.Dequeue();
             let createRoleOption = proto.params[0] as SimCivil.Contract.CreateRoleOption;
-            (async () => {
-                let success = await SimCivil.Contract.IRoleManager.CreateRole(createRoleOption);
-                if (success) {
-                    PlayerAssetsData.instance.Roles = await SimCivil.Contract.IRoleManager.GetRoleList();
-                    UISessionData.instance.ECS2UIProtos.Enqueue(new UIProto(UIProtoTypeEnum.RLT_ROLES, PlayerAssetsData.instance.Roles));
-                } else {
-                    UISessionData.instance.ECS2UIProtos.Enqueue(new UIProto(UIProtoTypeEnum.RLT_ERROR_EVENT, LocalizationManager.Instance.GetLocalizationTextByKey("create_role_error")));
-                }
-            })();
+            Logger.info(createRoleOption);
+            this.CeateRole(createRoleOption);
+        }
+    }
 
+    private async CeateRole(option: SimCivil.Contract.CreateRoleOption): Promise<void> {
+        let success = await SimCivil.Contract.IRoleManager.CreateRole(option);
+        if (success) {
+            PlayerAssetsData.instance.Roles = await SimCivil.Contract.IRoleManager.GetRoleList();
+            UISessionData.instance.ECS2UIProtos.Enqueue(new UIProto(UIProtoTypeEnum.RLT_ROLES, PlayerAssetsData.instance.Roles));
+        } else {
+            UISessionData.instance.ECS2UIProtos.Enqueue(new UIProto(UIProtoTypeEnum.RLT_ERROR_EVENT, LocalizationManager.Instance.GetLocalizationTextByKey("create_role_error")));
         }
     }
 }

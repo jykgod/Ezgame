@@ -28,12 +28,11 @@ export default class MotionControllerSystem extends ECS.ComponentSystem {
                         this.directions[i].direction = cc.Vec2.ZERO;
                         if(inputData.right) this.directions[i].direction.x += 1;
                         if(inputData.left) this.directions[i].direction.x -= 1;
-                        if(inputData.up) {this.directions[i].direction.y += 1;Logger.log(JSON.stringify(inputData));}
+                        if(inputData.up) this.directions[i].direction.y += 1;
                         if(inputData.down) this.directions[i].direction.y -= 1;
                         this.directions[i].direction.normalizeSelf();
                 }
                 this.motions[i].v = this.directions[i].direction.mul(this.motions[i].speed);
-                // Logger.log(this.motions[i].v.mag(), "direct");
             }
         }
     }
