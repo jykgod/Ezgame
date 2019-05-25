@@ -29,7 +29,6 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
         EcsUtility.RegisterViewSyncOpt = (async () => {
             await SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
                 ViewChangeData.instance.data = viewChanged;
-                 Logger.log(viewChanged);
             });
             EcsUtility.InitedViewSyncSystem = true;
         })();

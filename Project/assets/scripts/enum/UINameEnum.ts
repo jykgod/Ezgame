@@ -8,5 +8,6 @@ export enum UINameEnum{
     DEFAULT = 'null',
     CHOOSE_ROLE_UI = "ChooseRoleUI",
     CHOOSE_ROLE_UI_COMPONENT = "ChooseRoleUIComponent",
-    POP_UP_CREATE_ROLE_UI = "PopUpCreateRoleUI"
+    POP_UP_CREATE_ROLE_UI = "PopUpCreateRoleUI",
+    USER_INFO_UI = "UserInfoUI"
 }

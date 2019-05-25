@@ -318,7 +318,7 @@ var ECS;
                 sharedComponentType[_i] = arguments[_i];
             }
             for (var i = 0; i < sharedComponentType.length; i++) {
-                componentDataType[i].instance = undefined;
+                sharedComponentType[i].instance = undefined;
             }
         };
         /**
@@ -1213,7 +1213,7 @@ var RpcClient = /** @class */ (function () {
         /**
          * 超时时间
          */
-        this.timeOut = 20;
+        this.timeOut = 60;
     }
     Object.defineProperty(RpcClient.prototype, "session", {
         /**
@@ -1418,32 +1418,6 @@ var SimCivil;
             return CreateRoleOption;
         }());
         Contract.CreateRoleOption = CreateRoleOption;
-    })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
-})(SimCivil || (SimCivil = {}));
-var SimCivil;
-(function (SimCivil) {
-    var Contract;
-    (function (Contract) {
-        // $Classes/Enums/Interfaces(filter)[template][separator]
-        // filter (optional): Matches the name or full name of the current item. * = match any, wrap in [] to match attributes or prefix with : to match interfaces or base classes.
-        // template: The template to repeat for each matched item
-        // separator (optional): A separator template that is placed between all templates e.g. $Properties[public $name: $Type][, ]
-        // More info: http://frhagn.github.io/Typewriter/
-        var InspectionResult = /** @class */ (function () {
-            function InspectionResult() {
-                this.$type = "SimCivil.Contract.InspectionResult, SimCivil.Contract";
-                // ENTITYID
-                this.EntityId = "00000000-0000-0000-0000-000000000000";
-                // TIMESTAMP
-                this.TimeStamp = 0;
-                // OBSERVERID
-                this.ObserverId = "00000000-0000-0000-0000-000000000000";
-                // VALUES
-                this.Values = {};
-            }
-            return InspectionResult;
-        }());
-        Contract.InspectionResult = InspectionResult;
     })(Contract = SimCivil.Contract || (SimCivil.Contract = {}));
 })(SimCivil || (SimCivil = {}));
 var SimCivil;

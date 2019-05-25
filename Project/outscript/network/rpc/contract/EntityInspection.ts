@@ -1,4 +1,5 @@
-﻿
+﻿import ServerArrObject from "../../../../assets/scripts/struct/ServerArrObject";
+
 module SimCivil.Contract {
 
     // $Classes/Enums/Interfaces(filter)[template][separator]
@@ -19,6 +20,6 @@ module SimCivil.Contract {
         // OBSERVERID
         public ObserverId: string = "00000000-0000-0000-0000-000000000000";
         // VALUES
-        public Values: { [key: string]: string; } = {};
+        public Values: { [key: string]: ServerArrObject; } = {};
     }
 }

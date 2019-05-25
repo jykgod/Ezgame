@@ -7,5 +7,6 @@ export default class InputData implements ECS.ISharedComponentData{
     public mouse_left: boolean;
     public mouse_right: boolean;
     public mousePosition: cc.Vec2;
+    public e: boolean;
     public time: number;
 }

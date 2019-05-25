@@ -115,7 +115,7 @@ export default class MapSystem extends ECS.ComponentSystem {
 
     private UpdateCeilsTexture(): void {
         for (let i = 0; i < this.ceils.length; i++) {
-            if (this.ceils[i].inView && this.ceils[i].dirty) {
+            if (this.ceils[i].inView && this.ceils[i].dirty && this.ceils[i].uiNode) {
                 this.ceils[i].uiNode.active = true;
                 let x = Math.round(this.ceils[i].pos.x);
                 let y = Math.round(this.ceils[i].pos.y);

@@ -8,6 +8,7 @@ import PlayerMotionSyncSystem from "../../ecs/system/PlayerMotionSyncSystem";
 import CameraSystem from "../../ecs/system/CameraSystem";
 import { ResourcesManager } from "../../manager/ResourcesManager";
 import { GloableConstantUtils } from "../../tools/GloableConstantUtils";
+import FuncKeySystem from "../../ecs/system/FuncKeySystem";
 
 export class GameStateMainNormal implements FSM.IState {
     stateType = GameStateEnum.GAME_STATE_MAIN_NORMAL;
@@ -24,6 +25,8 @@ export class GameStateMainNormal implements FSM.IState {
         ECS.World.active.addSystem(MotionControllerSystem);
         //添加玩家移动同步系统
         ECS.World.active.addSystem(PlayerMotionSyncSystem);
+        //添加功能键系统
+        ECS.World.active.addSystem(FuncKeySystem);
         //创建player
         ResourcesManager.Instance.loadRes(GloableConstantUtils.GamePrefabPath.concat("Player"), (error, res) => {
             if (error) {

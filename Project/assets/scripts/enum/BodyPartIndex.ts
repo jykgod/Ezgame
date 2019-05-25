@@ -1,0 +1,22 @@
+export enum BodyPartIndex {
+    Soul,
+    LeftEye,
+    RightEye,
+    Brain,
+    LeftEar,
+    RightEar,
+    Mouth,
+    Digestive,
+    Lung,
+    Heart,
+    Immunity,
+    LeftArm,
+    RightArm,
+    LeftHand,
+    RightHand,
+    LeftLeg,
+    RightLeg,
+    LeftFoot,
+    RightFoot,
+    BodyPartCount
+}

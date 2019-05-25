@@ -54,7 +54,6 @@ export class ChooseRoleUIComponent extends cc.Component {
 
     onDestroy(){
         GameLauncher.Instance.node.off(EventEnum.ChooseRole, this.OnClick, this);
-        super.onDestroy();
     }
 
     private refresh() {

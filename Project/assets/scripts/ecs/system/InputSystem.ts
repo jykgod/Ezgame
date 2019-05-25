@@ -2,6 +2,8 @@ import InputData from "../sharedComponent/InputData";
 import GameLauncher from "../../logic/GameLauncher";
 import TestComponent from "../component/TestComponent";
 import PositionComponent from "../component/PositionComponent";
+import { UIManager } from "../../manager/UIManager";
+import { UINameEnum } from "../../enum/UINameEnum";
 
 export default class InputSystem extends ECS.ComponentSystem {
     public OnStart(): void {
@@ -70,6 +72,8 @@ export default class InputSystem extends ECS.ComponentSystem {
             case cc.macro.KEY.d:
                 InputData.instance.right = true;
                 break;
+            case cc.macro.KEY.e:
+                InputData.instance.e = true;
         }
         InputData.instance.time = TimeManager.Instance.realTimeSinceStartScene;
     }
@@ -88,6 +92,8 @@ export default class InputSystem extends ECS.ComponentSystem {
             case cc.macro.KEY.d:
                 InputData.instance.right = false;
                 break;
+            case cc.macro.KEY.e:
+                InputData.instance.e = false;
         }
         InputData.instance.time = TimeManager.Instance.realTimeSinceStartScene;
     }

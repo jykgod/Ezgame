@@ -18,7 +18,6 @@ export default class Test extends cc.Component {
 
 
     start () {
-        Logger.info("123");
         Logger.info(this.db.dragonAsset);
         Logger.info(this.db.dragonAtlasAsset);
         let armature: dragonBones.Armature = this.db.armature();

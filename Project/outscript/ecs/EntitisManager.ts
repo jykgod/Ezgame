@@ -103,7 +103,7 @@ namespace ECS {
          */
         public removeSharedComponent(...sharedComponentType: IComponentData[]) {
             for (let i = 0; i < sharedComponentType.length; i++) {
-                componentDataType[i].instance = undefined;
+                sharedComponentType[i].instance = undefined;
             }
         }
 
