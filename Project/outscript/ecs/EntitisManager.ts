@@ -22,12 +22,18 @@ namespace ECS {
          * _entitisComponents[i][j]中i为实体id，j为组件类型id
          */
         private _entitisComponents: Array<Array<IComponentData>>;
+        /**
+         * 实体是否是新加入的
+         * 用来判断是不是要调用behavior的start函数
+         */
+        public ifNew: { [index: number]: boolean };
 
         public constructor() {
             this._entitiIDTop = 0;
             this._entities = new Array<number>();
             this._components = new Array<Array<number>>();
             this._entitisComponents = new Array<Array<IComponentData>>();
+            this.ifNew = {};
         }
 
         /**
@@ -83,6 +89,7 @@ namespace ECS {
         public CreateAEntity(): number {
             this._entitisComponents[this._entitiIDTop] = new Array<IComponentData>();
             this._entities[this._entities.length] = this._entitiIDTop;
+            this.ifNew[this._entitiIDTop] = true;
             return this._entitiIDTop++;
         }
 
@@ -120,7 +127,7 @@ namespace ECS {
             }
 
             let index = this._entities.indexOf(entity);
-            if (index >= 0){
+            if (index >= 0) {
                 this._entities.splice(index, 1);
             }
 
@@ -133,7 +140,7 @@ namespace ECS {
          *      比如对Graphic组件中的layer排序。
          * @param componentDataType 
          */
-        public GetEntities(...componentDataType: IComponentData[]): Array<number>{
+        public GetEntities(...componentDataType: IComponentData[]): Array<number> {
             if (componentDataType == null || componentDataType == undefined || componentDataType.length == 0) {
                 return this._entities;
             }
@@ -175,7 +182,7 @@ namespace ECS {
          * @param entity 实体
          * @param type 组件类型
          */
-        public GetComponent(entity: number, type: IComponentData): IComponentData{
+        public GetComponent(entity: number, type: IComponentData): IComponentData {
             if (this._entitisComponents[entity] == null || this._entitisComponents[entity] == undefined) {
                 Logger.error(`找不到实体 id:${entity}`, "EntitisManager.addComponent");
                 return;
@@ -184,5 +191,5 @@ namespace ECS {
         }
     }
 }
-if(!(<any>window).ECS) (<any>window).ECS = {}; 
+if (!(<any>window).ECS) (<any>window).ECS = {};
 (<any>window).ECS.EntitisManager = ECS.EntitisManager;

@@ -15,22 +15,23 @@ namespace ECS {
      * 3.如果需要获取系统关联的实体，可以直接在onupdate时通过entities变量取得
      */
     export abstract class ComponentSystem extends ScriptBehaviourManager {
+        protected OnUpdate = null;
         InternalUpdate(): void {
-            this.OnUpdate();
+            if (this.OnUpdate) {
+                this.OnUpdate();
+            }
         }
-
-        protected abstract OnUpdate(): void;
-        public OnDestroy(): void{
+        public OnDestroy(): void {
         }
-        public OnStart(): void{
+        public OnStart(): void {
         }
     }
 
     Object.seal(ComponentSystem.prototype.InternalUpdate);
 
-    export function inject(type: IComponentData){
+    export function inject(type: IComponentData) {
         return function (target: any, propertyName: string) {
-            if(target.ctypes == undefined){
+            if (target.ctypes == undefined) {
                 target.ctypes = new Array<IComponentData>();
                 target.cnames = new Array<string>();
             }
@@ -39,6 +40,6 @@ namespace ECS {
         }
     }
 }
-if(!(<any>window).ECS) (<any>window).ECS = {}; 
+if (!(<any>window).ECS) (<any>window).ECS = {};
 (<any>window).ECS.ComponentSystem = ECS.ComponentSystem;
 (<any>window).ECS.inject = ECS.inject;

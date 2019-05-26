@@ -178,6 +178,53 @@ window.ECS.ScriptBehaviourManager = ECS.ScriptBehaviourManager;
 var ECS;
 (function (ECS) {
     /**
+     * Behaviour
+     *
+     * 注：
+     * 1.禁止包含命名为ctypes和cnames的成员
+     * 2.声明组件数组变量时需要使用装饰器inject
+     * 例:
+     * @ECS.inject(TestComponent)
+     * x: TestComponent;
+     * @ECS.inject(PositionComponent)
+     * y: PositionComponent;
+     * 3.因为所有实体其实是公用的一个behavior实例，所以在定义变量的时候一定要小心！
+     */
+    var ComponentBehaviour = /** @class */ (function (_super) {
+        __extends(ComponentBehaviour, _super);
+        function ComponentBehaviour() {
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.OnUpdate = null;
+            return _this;
+        }
+        Object.defineProperty(ComponentBehaviour.prototype, "Entity", {
+            get: function () {
+                return this.entities[0];
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ComponentBehaviour.prototype.InternalUpdate = function () {
+            if (this.OnUpdate) {
+                this.OnUpdate();
+            }
+        };
+        ComponentBehaviour.prototype.OnDestroy = function () {
+        };
+        ComponentBehaviour.prototype.OnStart = function () {
+        };
+        return ComponentBehaviour;
+    }(ECS.ScriptBehaviourManager));
+    ECS.ComponentBehaviour = ComponentBehaviour;
+    Object.seal(ComponentBehaviour.prototype.InternalUpdate);
+})(ECS || (ECS = {}));
+if (!window.ECS)
+    window.ECS = {};
+window.ECS.ComponentBehaviour = ECS.ComponentBehaviour;
+/// <reference path="./ScriptBehaviourManager.ts"/>
+var ECS;
+(function (ECS) {
+    /**
      * 系统
      *
      * 注：
@@ -194,10 +241,14 @@ var ECS;
     var ComponentSystem = /** @class */ (function (_super) {
         __extends(ComponentSystem, _super);
         function ComponentSystem() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.OnUpdate = null;
+            return _this;
         }
         ComponentSystem.prototype.InternalUpdate = function () {
-            this.OnUpdate();
+            if (this.OnUpdate) {
+                this.OnUpdate();
+            }
         };
         ComponentSystem.prototype.OnDestroy = function () {
         };
@@ -231,6 +282,7 @@ var ECS;
             this._entities = new Array();
             this._components = new Array();
             this._entitisComponents = new Array();
+            this.ifNew = {};
         }
         /**
          * 给实体添加组件(暂时不对重复添加组件做处理)
@@ -292,6 +344,7 @@ var ECS;
         EntitisManager.prototype.CreateAEntity = function () {
             this._entitisComponents[this._entitiIDTop] = new Array();
             this._entities[this._entities.length] = this._entitiIDTop;
+            this.ifNew[this._entitiIDTop] = true;
             return this._entitiIDTop++;
         };
         /**
@@ -416,10 +469,10 @@ var ECS;
          * @param name 命名
          */
         function World(name) {
-            /**
-             * update执行的时间间隔
-             */
-            this._deltaTime = 0.1;
+            // /**
+            //  * update执行的时间间隔
+            //  */
+            // public _deltaTime = 0.1;
             /**
              * 上次更新的时间
              */
@@ -427,6 +480,7 @@ var ECS;
             this._name = name;
             this._entitisManager = new ECS.EntitisManager();
             this._systems = new Array();
+            this._behaviours = new Array();
         }
         Object.defineProperty(World, "active", {
             get: function () {
@@ -494,14 +548,18 @@ var ECS;
             while (this._systems.length > 0) {
                 this._systems.pop().OnDestroy();
             }
+            while (this._behaviours.length > 0) {
+                this._behaviours.pop().OnDestroy();
+            }
         };
         /**
          * 帧执行函数
          */
         World.prototype.update = function () {
-            if (TimeManager.Instance.realTimeSinceStartScene - this._lastUpdateTime < this._deltaTime) {
-                return;
-            }
+            var _this = this;
+            // if (TimeManager.Instance.realTimeSinceStartScene - this._lastUpdateTime < this._deltaTime) {
+            //     return;
+            // }
             this._lastUpdateTime = TimeManager.Instance.realTimeSinceStartScene;
             for (var i = 0; i < this._systems.length; i++) {
                 var ctypes = (this._systems[i]['ctypes']);
@@ -519,13 +577,40 @@ var ECS;
                         }
                     }
                 }
-                this._systems[i].Update();
+                this._systems[i].InternalUpdate();
+            }
+            var _loop_1 = function (i) {
+                var ctypes = this_1._behaviours[i]['ctypes'];
+                if (ctypes != null && ctypes != undefined) {
+                    var cnames_1 = (this_1._behaviours[i]['cnames']);
+                    var entities = (_a = this_1._entitisManager).GetEntities.apply(_a, ctypes);
+                    if (entities) {
+                        entities.forEach(function (entity) {
+                            _this._behaviours[i].entities = [entity];
+                            for (var j = 0; j < ctypes.length; j++) {
+                                _this._behaviours[i][cnames_1[j]] = _this._entitisManager.GetComponent(entity, ctypes[j]);
+                            }
+                            if (_this._entitisManager.ifNew[entity]) {
+                                _this._behaviours[i].OnStart();
+                                _this._entitisManager.ifNew[entity] = false;
+                            }
+                            else {
+                                _this._behaviours[i].InternalUpdate();
+                            }
+                        });
+                    }
+                }
+                var _a;
+            };
+            var this_1 = this;
+            for (var i = 0; i < this._behaviours.length; i++) {
+                _loop_1(i);
             }
             var _a;
         };
         /**
          * 添加系统
-         * @param system 系统实例
+         * @param system 系统类型
          */
         World.prototype.addSystem = function (system) {
             var obj = new system();
@@ -534,7 +619,7 @@ var ECS;
         };
         /**
          * 移除系统
-         * @param system 系统实例
+         * @param system 系统类型
          */
         World.prototype.removeSystem = function (system) {
             var flag = false;
@@ -550,6 +635,21 @@ var ECS;
             if (flag) {
                 this._systems.pop();
             }
+        };
+        /**
+         * 定义行为
+         * @param system 行为类型
+         */
+        World.prototype.defineBehaviour = function () {
+            var _this = this;
+            var behaviours = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                behaviours[_i] = arguments[_i];
+            }
+            behaviours.forEach(function (behaviour) {
+                var obj = new behaviour();
+                _this._behaviours.push(obj);
+            });
         };
         /**
          * world表
@@ -1165,7 +1265,7 @@ function RPC(serviceName, noReturn) {
                             ret = _a.sent();
                             if (ret == null || ret == undefined)
                                 return [2 /*return*/, null];
-                            Logger.info(ret);
+                            //  Logger.info(ret);
                             TimeManager.Instance.SaveServerTime(ret.TimeStamp);
                             if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
                                 return [2 /*return*/, ret.ReturnValue["$values"]];
@@ -1245,7 +1345,7 @@ var RpcClient = /** @class */ (function () {
         var reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev) {
-            // Logger.info(reader.result);
+            //   Logger.info(reader.result);
             var ret = JSON.parse(reader.result);
             if (ret["$type"].indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 var obj = JSON.parse(reader.result);

@@ -21,7 +21,7 @@ function RPC(serviceName: string, noReturn: boolean) {
             if (noReturn == false) {
                 let ret = await RpcClient.Instance.GetResponce(_sequence);
                 if (ret == null || ret == undefined) return null;
-                 Logger.info(ret);
+                //  Logger.info(ret);
                 TimeManager.Instance.SaveServerTime(ret.TimeStamp);
                 if (ret.ReturnValue["$values"] != null && ret.ReturnValue["$values"] != undefined) {
                     return ret.ReturnValue["$values"];
@@ -99,7 +99,7 @@ class RpcClient {
         let reader = new FileReader();
         reader.readAsText(event.data, 'utf-8');
         reader.onload = function (ev: ProgressEvent) {
-            // Logger.info(reader.result);
+          //   Logger.info(reader.result);
             let ret = JSON.parse(reader.result);
             if ((<string>ret["$type"]).indexOf("SimCivil.Rpc.RpcResponse") != -1) {
                 let obj: SimCivil.Rpc.RpcResponse = JSON.parse(reader.result);

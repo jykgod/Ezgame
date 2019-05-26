@@ -22,26 +22,21 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Player extends Npc {
-    private posComp: PositionComponent;
     private avatar: Avatar;
 
     async start() {
-        this._entity = ECS.World.active.EntitisManager.CreateAEntity();
-        ECS.World.active.EntitisManager.addComponent(
-            this._entity,
-            MotionComponent,
-            PositionComponent,
-            MotionControllerComponent,
-            DirectionComponent);
-        this.posComp = <PositionComponent>ECS.World.active.EntitisManager.GetComponent(this._entity, PositionComponent);
+        // this._entity = ECS.World.active.EntitisManager.CreateAEntity();
+        // ECS.World.active.EntitisManager.addComponent(
+        //     this._entity,
+        //     MotionComponent,
+        //     PositionComponent,
+        //     MotionControllerComponent,
+        //     DirectionComponent);
+        // this.posComp = <PositionComponent>ECS.World.active.EntitisManager.GetComponent(this._entity, PositionComponent);
         this.avatar = new Avatar(this.node);
         await this.avatar.load();
-        let inspect = await SimCivil.Contract.IPlayerController.Inspect(PlayerAssetsData.instance.Role.Id);
-        PlayerAssetsData.instance.npcAssets = 
-        EcsUtility.AddNpc(this._entity, PlayerAssetsData.instance.Role.Id, NpcTypeEnum.player, PlayerAssetsData.instance.Role, inspect);
-    }
-
-    update(){
-        this.node.position = this.posComp.position.mul(EcsUtility.LogicToUIRatio);
+        // let inspect = await SimCivil.Contract.IPlayerController.Inspect(PlayerAssetsData.instance.Role.Id);
+        // PlayerAssetsData.instance.npcAssets = 
+        // EcsUtility.AddNpcAsset(this._entity, PlayerAssetsData.instance.Role.Id, NpcTypeEnum.player, PlayerAssetsData.instance.Role, inspect);
     }
 }

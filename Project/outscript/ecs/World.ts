@@ -60,10 +60,10 @@ namespace ECS {
          * 实体管理对象
          */
         private _entitisManager: EntitisManager;
-        /**
-         * update执行的时间间隔
-         */
-        public _deltaTime = 0.1;
+        // /**
+        //  * update执行的时间间隔
+        //  */
+        // public _deltaTime = 0.1;
         /**
          * 上次更新的时间
          */
@@ -79,6 +79,10 @@ namespace ECS {
          */
         private _systems: Array<ComponentSystem>;
         /**
+         * 行为数组
+         */
+        private _behaviours: Array<ComponentBehaviour>;
+        /**
          * 构造函数
          * @param name 命名
          */
@@ -86,6 +90,7 @@ namespace ECS {
             this._name = name;
             this._entitisManager = new EntitisManager();
             this._systems = new Array<ComponentSystem>();
+            this._behaviours = new Array<ComponentBehaviour>();
         }
         /**
          * 析构函数
@@ -94,14 +99,17 @@ namespace ECS {
             while (this._systems.length > 0) {
                 this._systems.pop().OnDestroy();
             }
+            while (this._behaviours.length > 0) {
+                this._behaviours.pop().OnDestroy();
+            }
         }
         /**
          * 帧执行函数
          */
         public update(): void {
-            if (TimeManager.Instance.realTimeSinceStartScene - this._lastUpdateTime < this._deltaTime) {
-                return;
-            }
+            // if (TimeManager.Instance.realTimeSinceStartScene - this._lastUpdateTime < this._deltaTime) {
+            //     return;
+            // }
             this._lastUpdateTime = TimeManager.Instance.realTimeSinceStartScene;
             for (let i = 0; i < this._systems.length; i++) {
                 let ctypes: IComponentData[] = (this._systems[i]['ctypes']);
@@ -119,12 +127,33 @@ namespace ECS {
                         }
                     }
                 }
-                this._systems[i].Update();
+                this._systems[i].InternalUpdate();
+            }
+            for (let i = 0; i < this._behaviours.length; i++) {
+                let ctypes: IComponentData[] = this._behaviours[i]['ctypes'];
+                if (ctypes != null && ctypes != undefined) {
+                    let cnames: string[] = (this._behaviours[i]['cnames']);
+                    let entities = this._entitisManager.GetEntities(...ctypes);
+                    if (entities) {
+                        entities.forEach(entity => {
+                            this._behaviours[i].entities = [entity];
+                            for (let j = 0; j < ctypes.length; j++) {
+                                this._behaviours[i][cnames[j]] = this._entitisManager.GetComponent(entity, ctypes[j]);
+                            }
+                            if (this._entitisManager.ifNew[entity]) {
+                                this._behaviours[i].OnStart();
+                                this._entitisManager.ifNew[entity] = false;
+                            } else {
+                                this._behaviours[i].InternalUpdate();
+                            }
+                        });
+                    }
+                }
             }
         }
         /**
          * 添加系统
-         * @param system 系统实例
+         * @param system 系统类型
          */
         public addSystem(system: typeof ComponentSystem): void {
             let obj: ComponentSystem = new system();
@@ -134,7 +163,7 @@ namespace ECS {
 
         /**
          * 移除系统
-         * @param system 系统实例
+         * @param system 系统类型
          */
         public removeSystem(system: typeof ComponentSystem): void {
             let flag = false;
@@ -150,6 +179,17 @@ namespace ECS {
             if (flag) {
                 this._systems.pop();
             }
+        }
+
+        /**
+         * 定义行为
+         * @param system 行为类型
+         */
+        public defineBehaviour(...behaviours: (typeof ComponentBehaviour)[]): void {
+            behaviours.forEach(behaviour => {
+                let obj: ComponentBehaviour = new behaviour();
+                this._behaviours.push(obj);
+            });
         }
     }
 

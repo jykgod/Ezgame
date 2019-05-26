@@ -28,7 +28,7 @@ export default class CameraSystem extends ECS.ComponentSystem {
         MapDataComponent.instance.cameraNode = null;
     }
 
-    protected OnUpdate(): void {
+    protected OnUpdate = function(): void {
         if (this.positions.length <= 0 || MapDataComponent.instance.cameraNode == undefined) return;
         let playerPos = cc.Vec2.ZERO;
         for (let i = 0; i < this.positions.length; i++) {

@@ -23,7 +23,7 @@ export default class MapSystem extends ECS.ComponentSystem {
         ECS.World.active.EntitisManager.removeSharedComponent(MapDataComponent);
     }
 
-    protected OnUpdate(): void {
+    protected OnUpdate = function(): void {
         this.UpdateCeilsPosition();
         this.DealServerData();
         this.UpdateCeilsTexture();

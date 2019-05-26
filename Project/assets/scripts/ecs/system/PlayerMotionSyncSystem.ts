@@ -16,21 +16,26 @@ export default class PlayerMotionSyncSystem extends ECS.ComponentSystem {
     public controller: Array<MotionControllerComponent>;
 
     public OnStart(): void {
-        EcsUtility.LastSyncMotionTime = TimeManager.Instance.GetCurrentServerTIme();
+        EcsUtility.LastLocalMoveTime = EcsUtility.LastSyncMotionTime = TimeManager.Instance.GetCurrentServerTIme();
     }
 
-    protected OnUpdate(): void {
+    protected OnUpdate = function (): void {
         let now = TimeManager.Instance.GetCurrentServerTIme();
         for (let i = 0; i < this.motion.length; i++) {
             // Logger.log(`(${motionV.x},${motionV.y})`, "PlayerMotionSyncSystem");
             // Logger.log((now - this.lastTime) / 1000, "PlayerMotionSyncSystem");
             // Logger.log(motionV.mag(), "PlayerMotionSyncSystem");
-            if(this.motion[i].v.magSqr() > 0){
-                let motionV = this.motion[i].v.mul((now - EcsUtility.LastSyncMotionTime) / 1000);
+            if (this.motion[i].v.magSqr() > 0) {
+                let motionV = this.motion[i].v.mul((now - EcsUtility.LastLocalMoveTime) / 1000);
+                EcsUtility.LastLocalMoveTime = now;
                 this.pos[i].position = this.pos[i].position.add(motionV);
-                SimCivil.Contract.IPlayerController.MoveTo([this.pos[i].position.x, this.pos[i].position.y], now);
+                if (now - EcsUtility.LastSyncMotionTime > EcsUtility.SyncPositionDeltaTime){
+                    SimCivil.Contract.IPlayerController.MoveTo([this.pos[i].position.x, this.pos[i].position.y], now);
+                    EcsUtility.LastSyncMotionTime = now;
+                }
+            }else{
+                EcsUtility.LastLocalMoveTime = now;
             }
         }
-        EcsUtility.LastSyncMotionTime = now;
     }
 }

@@ -20,7 +20,7 @@ export default class GraphicComponent implements ECS.IComponentData {
      * 渲染已存在的对象节点
      * 每个渲染对象在渲染时如果存在缓存对象则用缓存对象来渲染，否则根据预制名从对象池取一个新的对象并渲染.
      */
-    public objectID: cc.Node;
+    public node: cc.Node;
     /**
      * 物体是否被渲染
      */

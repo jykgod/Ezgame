@@ -15,7 +15,7 @@ export default class MotionControllerSystem extends ECS.ComponentSystem {
     @ECS.inject(MotionControllerComponent)
     public motionController: Array<MotionControllerComponent>;
 
-    protected OnUpdate(): void {
+    protected OnUpdate = function(): void {
         if(this.entities == null){
             return;
         }

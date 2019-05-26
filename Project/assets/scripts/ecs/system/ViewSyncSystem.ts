@@ -6,6 +6,7 @@ import MotionControllerComponent from "../component/MotionControllerComponent";
 import MotionComponent from "../component/MotionComponent";
 import MapDataComponent from "../sharedComponent/MapDataComponent";
 import NpcAssetsData from "../sharedComponent/NpcAssetsData";
+import HealthComponent from "../component/HealthComponent";
 
 /**
  * 视野同步系统
@@ -28,6 +29,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
         EcsUtility.InitedViewSyncSystem = false;
         EcsUtility.RegisterViewSyncOpt = (async () => {
             await SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
+                // Logger.info(viewChanged);
                 ViewChangeData.instance.data = viewChanged;
             });
             EcsUtility.InitedViewSyncSystem = true;
@@ -42,7 +44,7 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
         EcsUtility.InitedViewSyncSystem = false;
     }
 
-    protected OnUpdate(): void {
+    protected OnUpdate = function (): void {
         if (ViewChangeData.instance.data != null && this.positions != null && this.positions.length > 0) {
             let pos = new cc.Vec2(ViewChangeData.instance.data.Position[0], ViewChangeData.instance.data.Position[1]);
             // Logger.log(this.positions[0].position);
@@ -85,8 +87,23 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
                 }
                 this.positions[0].position = pos;
                 this.motions[0].speed = ViewChangeData.instance.data.Speed;
-
             }
+        }
+        //视野里出现了发生了数据变化的Entity
+        if (ViewChangeData.instance.data != null && ViewChangeData.instance.data.EntityChange.length > 0) {
+            ViewChangeData.instance.data.EntityChange.forEach(obj => {
+                let assets = NpcAssetsData.instance.npcAssetsDict[obj.Id];
+                let ent = 0;
+                if (assets == null || assets == undefined) {
+                    ent = EcsUtility.AddNpc(obj);
+                }else{
+                    ent = assets.entity;
+                }
+                let comp = ECS.World.active.EntitisManager.GetComponent(ent, HealthComponent) as HealthComponent;
+                comp.HP = obj.Hp;
+                let comp2 = ECS.World.active.EntitisManager.GetComponent(ent, PositionComponent) as PositionComponent;
+                comp2.position = cc.v2(obj.Pos[0], obj.Pos[1]);
+            });
         }
     }
 }

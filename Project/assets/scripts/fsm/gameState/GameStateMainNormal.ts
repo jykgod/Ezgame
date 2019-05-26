@@ -9,6 +9,8 @@ import CameraSystem from "../../ecs/system/CameraSystem";
 import { ResourcesManager } from "../../manager/ResourcesManager";
 import { GloableConstantUtils } from "../../tools/GloableConstantUtils";
 import FuncKeySystem from "../../ecs/system/FuncKeySystem";
+import { EcsUtility } from "../../ecs/utility/EcsUtility";
+import PositionSTGSystem from "../../ecs/system/PositionSTGSystem";
 
 export class GameStateMainNormal implements FSM.IState {
     stateType = GameStateEnum.GAME_STATE_MAIN_NORMAL;
@@ -27,15 +29,18 @@ export class GameStateMainNormal implements FSM.IState {
         ECS.World.active.addSystem(PlayerMotionSyncSystem);
         //添加功能键系统
         ECS.World.active.addSystem(FuncKeySystem);
+        //添加位置同步系统
+        ECS.World.active.addSystem(PositionSTGSystem);
         //创建player
-        ResourcesManager.Instance.loadRes(GloableConstantUtils.GamePrefabPath.concat("Player"), (error, res) => {
-            if (error) {
-                Logger.log(error.message);
-                return;
-            }
-            let node: cc.Node = cc.instantiate<cc.Node>(res);
-            node.setParent(cc.Canvas.instance.node);
-        });
+        // ResourcesManager.Instance.loadRes(GloableConstantUtils.GamePrefabPath.concat("Player"), (error, res) => {
+        //     if (error) {
+        //         Logger.log(error.message);
+        //         return;
+        //     }
+        //     let node: cc.Node = cc.instantiate<cc.Node>(res);
+        //     node.setParent(cc.Canvas.instance.node);
+        // });
+        EcsUtility.AddPlayer();
     }
 
     StateUpdate(currentStateTime: number): void{

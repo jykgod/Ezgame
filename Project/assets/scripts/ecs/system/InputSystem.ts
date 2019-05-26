@@ -24,9 +24,6 @@ export default class InputSystem extends ECS.ComponentSystem {
         GameLauncher.Instance.node.off(cc.Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
     }
 
-    protected OnUpdate(): void {
-    }
-
     private onMouseDown(event: cc.Event.EventMouse) {
         switch (event.getButton()) {
             case cc.Event.EventMouse.BUTTON_LEFT:

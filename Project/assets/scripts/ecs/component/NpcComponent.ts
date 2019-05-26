@@ -7,4 +7,5 @@ import NpcAssets from "../../struct/NpcAssets";
  */
 export default class NpcComponent implements ECS.IComponentData {
     public npcAssets: NpcAssets;
+    public dirty: boolean;
 }

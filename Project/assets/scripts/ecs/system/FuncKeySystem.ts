@@ -5,7 +5,7 @@ import { UserInfoUI } from "../../ui/userinfoui/UserInfoUI";
 
 export default class FuncKeySystem extends ECS.ComponentSystem {
 
-    protected OnUpdate(): void {
+    protected OnUpdate = function(): void {
         if(InputData.instance.e == true){
             InputData.instance.e = false;
             let ui = UIManager.Instance.GetUI(UINameEnum.USER_INFO_UI) as UserInfoUI;

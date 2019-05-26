@@ -1,9 +1,4 @@
-import { ResourcesManager } from "../../manager/ResourcesManager";
-import { GloableConstantUtils } from "../../tools/GloableConstantUtils";
 import Avatar from "../../logic/player/Avatar";
-import { UI2EcsSessionManager } from "../../manager/UI2EcsSessionManager";
-import UIProto from "../../struct/UIProto";
-import { UIProtoTypeEnum } from "../../enum/UIProtoTypeEnum";
 import { EventEnum } from "../../enum/EventEnum";
 import PlayerAssetsData from "../../ecs/sharedComponent/PlayerAssetsData";
 import GameLauncher from "../../logic/GameLauncher";
@@ -58,7 +53,7 @@ export class ChooseRoleUIComponent extends cc.Component {
 
     private refresh() {
         if (this.roleData != null && this.role != null && this.role.loaded == true) {
-
+            
         }
     }
 }
