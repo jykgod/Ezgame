@@ -18,6 +18,7 @@ export class EcsUtility {
     public static LastSyncMotionTime: number;
     public static LastLocalMoveTime: number;
     public static LogicToUIRatio: number = 80;
+    public static NetWorkDeltaTime: number = 300;
     public static SyncPositionDeltaTime: number = 100;//单位：ms，向服务器同步客户端位置的时间间隔
 
     /**
