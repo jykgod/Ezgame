@@ -4,6 +4,7 @@ import HealthComponent from "../component/HealthComponent";
 import { ResourcesManager } from "../../manager/ResourcesManager";
 import { GloableConstantUtils } from "../../tools/GloableConstantUtils";
 import GraphicComponent from "../component/GraphicComponent";
+import { BodyPartIndex } from "../../enum/BodyPartIndex";
 
 export default class NpcBehaviour extends ECS.ComponentBehaviour {
     @ECS.inject(PositionComponent)

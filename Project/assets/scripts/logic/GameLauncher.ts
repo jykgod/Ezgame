@@ -6,6 +6,7 @@ import { UI2EcsSessionManager } from "../manager/UI2EcsSessionManager";
 import InputSystem from "../ecs/system/InputSystem";
 import UISessionData from "../ecs/sharedComponent/UISessionDate";
 import NpcBehaviour from "../ecs/behaviour/NpcBehaviour";
+import HealthBehaviour from "../ecs/system/HealthBehaviour";
 
 const { ccclass, property } = cc._decorator;
 
@@ -39,7 +40,7 @@ export default class GameLauncher extends cc.Component {
         //添加输入系统
         world.addSystem(InputSystem);
         //定义行为
-        world.defineBehaviour(NpcBehaviour);
+        world.defineBehaviour(NpcBehaviour, HealthBehaviour);
         //添加UI会话数据组件
         ECS.World.active.EntitisManager.addSharedComponent(UISessionData);
         // let world = ECS.World.CreateAWorld("hello");

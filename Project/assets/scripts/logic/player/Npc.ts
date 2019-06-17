@@ -1,7 +1,3 @@
-import MotionComponent from "../../ecs/component/MotionComponent";
-import PositionComponent from "../../ecs/component/PositionComponent";
-import MotionControllerComponent from "../../ecs/component/MotionControllerComponent";
-import DirectionComponent from "../../ecs/component/DirectionComponent";
 
 // Learn TypeScript:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/typescript.html

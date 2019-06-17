@@ -10,7 +10,7 @@ export default class PositionComponent implements ECS.IComponentData {
     }
 
     public set position(v: cc.Vec2) {
-        if (v == this._position) return;
+        if (Math.abs(v.x - this._position.x) < 0.00001 && Math.abs(v.y - this._position.y) < 0.00001) return;
         this._position = v;
         this._dirty = true;
     }

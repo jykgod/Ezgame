@@ -26,14 +26,14 @@ namespace ECS {
          * 实体是否是新加入的
          * 用来判断是不是要调用behavior的start函数
          */
-        public ifNew: { [index: number]: boolean };
+        public ifNotNew: { [index: number]: boolean };
 
         public constructor() {
             this._entitiIDTop = 0;
             this._entities = new Array<number>();
             this._components = new Array<Array<number>>();
             this._entitisComponents = new Array<Array<IComponentData>>();
-            this.ifNew = {};
+            this.ifNotNew = {};
         }
 
         /**
@@ -89,7 +89,6 @@ namespace ECS {
         public CreateAEntity(): number {
             this._entitisComponents[this._entitiIDTop] = new Array<IComponentData>();
             this._entities[this._entities.length] = this._entitiIDTop;
-            this.ifNew[this._entitiIDTop] = true;
             return this._entitiIDTop++;
         }
 

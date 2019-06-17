@@ -49,6 +49,103 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var Magic;
+(function (Magic) {
+    var Core;
+    (function (Core) {
+        var Action = /** @class */ (function () {
+            function Action() {
+            }
+            return Action;
+        }());
+        Core.Action = Action;
+    })(Core = Magic.Core || (Magic.Core = {}));
+})(Magic || (Magic = {}));
+var Magic;
+(function (Magic) {
+    var Core;
+    (function (Core) {
+        var Condition = /** @class */ (function () {
+            function Condition() {
+            }
+            return Condition;
+        }());
+        Core.Condition = Condition;
+    })(Core = Magic.Core || (Magic.Core = {}));
+})(Magic || (Magic = {}));
+var Magic;
+(function (Magic) {
+    var Core;
+    (function (Core) {
+        var GenerateDataType;
+        (function (GenerateDataType) {
+        })(GenerateDataType = Core.GenerateDataType || (Core.GenerateDataType = {}));
+    })(Core = Magic.Core || (Magic.Core = {}));
+})(Magic || (Magic = {}));
+var Magic;
+(function (Magic) {
+    var Core;
+    (function (Core) {
+        var Graph = /** @class */ (function () {
+            function Graph() {
+            }
+            Graph.prototype.AddModules = function (module) {
+            };
+            Graph.prototype.SortQueue = function () {
+                return false;
+            };
+            Graph.prototype.GetMagic = function () {
+                return null;
+            };
+            return Graph;
+        }());
+        Core.Graph = Graph;
+    })(Core = Magic.Core || (Magic.Core = {}));
+})(Magic || (Magic = {}));
+var Magic;
+(function (Magic) {
+    var Core;
+    (function (Core) {
+        var ModuleBase = /** @class */ (function () {
+            function ModuleBase() {
+            }
+            ModuleBase.prototype.Run = function () {
+                return null;
+            };
+            ModuleBase.Link = function (slotA, slotB) {
+            };
+            return ModuleBase;
+        }());
+        Core.ModuleBase = ModuleBase;
+    })(Core = Magic.Core || (Magic.Core = {}));
+})(Magic || (Magic = {}));
+var Magic;
+(function (Magic) {
+    var Core;
+    (function (Core) {
+        var Skill = /** @class */ (function () {
+            function Skill() {
+            }
+            return Skill;
+        }());
+        Core.Skill = Skill;
+    })(Core = Magic.Core || (Magic.Core = {}));
+})(Magic || (Magic = {}));
+var Magic;
+(function (Magic) {
+    var Core;
+    (function (Core) {
+        var Slot = /** @class */ (function () {
+            function Slot() {
+            }
+            Slot.GetDataDes = function (dataType) {
+                return "";
+            };
+            return Slot;
+        }());
+        Core.Slot = Slot;
+    })(Core = Magic.Core || (Magic.Core = {}));
+})(Magic || (Magic = {}));
 /**
  * 统一管理UI的切换时动画
  * 保持游戏UI动画风格的一致性
@@ -282,7 +379,7 @@ var ECS;
             this._entities = new Array();
             this._components = new Array();
             this._entitisComponents = new Array();
-            this.ifNew = {};
+            this.ifNotNew = {};
         }
         /**
          * 给实体添加组件(暂时不对重复添加组件做处理)
@@ -344,7 +441,6 @@ var ECS;
         EntitisManager.prototype.CreateAEntity = function () {
             this._entitisComponents[this._entitiIDTop] = new Array();
             this._entities[this._entities.length] = this._entitiIDTop;
-            this.ifNew[this._entitiIDTop] = true;
             return this._entitiIDTop++;
         };
         /**
@@ -590,9 +686,9 @@ var ECS;
                             for (var j = 0; j < ctypes.length; j++) {
                                 _this._behaviours[i][cnames_1[j]] = _this._entitisManager.GetComponent(entity, ctypes[j]);
                             }
-                            if (_this._entitisManager.ifNew[entity]) {
+                            if (!_this._entitisManager.ifNotNew[entity * World.MAX_BEHAVIOUR_NUM + i]) {
                                 _this._behaviours[i].OnStart();
-                                _this._entitisManager.ifNew[entity] = false;
+                                _this._entitisManager.ifNotNew[entity * World.MAX_BEHAVIOUR_NUM + i] = true;
                             }
                             else {
                                 _this._behaviours[i].InternalUpdate();
@@ -655,6 +751,10 @@ var ECS;
          * world表
          */
         World._worlds = new Array();
+        /**
+         * 最多支持的behavior数量
+         */
+        World.MAX_BEHAVIOUR_NUM = 10;
         return World;
     }());
     ECS.World = World;
@@ -1833,6 +1933,7 @@ var SimCivil;
                 this.Pos = null;
                 // HP
                 this.Hp = 0;
+                this.MaxSpeed = 0;
             }
             EntityDto.prototype.ToString = function () {
                 return null;

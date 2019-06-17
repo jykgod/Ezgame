@@ -75,6 +75,10 @@ namespace ECS {
             return this._entitisManager;
         }
         /**
+         * 最多支持的behavior数量
+         */
+        private static MAX_BEHAVIOUR_NUM = 10;
+        /**
          * 系统数组
          */
         private _systems: Array<ComponentSystem>;
@@ -140,9 +144,9 @@ namespace ECS {
                             for (let j = 0; j < ctypes.length; j++) {
                                 this._behaviours[i][cnames[j]] = this._entitisManager.GetComponent(entity, ctypes[j]);
                             }
-                            if (this._entitisManager.ifNew[entity]) {
+                            if (!this._entitisManager.ifNotNew[entity * World.MAX_BEHAVIOUR_NUM + i]) {
                                 this._behaviours[i].OnStart();
-                                this._entitisManager.ifNew[entity] = false;
+                                this._entitisManager.ifNotNew[entity * World.MAX_BEHAVIOUR_NUM + i] = true;
                             } else {
                                 this._behaviours[i].InternalUpdate();
                             }

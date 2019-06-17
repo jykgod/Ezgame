@@ -62,14 +62,18 @@ export class EcsUtility {
             PositionComponent,
             GraphicComponent,
             DirectionComponent,
-            HealthComponent
+            HealthComponent,
+            MotionComponent
         );
         let npcComp = ECS.World.active.EntitisManager.GetComponent(entity, NpcComponent) as NpcComponent;
         npcComp.npcAssets = assets;
         let healthComp = ECS.World.active.EntitisManager.GetComponent(entity, HealthComponent) as HealthComponent;
         healthComp.HP = obj.Hp;
+        healthComp.maxHP = 1;
         let posComp = ECS.World.active.EntitisManager.GetComponent(entity, PositionComponent) as PositionComponent;
         posComp.position = cc.v2(obj.Pos[0], obj.Pos[1]);
+        let moveComp = ECS.World.active.EntitisManager.GetComponent(entity, MotionComponent) as MotionComponent;
+        moveComp.speed = obj.MaxSpeed;
         return entity;
     }
 
@@ -95,7 +99,8 @@ export class EcsUtility {
         npcComp.npcAssets = assets;
         PlayerAssetsData.instance.npcAssets = assets;
         let healthComp = ECS.World.active.EntitisManager.GetComponent(entity, HealthComponent) as HealthComponent;
-        healthComp.HP = 10;
+        healthComp.HP = 1;
+        healthComp.maxHP = 1;
         return entity;
     }
 }

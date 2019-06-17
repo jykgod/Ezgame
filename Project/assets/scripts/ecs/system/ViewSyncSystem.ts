@@ -29,7 +29,9 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
         EcsUtility.InitedViewSyncSystem = false;
         EcsUtility.RegisterViewSyncOpt = (async () => {
             await SimCivil.Contract.IViewSynchronizer.RegisterViewSync((viewChanged) => {
-                // Logger.info(viewChanged);
+                if (viewChanged.EntityChange.length > 0){
+                    Logger.info(viewChanged);
+                }
                 ViewChangeData.instance.data = viewChanged;
             });
             EcsUtility.InitedViewSyncSystem = true;
@@ -96,13 +98,16 @@ export default class ViewSyncSystem extends ECS.ComponentSystem {
                 let ent = 0;
                 if (assets == null || assets == undefined) {
                     ent = EcsUtility.AddNpc(obj);
-                }else{
+                } else {
                     ent = assets.entity;
+                    let comp = ECS.World.active.EntitisManager.GetComponent(ent, HealthComponent) as HealthComponent;
+                    comp.HP = obj.Hp;
+                    comp.maxHP = 1;
+                    let comp2 = ECS.World.active.EntitisManager.GetComponent(ent, PositionComponent) as PositionComponent;
+                    comp2.position = cc.v2(obj.Pos[0], obj.Pos[1]);
+                    let comp3 = ECS.World.active.EntitisManager.GetComponent(ent, MotionComponent) as MotionComponent;
+                    comp3.speed = obj.MaxSpeed;
                 }
-                let comp = ECS.World.active.EntitisManager.GetComponent(ent, HealthComponent) as HealthComponent;
-                comp.HP = obj.Hp;
-                let comp2 = ECS.World.active.EntitisManager.GetComponent(ent, PositionComponent) as PositionComponent;
-                comp2.position = cc.v2(obj.Pos[0], obj.Pos[1]);
             });
         }
     }

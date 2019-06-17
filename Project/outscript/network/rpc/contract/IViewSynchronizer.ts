@@ -75,6 +75,8 @@ module SimCivil.Contract {
         public Pos: number[] = null;
         // HP
         public Hp: number = 0;
+
+        public MaxSpeed: number = 0;
 		
 		public ToString(): string{
 			return null;

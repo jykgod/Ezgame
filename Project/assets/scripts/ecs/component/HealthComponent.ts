@@ -1,3 +1,5 @@
+import HpUI from "../../ui/userheader/HpUI";
+
 /**
  * 生命组件
  * 用来绑定在一些有生命的物体上面
@@ -19,4 +21,6 @@ export default class HealthComponent implements ECS.IComponentData {
     public set dirty(v: boolean) {
         this._dirty = v;
     }
+    public maxHP: number = -1;
+    public hpUI: HpUI;
 }
